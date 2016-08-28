@@ -1,0 +1,61 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/accounticon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/default_account"
+        android:clickable="true"
+        android:contextClickable="true"
+        android:longClickable="true"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin" />
+
+    <TextView
+        android:id="@+id/accountname"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:singleLine="true"
+        android:textSize="14sp"
+        android:clickable="true"
+        android:text="My account name is ABC"
+        android:layout_toRightOf="@+id/accounticon" />
+
+    <TextView
+        android:id="@+id/accountnumber"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:singleLine="true"
+        android:text="123-XXXXXXX-222"
+        android:textSize="14sp"
+        android:clickable="true"
+        android:layout_below="@+id/accountname"
+        android:layout_alignLeft="@+id/accountname" />
+
+    <TextView
+        android:id="@+id/accountcurrency"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="SGD"
+        android:textSize="14sp"
+        android:clickable="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/accountname" />
+
+
+    <TextView
+        android:id="@+id/accountbalance"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="9,999,999.99"
+        android:textSize="14sp"
+        android:clickable="true"
+        android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
+        android:layout_below="@+id/accountcurrency"
+        android:layout_alignParentEnd="true" />
+
+
+</RelativeLayout>

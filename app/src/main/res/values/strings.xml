@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">moneyapp</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_name_accounts">Accounts</string>
+    <string name="section_name_spending">Spending</string>
+    <string name="section_name_goals">Goals</string>
+    <string name="section_name_peers">Peers</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="label_account_fragment_CASH">Current and Savings</string>
+    <string name="label_account_fragment_CREDIT">Credit Cards</string>
+    <string name="label_account_fragment_LOAN">Loans</string>
+    <string name="label_account_fragment_INVESTMENT">Investments</string>
+    <string name="label_account_fragment_RETIREMENT">Retirement</string>
+    <string name="label_account_fragment_PROPERTY">Property</string>
+    <string name="label_account_fragment_INSURANCE">Insurance</string>
+    <string name="label_account_fragment_REWARDS">Rewards</string>
+    <string name="label_account_fragment_BILLS">Bills</string>
+    <string name="label_account_fragment_OTHERASSETS">Other Assets</string>
+    <string name="label_account_fragment_OTHERLIABILITIES">Other Liabilities</string>
+    <string name="label_account_card_menu_title">Menu</string>
+</resources>
