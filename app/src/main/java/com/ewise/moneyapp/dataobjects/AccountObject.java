@@ -89,8 +89,4 @@ public class AccountObject {
         return amount;
     }
 
-    public String mystringtestonly()
-    {
-        return currency;
-    }
 }
