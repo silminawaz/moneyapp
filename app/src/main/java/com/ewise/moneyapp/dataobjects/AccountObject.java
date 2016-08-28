@@ -88,4 +88,9 @@ public class AccountObject {
         BigDecimal amount = new BigDecimal (funds);
         return amount;
     }
+
+    public String mystringtestonly()
+    {
+        return currency;
+    }
 }
