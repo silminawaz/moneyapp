@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.ewise.moneyapp.R;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.math.BigDecimal;
@@ -32,30 +33,35 @@ public class AccountCardDataObject {
 
     private Context context;
     private eAccountCategory category;
-    private String title;  //todo: set title for the account card
-    private Currency displayCurrency;  //todo: initialise the display currency
-                                        //todo: set display currency - re calculate the balance based on that currency
-    private BigDecimal displayCurrencyBalance; //todo: calculate the display currency balance
-    private Currency preferredCurrency; //todo: initialise the preferred currency
-    private Currency preferredCurrencyBalance; //todo: calculate the preferred currency balance
+    private String title;
 
-    private List<AccountObject> accountList = Collections.emptyList();
+    //currency for display only
+    private String displayCurrencyCode;
+    private BigDecimal displayCurrencyBalance;
+    private BigDecimal displayCurrencyFunds;
 
-    public AccountCardDataObject (Context context, eAccountCategory category, List<AccountObject> accountList, Currency preferredCurrency){
+    //user's preferred or base currency
+    private String preferredCurrencyCode;
+    private BigDecimal preferredCurrencyBalance;
+    private BigDecimal preferredCurrencyFunds;
+
+
+    private ArrayList<AccountObject> accountList = new ArrayList<AccountObject>();
+
+    public AccountCardDataObject(Context context, eAccountCategory category, ArrayList<AccountObject> accountList, String preferredCurrencyCode) {
         this.context = context;
         this.category = category;
         this.accountList = accountList;
-        this.preferredCurrency = preferredCurrency;
-        this.displayCurrency = this.preferredCurrency;
-        setTitle ();
-        setPreferredCurrencyBalance();
+        this.preferredCurrencyCode = preferredCurrencyCode;
+        this.displayCurrencyCode = this.preferredCurrencyCode;
+        setTitle();
+        recalculateBalances();
     }
 
     //Set the title for the account card
-    private void setTitle (){
+    private void setTitle() {
 
-        switch (category)
-        {
+        switch (category) {
             case E_ACCOUNT_CATEGORY_CASH:
                 title = context.getString(R.string.label_account_fragment_CASH);
                 return;
@@ -88,20 +94,103 @@ public class AccountCardDataObject {
                 return;
             case E_ACCOUNT_CATEGORY_OTHERLIABILITIES:
                 title = context.getString(R.string.label_account_fragment_OTHERLIABILITIES);
-                return;
-
         }
     }
 
 
-    private void setPreferredCurrencyBalance ()
-    {
+    private void recalculateBalances() {
+        this.preferredCurrencyBalance = BigDecimal.ZERO;
+        this.preferredCurrencyFunds = BigDecimal.ZERO;
+        this.displayCurrencyBalance = BigDecimal.ZERO;
+        this.displayCurrencyFunds = BigDecimal.ZERO;
+        CurrencyExchangeRates rates = CurrencyExchangeRates.INSTANCE;
+
         //calculate the preferred currency balance from the accountList
+        for (AccountObject acct : accountList) {
+            //todo: does not support multi-currency accounts - only supports all accounts in preferred/base, currency
+            //find the exchange rate for account currency to preferred currency
+            CurrencyExchangeRateItem rateItem = rates.
+            this.preferredCurrencyBalance = this.preferredCurrencyBalance.add(acct.getBalanceAmount());
+            this.preferredCurrencyFunds = this.preferredCurrencyFunds.add(acct.getFundsAmount());
+        }
 
+        changeDisplayCurrency(this.displayCurrency, )
 
+        this.displayCurrencyBalance = this.preferredCurrencyBalance;
+        this.displayCurrencyFunds = this.preferredCurrencyFunds;
     }
 
 
+    // set the display currency and recalculate the display currency balances
+    public boolean changePreferredCurrency(Currency preferredCurrency, CurrencyExchangeRateItem preferredCurrencyExchangeRate) {
 
+        //check if the displayCurrency and the exchange rates are matching
+        if (!preferredCurrencyExchangeRate.RateIsValidForCurrency(preferredCurrency)) return false;
+
+        if (preferredCurrency.equals(this.preferredCurrency)) {
+            return true; //nothing to do - already in that currency
+        } else {
+            if (preferredCurrency.equals(this.displayCurrency)) {
+                this.preferredCurrencyBalance = this.displayCurrencyBalance;
+                this.preferredCurrencyFunds = this.displayCurrencyFunds;
+                return true;
+            } else {
+                //new preferred currency
+                this.preferredCurrency = preferredCurrency;
+                this.displayCurrencyFunds = BigDecimal.ZERO;
+                this.displayCurrencyBalance = BigDecimal.ZERO;
+
+                if (displayCurrency.equals(displayCurrencyExchangeRate.quoteCurrency)) {
+                    this.displayCurrencyBalance = displayCurrencyExchangeRate.ExchangeToQuoteCurrency(this.preferredCurrencyBalance);
+                    this.displayCurrencyFunds = displayCurrencyExchangeRate.ExchangeToQuoteCurrency(this.preferredCurrencyFunds);
+                } else {
+                    if (displayCurrency.equals(displayCurrencyExchangeRate.baseCurrency)) {
+                        this.displayCurrencyBalance = displayCurrencyExchangeRate.ExchangeToBaseCurrency(this.preferredCurrencyBalance);
+                        this.displayCurrencyFunds = displayCurrencyExchangeRate.ExchangeToQuoteCurrency(this.preferredCurrencyFunds);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    // set the display currency and recalculate the display currency balances
+    public boolean changeDisplayCurrency(Currency displayCurrency) {
+
+        CurrencyExchangeRateItem displayCurrencyExchangeRate = CurrencyExchangeRates.INSTANCE.getExchangeRateItem
+
+        //check if the displayCurrency and the exchangerates are matching
+        if (!displayCurrencyExchangeRate.RateIsValidForCurrency(displayCurrency)) return false;
+
+        if (displayCurrency.equals(this.displayCurrency)) {
+            return true; //nothing to do - already in that currency
+        } else {
+            if (displayCurrency.equals(this.preferredCurrency)) {
+                this.displayCurrencyBalance = this.preferredCurrencyBalance;
+                this.displayCurrencyFunds = this.preferredCurrencyFunds;
+                return true;
+            } else {
+                //new display currency
+                this.displayCurrency = displayCurrency;
+                this.displayCurrencyFunds = BigDecimal.ZERO;
+                this.displayCurrencyBalance = BigDecimal.ZERO;
+
+                if (displayCurrency.equals(displayCurrencyExchangeRate.quoteCurrency)) {
+                    this.displayCurrencyBalance = displayCurrencyExchangeRate.ExchangeToQuoteCurrency(this.preferredCurrencyBalance);
+                    this.displayCurrencyFunds = displayCurrencyExchangeRate.ExchangeToQuoteCurrency(this.preferredCurrencyFunds);
+                } else {
+                    if (displayCurrency.equals(displayCurrencyExchangeRate.baseCurrency)) {
+                        this.displayCurrencyBalance = displayCurrencyExchangeRate.ExchangeToBaseCurrency(this.preferredCurrencyBalance);
+                        this.displayCurrencyFunds = displayCurrencyExchangeRate.ExchangeToQuoteCurrency(this.preferredCurrencyFunds);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 
 }
+
