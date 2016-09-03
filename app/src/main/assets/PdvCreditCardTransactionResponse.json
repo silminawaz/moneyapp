@@ -1,0 +1,183 @@
+{
+  "status": "success",
+  "message": null,
+  "errorType": null,
+  "instId": null,
+  "verify": null,
+  "accountTransactions": [
+    {
+      "instId": "1103",
+      "accountId": "322a1b03e39e95e170a1352df672ecbdab2af701",
+      "transactions": [
+        {
+          "id": 233,
+          "date": "2016-06-05",
+          "description": "\"Bayview Beach Resort F Penang MY\"",
+          "amount": -978.21,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "9sN8fMvTpfjUEnEbN1KwVljGZvaIhVuSMhfMDTxH1hU"
+        },
+        {
+          "id": 232,
+          "date": "2016-06-09",
+          "description": "\"GIANT-BEDOK MKT PL SINGAPORE SG\"",
+          "amount": -49.79,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "EwEo0rtqBqP3qVUKZOr7sCt-GTU9GCl0U1aGZ77Ab6w"
+        },
+        {
+          "id": 239,
+          "date": "2016-06-11",
+          "description": "\"G2000 PARKWAY PARADE SINGAPORE SGP\"",
+          "amount": -129,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "YyqfvHnNfdwpZtIzUiw5om9W-zKIBL8uOChKJhsmMIE"
+        },
+        {
+          "id": 240,
+          "date": "2016-06-11",
+          "description": "\"DARLING SHOES SINGAPORE SGP\"",
+          "amount": -25.9,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "Vpdc1Bajuo2DrDbnu5AKZmnCqKeoMxcz20ScCqconBo"
+        },
+        {
+          "id": 238,
+          "date": "2016-06-13",
+          "description": "\"KIYO SINGAPORE SGP\"",
+          "amount": -29,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "9wdoH1U4JZEefwexUuLQFB1gy7Ox7gsPVz9-9KHfHBo"
+        },
+        {
+          "id": 237,
+          "date": "2016-06-15",
+          "description": "\"SHELL SIMPANG BEDOK SINGAPORE SGP\"",
+          "amount": -26.3,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "AFjEPI9Xi6GZGFz8lkTkfnOhS3Hn4ANLSQ3EE-F-MIs"
+        },
+        {
+          "id": 231,
+          "date": "2016-06-22",
+          "description": "\"SriLankan A 6039999999 Katunayake SG\"",
+          "amount": -486.4,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "F5hbL0FQLfUH01eMb8xpozhUvy6iJ5HnSt9c9AghYR4"
+        },
+        {
+          "id": 230,
+          "date": "2016-06-23",
+          "description": "\"REFLEXSOLE SINGAPORE SG\"",
+          "amount": -78,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "wf2a_ukMpP_n4jIliVkJOuSp1RQuz-7A-qBOVrU0ZAM"
+        },
+        {
+          "id": 229,
+          "date": "2016-06-24",
+          "description": "\"KINOKUNIYA-TAKASHIMAYA SINGAPORE SG\"",
+          "amount": -297.66,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "r_feLCVK7g7d0qtwzalLiYh2hrGiERcybi84TTlJy50"
+        },
+        {
+          "id": 228,
+          "date": "2016-06-25",
+          "description": "\"GIANT-BEDOK MKT PL SINGAPORE SG\"",
+          "amount": -19.9,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "2BrdwoUXwxqnu70Av-XMuuG_zKiVKmD36n-RLybeAQU"
+        },
+        {
+          "id": 234,
+          "date": "2016-06-27",
+          "description": "\"SI PAYMENT\"",
+          "amount": 1810.65,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "pNIfh5RRiDEsNZo_hUAYeNTe1WGx5mnfxYsSVguHTN0"
+        },
+        {
+          "id": 227,
+          "date": "2016-06-28",
+          "description": "\"SHELL SIMPANG BEDOK SINGAPORE SG\"",
+          "amount": -95.85,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "puCRJkhAU5hoTc03la2aeomkSILjQxmX4x0iJU4Sw9M"
+        },
+        {
+          "id": 225,
+          "date": "2016-06-29",
+          "description": "\"MIRACLE DAY SPA SINGAPORE SG\"",
+          "amount": -95,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "6ZFxh6ZKIww3SSDJjvQRa4OUgvTz-wHN_cfuSb-ZZM8"
+        },
+        {
+          "id": 226,
+          "date": "2016-06-29",
+          "description": "\"SHELL SIMPANG BEDOK SINGAPORE SG\"",
+          "amount": -66.9,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "6SvjvEKljB9A_WUeH5DB705-I927P14bnoTWSVRnG4U"
+        },
+        {
+          "id": 224,
+          "date": "2016-06-30",
+          "description": "\"GURNEY DRIVE-T3D SINGAPORE SG\"",
+          "amount": -114.7,
+          "currency": "SGD",
+          "data": "undefined",
+          "fingerprint": "8mfWtjDakIn22IjY4YUqfbrs5Y1Bj4ElXvKc9EgiQhM"
+        }
+      ],
+      "account": {
+        "accountId": "s101_1103_1970832291*5322A1B03E39E95E170A1352DF672ECBDAB2AF701",
+        "instId": "s101_1103_1970832291",
+        "category": "CREDIT",
+        "accountNumber": "************3119",
+        "accountName": "VISA/MASTERCARD",
+        "accountHash": "322a1b03e39e95e170a1352df672ecbdab2af701",
+        "balance": "2803.34",
+        "currency": "SGD",
+        "availBalance": "3927.77",
+        "updatedAt": "07/27/2016 12:08:03",
+        "data": "{\"Portfolio\":{\"PortfolioNumber\":\"\",\"PortfolioName\":\"MR MOHAMED SILMI NAWAZ\",\"PortfolioValuationCurrency\":\"\",\"PortfolioTotalCurrentValue\":\"\",\"PortfolioLastUpdatedDateTime\":\"20160727\"},\"PortfolioHoldingId\":\"************3119\",\"PortfolioHoldingName\":\"VISA/MASTERCARD\",\"PortfolioHoldingAcctCategory\":\"Loan\",\"PortfolioHoldingAcctSubCategory\":\"Cards_CC\",\"PortfolioHoldingValuationCurrency\":\"SGD\",\"PortfolioHoldingLastUpdatedDateTime\":\"20160727\",\"PortfolioHoldingTotalCurrentValue\":\"2803.34\",\"PortfolioHoldingsAssetList\":{}}"
+      }
+    },
+    {
+      "instId": "1201",
+      "accountId": "aeecf27bc872a29c7a7538f4615e4e865bd1fc68",
+      "transactions": [],
+      "account": {
+        "accountId": "s101_1201_4601080165*31AEECF27BC872A29C7A7538F4615E4E865BD1FC68",
+        "instId": "s101_1201_4601080165",
+        "category": "CREDIT",
+        "accountNumber": "6666 6666 66",
+        "accountName": "Dummy Account 06",
+        "accountHash": "aeecf27bc872a29c7a7538f4615e4e865bd1fc68",
+        "balance": "-1226.600000",
+        "currency": "JOD",
+        "availBalance": "2000.600000",
+        "updatedAt": "08/18/2016 09:55:26",
+        "data": "undefined"
+      }
+    }
+  ],
+  "accountsUpdated": [],
+  "responses": null
+}

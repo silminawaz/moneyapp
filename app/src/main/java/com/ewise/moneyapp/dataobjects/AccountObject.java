@@ -78,15 +78,4 @@ public class AccountObject {
         return amount;
     }
 
-    public BigDecimal getBalanceAmount(Currency ccy, CurrencyExchangeRates rates) {
-        //go through the rates and find the
-        BigDecimal amount = new BigDecimal (balance);
-        return amount;
-    }
-
-    public BigDecimal getFundsAmount(Currency ccy, CurrencyExchangeRates rates) {
-        BigDecimal amount = new BigDecimal (funds);
-        return amount;
-    }
-
 }
