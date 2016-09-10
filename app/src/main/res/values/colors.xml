@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#8EC448</color>
+
+    <color name="coloreWisePrimary">#8EC448</color>
+    <color name="coloreWiseMainTextBlack">#de000000</color>
+    <color name="coloreWiseSecondaryTextBlack">#89000000</color>
+    <color name="coloreWiseOtherTextBlack">#4c000000</color>
+    <color name="coloreWiseMainTextWhite">#ffffff</color>
+    <color name="coloreWiseSecondaryTextWhite">#b3ffffff</color>
+    <color name="coloreWiseCardViewBackground">#0d000000</color>
+
     <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorTabBar">#9cca6c</color>
+    <color name="colorCardToolbar">#e3e3e3</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorAccountCardHeaderText">#000000</color>
     <color name="colorAccountCardViewText">#4da6ff</color>
+    <color name="AccountCardCurrencyTextColor">#30d627</color>
 </resources>

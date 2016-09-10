@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    tools:context=".AccountDetailsActivity"
+    android:id="@+id/accountdetails_month_select">
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:background="@android:color/darker_gray"
+        android:id="@+id/accountdetails_cardview"
+        android:layout_gravity="top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="0dp"
+        card_view:elevation="15dp"
+        card_view:contentPadding="0dp"
+        android:nestedScrollingEnabled="true"
+        android:longClickable="false"
+        android:clickable="true"
+        android:outlineProvider="background">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorCardToolbar"
+        android:layout_alignParentEnd="true">
+
+        <ImageView
+            android:id="@+id/accountdetails_accounticon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/default_account"
+            android:clickable="true"
+            android:contextClickable="true"
+            android:longClickable="true"
+            android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:layout_marginTop="@dimen/abc_dialog_list_padding_vertical_material" />
+
+        <TextView
+            android:id="@+id/accountdetails_accountname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textSize="20sp"
+            android:clickable="true"
+            android:text="HSBC Savings"
+            android:longClickable="true"
+            android:linksClickable="true"
+            android:textStyle="bold"
+            android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
+            android:layout_marginTop="@dimen/abc_dialog_list_padding_vertical_material"
+            android:layout_toRightOf="@+id/accountdetails_accounticon"
+            android:textColor="@color/coloreWiseMainTextBlack" />
+
+        <TextView
+            android:id="@+id/accountdetails_accountnumber"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:singleLine="true"
+            android:text="123-XXXXXXX-222"
+            android:textSize="12sp"
+            android:clickable="true"
+            android:longClickable="true"
+            android:linksClickable="true"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/coloreWiseSecondaryTextBlack"
+            android:layout_below="@+id/accountdetails_accountname"
+            android:layout_alignLeft="@+id/accountdetails_accountname" />
+
+        <TextView
+            android:id="@+id/accountdetails_accountcurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SGD"
+            android:textSize="25sp"
+            android:clickable="true"
+            android:layout_alignTop="@+id/accountdetails_accountbalance"
+            android:longClickable="true"
+            android:linksClickable="true"
+            android:ellipsize="end"
+            android:layout_toRightOf="@+id/accountdetails_accountbalance"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/coloreWisePrimary" />
+
+
+        <TextView
+            android:id="@+id/accountdetails_accountbalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="9,999,999.99"
+            android:textSize="25sp"
+            android:clickable="true"
+            android:layout_alignParentEnd="false"
+            android:longClickable="true"
+            android:linksClickable="true"
+            android:layout_below="@+id/accountdetails_accountnumber"
+            android:layout_alignLeft="@+id/accountdetails_accountname"
+            android:textColor="@color/coloreWiseSecondaryTextBlack"/>
+
+
+        <TextView
+            android:id="@+id/accountdetails_lastupdated"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:singleLine="true"
+            android:text="10 mins ago."
+            android:textSize="12sp"
+            android:clickable="true"
+            android:longClickable="true"
+            android:linksClickable="true"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/accountdetails_accountbalance"
+            android:textColor="@color/coloreWisePrimary"
+            android:layout_alignParentEnd="true" />\
+
+        <TextView
+            android:id="@+id/accountdetails_balance_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(Balance)"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:longClickable="true"
+            android:linksClickable="true"
+            android:ellipsize="end"
+            android:layout_marginLeft="5dp"
+            android:layout_alignTop="@+id/accountdetails_accountcurrency"
+            android:layout_toRightOf="@+id/accountdetails_accountcurrency"
+            android:visibility="invisible" />
+
+
+    </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/label_account_details_transactions"
+        android:textColor="@color/coloreWiseMainTextBlack"
+        android:id="@+id/accountdetails_transaction_label"
+        android:layout_below="@+id/accountdetails_cardview"
+        android:layout_alignStart="@+id/accountdetails_cardview"
+        android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="August"
+        android:id="@+id/accountdetails_date_select_text"
+        android:textColor="@color/coloreWiseMainTextBlack"
+        android:layout_alignParentEnd="false"
+        android:layout_toLeftOf="@+id/accountdetails_date_select_btn"
+        android:layout_below="@+id/accountdetails_cardview"
+        android:layout_marginTop="5dp" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/accountdetails_date_select_btn"
+        android:layout_below="@+id/accountdetails_cardview"
+        android:layout_alignEnd="@+id/accountdetails_cardview"
+        android:src="@drawable/ic_expand_more"
+        android:layout_alignRight="@+id/accountdetails_cardview" />
+
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/accountdetails_transactioncard_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/accountdetails_date_select_text"
+        android:nestedScrollingEnabled="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp" />
+
+</RelativeLayout>

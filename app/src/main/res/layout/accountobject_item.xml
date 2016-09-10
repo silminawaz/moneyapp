@@ -17,12 +17,15 @@
     <TextView
         android:id="@+id/accountname"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:singleLine="true"
-        android:textSize="14sp"
+        android:textSize="18sp"
         android:clickable="true"
         android:text="My account name is ABC"
-        android:layout_toRightOf="@+id/accounticon" />
+        android:layout_toRightOf="@+id/accounticon"
+        android:longClickable="true"
+        android:linksClickable="true"
+        android:textStyle="italic" />
 
     <TextView
         android:id="@+id/accountnumber"
@@ -30,10 +33,14 @@
         android:layout_height="20dp"
         android:singleLine="true"
         android:text="123-XXXXXXX-222"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:clickable="true"
         android:layout_below="@+id/accountname"
-        android:layout_alignLeft="@+id/accountname" />
+        android:layout_alignLeft="@+id/accountname"
+        android:longClickable="true"
+        android:linksClickable="true"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/coloreWiseMainTextBlack" />
 
     <TextView
         android:id="@+id/accountcurrency"
@@ -43,7 +50,11 @@
         android:textSize="14sp"
         android:clickable="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/accountname" />
+        android:layout_alignTop="@+id/accountname"
+        android:longClickable="true"
+        android:linksClickable="true"
+        android:textColor="@color/coloreWiseMainTextBlack"
+        android:ellipsize="end" />
 
 
     <TextView
@@ -51,11 +62,23 @@
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:text="9,999,999.99"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:clickable="true"
         android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
         android:layout_below="@+id/accountcurrency"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:longClickable="true"
+        android:linksClickable="true"
+        android:textStyle="normal"
+        android:textColor="@color/coloreWiseSecondaryTextBlack"
+        android:layout_marginTop="5dp" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.25dp"
+        android:background="@color/dim_foreground_material_dark"
+        android:layout_below="@+id/accounticon"
+        android:layout_toRightOf="@+id/accounticon" />
 
 
 </RelativeLayout>

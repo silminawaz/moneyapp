@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="PdvAccountResponse_Loader_id" type="id"/>
+    <item name="PdvTransactionResponse_Loader_id" type="id"/>
+    <item name="PfmTrendResponse_Loader_id" type="id"/>
+    <item name="PfmBudgetResponse_Loader_id" type="id"/>
+    <item name="AegisCreditProfileResponse_Loader_id" type="id"/>
+    <item name="VedaCreditScoreResponse_Loader_id" type="id"/>
+    <item name="AegisPeerComparisonResponse_Loader_id" type="id"/>
+</resources>

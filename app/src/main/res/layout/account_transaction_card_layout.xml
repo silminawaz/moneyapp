@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/account_transaction_cardview"
+        android:layout_gravity="top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="0dp"
+        card_view:elevation="15dp"
+        card_view:contentPadding="0dp"
+        android:nestedScrollingEnabled="true"
+        android:longClickable="false"
+        android:clickable="true"
+        android:outlineProvider="background">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/relativeLayout">
+
+
+                    <TextView
+                        android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
+                        android:id="@+id/transactioncard_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="09-Sep-2016"
+                        android:textSize="18sp"
+                        android:textColor="@color/coloreWiseSecondaryTextBlack" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1500.00"
+                    android:id="@+id/transactioncard_cashflow"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="18sp"
+                    android:layout_toLeftOf="@+id/transactioncard_menu_btn" />
+
+                <ImageButton
+                        android:background="@color/coloreWiseCardViewBackground"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:id="@+id/transactioncard_menu_btn"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ic_expand_more"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="false"
+                        android:nestedScrollingEnabled="false"
+                        android:baselineAlignBottom="false" />
+
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/transactionlist_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="true"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentBottom="false"
+                android:layout_below="@+id/relativeLayout" />
+
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

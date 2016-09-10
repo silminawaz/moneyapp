@@ -1,0 +1,32 @@
+WORK IN PROGRESS
+10sep16 - stopped here:
+Tracing loading of transactioncardlist notification loading.
+
+
+
+FEATURES
+
+TODO - 1. use "Loaders" for Asynchronous data access from fragments
+TODO  - 2. Use picasso for image loading
+TODO  - 3. Implement Account Fragment
+TODO  -  3.1.    Main page account cards
+TODO  -  3.2.    Account details & transactions page
+TODO  - 4. Implement Budget Fragment
+TODO  - 5. Implement Goals Fragment
+TODO  - 6. Implement Peers Fragment
+
+
+
+BUGS
+TODO - Account Card total has no decimals
+
+REFACTORING
+
+Error handling
+TODO - Implement uncaught exception handling
+TODO - Introduce a cloud database service for error logging
+TODO - Incorporate crashlytics / fabric? or google tools
+
+
+
+

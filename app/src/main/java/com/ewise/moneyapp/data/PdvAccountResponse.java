@@ -1,5 +1,7 @@
 package com.ewise.moneyapp.data;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -14,6 +16,8 @@ import java.util.List;
  * Created by SilmiNawaz on 3/9/16.
  */
 public class PdvAccountResponse {
+
+    private static final String TAG = "LoadingAccounts";
 
     /**
      * status : data
@@ -144,6 +148,18 @@ public class PdvAccountResponse {
             return new ArrayList();
 
 
+        }
+
+        @Override
+        public String toString() {
+            try {
+                String jsonString = new Gson().toJson(this);
+                return jsonString.toString();
+            }
+            catch (Exception e){
+                Log.e(TAG, e.getMessage());
+            }
+            return super.toString();
         }
     }
 }

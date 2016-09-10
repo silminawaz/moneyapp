@@ -1,5 +1,7 @@
 package com.ewise.moneyapp.data;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -86,6 +88,21 @@ public class PdvTransactionResponse {
 
     }
 
+    /**
+     * class: PdvTransactionResponse
+     */
+    @Override
+    public String toString() {
+        try {
+            String jsonString = new Gson().toJson(this);
+            return jsonString.toString();
+        }
+        catch (Exception e){
+            Log.e("EXCEPTION", e.getMessage());
+        }
+        return super.toString();
+    }
+
     public static class AccountTransactionsObject {
         public String instId;
         public String accountId;
@@ -159,6 +176,24 @@ public class PdvTransactionResponse {
 
         }
 
+        /**
+         * class: PdvTransactionResponse.AccountTransactionObject
+         */
+        @Override
+        public String toString() {
+            try {
+                String jsonString = new Gson().toJson(this);
+                return jsonString.toString();
+            }
+            catch (Exception e){
+                Log.e("EXCEPTION", e.getMessage());
+            }
+            return super.toString();
+        }
+
+        /**
+         * class: PdvTransactionResponse.AccountTransactionObject.AccountObject
+         */
         public static class AccountObject {
             public String accountId;
             public String instId;
@@ -215,13 +250,44 @@ public class PdvTransactionResponse {
 
 
             }
+
+            public PdvAccountResponse.AccountsObject getAccountsObject(){
+                PdvAccountResponse.AccountsObject accountsObject = new PdvAccountResponse.AccountsObject();
+                accountsObject.accountId = this.accountId;
+                accountsObject.instId = this.instId;
+                accountsObject.category = this.category;
+                accountsObject.accountNumber = this.accountNumber;
+                accountsObject.accountName = this.accountName;
+                accountsObject.accountHash = this.accountHash;
+                accountsObject.balance = this.balance;
+                accountsObject.currency = this.currency;
+                accountsObject.availBalance = this.availBalance;
+                accountsObject.updatedAt = this.updatedAt;
+                accountsObject.data = this.data;
+                return accountsObject;
+            }
+
+            @Override
+            public String toString() {
+                try {
+                    String jsonString = new Gson().toJson(this);
+                    return jsonString.toString();
+                }
+                catch (Exception e){
+                    Log.e("EXCEPTION", e.getMessage());
+                }
+                return super.toString();
+            }
         }
 
+        /**
+         * class: PdvTransactionResponse.AccountTransactionObject.TransactionsObject
+         */
         public static class TransactionsObject {
             public int id;
             public String date;
             public String description;
-            public int amount;
+            public double amount;
             public String currency;
             public String data;
             public String fingerprint;
@@ -268,6 +334,18 @@ public class PdvTransactionResponse {
                 return new ArrayList();
 
 
+            }
+
+            @Override
+            public String toString() {
+                try {
+                    String jsonString = new Gson().toJson(this);
+                    return jsonString.toString();
+                }
+                catch (Exception e){
+                    Log.e("EXCEPTION", e.getMessage());
+                }
+                return super.toString();
             }
         }
     }

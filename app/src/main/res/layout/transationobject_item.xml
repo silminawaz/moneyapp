@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/transaction_category_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/default_account"
+        android:clickable="true"
+        android:contextClickable="true"
+        android:longClickable="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin" />
+
+    <TextView
+        android:id="@+id/transaction_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="18sp"
+        android:clickable="true"
+        android:text="Pay my mobile bill the quick brown fox"
+        android:layout_toRightOf="@+id/transaction_category_icon"
+        android:longClickable="true"
+        android:linksClickable="true"
+        android:textStyle="italic"
+        android:textColor="@color/coloreWiseSecondaryTextBlack"
+        android:autoText="false"
+        android:layout_toLeftOf="@+id/transaction_amount" />
+
+
+    <TextView
+        android:id="@+id/transaction_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="9,999,999.99"
+        android:textSize="16sp"
+        android:clickable="true"
+        android:layout_alignParentEnd="true"
+        android:longClickable="true"
+        android:linksClickable="true"
+        android:textStyle="bold"
+        android:textColor="@color/coloreWiseSecondaryTextBlack"
+        android:layout_alignTop="@+id/transaction_description" />
+
+
+</RelativeLayout>
