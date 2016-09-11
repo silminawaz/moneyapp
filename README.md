@@ -9,7 +9,6 @@ Planned features include:
 * Goal planning - to track progress of your financial goals
 * Financial alerts - to keep the you informed about important financial events
 * Online bills - to help you keep track of your bills like utilities, mobile, internet etc
-* Your credit score - to help track your credit score (available only in certain regions)
 * Compare with your peers - to see how you are doing in comparison to your peers
 
 
