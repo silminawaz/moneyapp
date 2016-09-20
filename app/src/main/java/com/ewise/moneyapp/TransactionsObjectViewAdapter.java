@@ -1,6 +1,7 @@
 package com.ewise.moneyapp;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.ewise.moneyapp.AccountsObjectItemView;
@@ -31,6 +32,7 @@ public class TransactionsObjectViewAdapter extends RecyclerViewAdapterBase<Trans
     protected TransactionsObjectItemView onCreateItemView(ViewGroup parent, int viewType) {
         return TransactionsObjectItemView_.build(context);
     }
+
 
     /*
     @Override

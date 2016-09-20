@@ -6,6 +6,7 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,9 @@ public class TransactionsObjectItemView extends RecyclerViewItemLayoutView<Trans
     @ViewById(R.id.transaction_amount)
     TextView transaction_amount;
 
+    @ViewById(R.id.transaction_layout)
+    RelativeLayout transaction_layout;
+
     public TransactionsObjectItemView(Context context) {
         super(context);
     }
@@ -40,6 +44,12 @@ public class TransactionsObjectItemView extends RecyclerViewItemLayoutView<Trans
     public void bind(final TransactionsObject dataObject) {
 
         Log.d("**TRACE**", String.format("Binding Transaction Object  : %s", dataObject.toString()));
+
+
+
+        this.transaction_description.setText(dataObject.description);
+        //TODO: Format balance correctly
+        this.transaction_amount.setText(String.format("%f",dataObject.amount));
 
         //set on click on the icon
         this.transaction_category_icon.setOnClickListener(new OnClickListener() {
@@ -49,25 +59,18 @@ public class TransactionsObjectItemView extends RecyclerViewItemLayoutView<Trans
             }
         });
 
-        this.setOnClickListener(new OnClickListener(){
+        transaction_layout.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View view) {
 
-                startTransactionDetailsActivity (dataObject);
+                Toast.makeText(getContext(), String.format("Description: %s | Amount: %s", dataObject.description, dataObject.amount), Toast.LENGTH_LONG).show();
             }
         });
-
-
-        this.transaction_description.setText(dataObject.description);
-        //TODO: Format balance correctly
-        this.transaction_amount.setText(String.format("%f",dataObject.amount));
-
     }
 
     public void startTransactionDetailsActivity(TransactionsObject transaction){
 
 
-        Toast.makeText(getContext(), "launch TransactionDetailsActivity : " + transaction.toString(), Toast.LENGTH_SHORT).show();
 
 /*      //TODO: Implement "TransactionDetailsActivity" to view / edit transactions
         String transactionObjJson = transaction.toString();

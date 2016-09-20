@@ -2,6 +2,7 @@ package com.ewise.moneyapp.data;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.data.PdvTransactionResponse.AccountTransactionsObject.TransactionsObject;
@@ -30,15 +32,33 @@ public class TransactionCardDataObject {
     public AccountsObject account = null;
     public List<TransactionsObject> transactionList = new ArrayList<>();
 
+
+    public enum eGroupTransactionsBy {
+        DAY,
+        MONTH,
+        YEAR
+    }
+
+    public String transactionYear;
+    public String transactionMonth;
     public Date transactionDate;
     public BigDecimal totalCashIn;
     public BigDecimal totalCashOut;
+    public eGroupTransactionsBy groupTransactionsBy = eGroupTransactionsBy.DAY;
 
-    public TransactionCardDataObject (Context context, AccountsObject account, Date transactionDate){
+    public int _transactionVisibility = View.GONE;
+
+    public TransactionCardDataObject (Context context, AccountsObject account, Date transactionDate, eGroupTransactionsBy groupTransactionsBy){
 
         this.context = context;
         this.account = account;
         this.transactionDate = transactionDate;
+
+        this.transactionMonth = new SimpleDateFormat(context.getString(R.string.transaction_groupby_month_format), Locale.getDefault()).format(transactionDate);
+        Log.d("**TRACE**", String.format("transactionMonth = : %s", transactionMonth));
+        this.transactionYear = new SimpleDateFormat(context.getString(R.string.transaction_groupby_year_format), Locale.getDefault()).format(transactionDate);
+
+        this.groupTransactionsBy = groupTransactionsBy;
 
         //set the cashin and cashout values
         Currency currency = Currency.getInstance(account.currency);
@@ -50,7 +70,7 @@ public class TransactionCardDataObject {
     }
 
     public void addTransaction (TransactionsObject transaction){
-        Log.d("**TXN**ADD", String.format("Adding transaction : %s", transaction.toString()));
+        Log.d("***TRACE***", String.format("Adding transaction : %s", transaction.toString()));
 
         transactionList.add(transaction);
         addTransactionToTotals (transaction);
@@ -61,9 +81,15 @@ public class TransactionCardDataObject {
         try {
             Currency currency = Currency.getInstance(account.currency);
             MathContext mc = new MathContext(currency.getDefaultFractionDigits(), RoundingMode.HALF_UP);
-            BigDecimal transactionAmount = new BigDecimal("0.0", mc);
-            transactionAmount = transactionAmount.add(new BigDecimal(transaction.amount, mc));
-            if (transactionAmount.doubleValue()>0) {this.totalCashIn.add(transactionAmount);} else {this.totalCashOut.add(transactionAmount);}
+            BigDecimal transactionAmount = BigDecimal.valueOf(transaction.amount);
+            if (transactionAmount.compareTo(BigDecimal.ZERO)<0) {
+                this.totalCashOut = this.totalCashOut.add(transactionAmount);
+                Log.d("***TRACE***", String.format("Date: %s | TransactionAmount : %f | Cashout : %f", transaction.date, transactionAmount.doubleValue(), totalCashOut.doubleValue()));
+
+            } else {
+                this.totalCashIn = this.totalCashIn.add(transactionAmount);
+                Log.d("***TRACE***", String.format("Date: %s | TransactionAmount : %f | Cashin : %f", transaction.date, transactionAmount.doubleValue(), totalCashIn.doubleValue()));
+            }
         }
         catch (Exception e)
         {

@@ -1,58 +1,58 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:id="@+id/accountlayout"
+    android:paddingTop="@dimen/ewise_horizontal_margin"
+    android:clickable="true"
+    android:contextClickable="true"
+    android:longClickable="true"
+    android:background="@drawable/ewise_background_select_state_list">
 
     <ImageView
         android:id="@+id/accounticon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/ewise_touch_icon_size"
+        android:layout_height="@dimen/ewise_touch_icon_size"
         android:src="@drawable/default_account"
         android:clickable="true"
-        android:contextClickable="true"
         android:longClickable="true"
         android:layout_marginLeft="@dimen/fab_margin"
         android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin" />
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_alignParentStart="false"
+        android:background="@drawable/ewise_background_select_state_list"/>
 
     <TextView
         android:id="@+id/accountname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textSize="18sp"
-        android:clickable="true"
+        android:maxLines="1"
+        android:textSize="@dimen/ewise_primary_text_size"
+        android:clickable="false"
         android:text="My account name is ABC"
         android:layout_toRightOf="@+id/accounticon"
-        android:longClickable="true"
-        android:linksClickable="true"
-        android:textStyle="italic" />
+        android:textStyle="bold|italic"
+        android:layout_toLeftOf="@+id/accountcurrency" />
 
     <TextView
         android:id="@+id/accountnumber"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:singleLine="true"
+        android:maxLines="1"
         android:text="123-XXXXXXX-222"
         android:textSize="12sp"
-        android:clickable="true"
-        android:layout_below="@+id/accountname"
-        android:layout_alignLeft="@+id/accountname"
-        android:longClickable="true"
-        android:linksClickable="true"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/coloreWiseMainTextBlack" />
+        android:textColor="@color/coloreWiseMainTextBlack"
+        android:layout_toRightOf="@+id/accounticon"
+        android:layout_toLeftOf="@+id/accountbalance"
+        android:layout_alignTop="@+id/accountbalance" />
 
     <TextView
         android:id="@+id/accountcurrency"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:text="SGD"
-        android:textSize="14sp"
-        android:clickable="true"
+        android:textSize="@dimen/ewise_secondary_text_size"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/accountname"
-        android:longClickable="true"
-        android:linksClickable="true"
         android:textColor="@color/coloreWiseMainTextBlack"
         android:ellipsize="end" />
 
@@ -62,16 +62,14 @@
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:text="9,999,999.99"
-        android:textSize="16sp"
-        android:clickable="true"
+        android:textSize="@dimen/ewise_primary_text_size"
         android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
         android:layout_below="@+id/accountcurrency"
         android:layout_alignParentEnd="true"
-        android:longClickable="true"
-        android:linksClickable="true"
         android:textStyle="normal"
         android:textColor="@color/coloreWiseSecondaryTextBlack"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="5dp"
+        android:minLines="1" />
 
     <View
         android:layout_width="fill_parent"

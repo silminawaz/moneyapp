@@ -58,7 +58,7 @@ public class PdvAccountTransactionResponseLoader extends AsyncTaskLoader<PdvTran
 
             //TODO: Change loaders to support loading data via PDV or Aegis APIs instead of from canned data assets
             //open file
-            String fileName = "PdvCashTransactionResponse.json";
+            String fileName = "PdvCashTransactionResponse2.json";
             if (_account != null) {
                 if (_account.category.equals(R.string.pdv_account_category_CREDIT)) {
                     fileName = "PdvCreditTransactionresponse.json";

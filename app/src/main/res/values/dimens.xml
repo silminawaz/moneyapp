@@ -6,4 +6,20 @@
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="ewise_horizontal_margin">5dp</dimen>
+    <dimen name="ewise_horizontal_margin_large">10dp</dimen>
+    <dimen name="ewise_horizontal_margin_xl">20dp</dimen>
+    <dimen name="ewise_vertical_margin">5dp</dimen>
+    <dimen name="ewise_vertical_margin_large">10dp</dimen>
+    <dimen name="ewise_vertical_margin_xl">20dp</dimen>
+    <dimen name="ewise_header_text_size">18sp</dimen>
+    <dimen name="ewise_primary_text_size">14sp</dimen>
+    <dimen name="ewise_secondary_text_size">12sp</dimen>
+    <dimen name="ewise_dropdown_text_size_large">16sp</dimen>
+    <dimen name="ewise_heading_text_size">20sp</dimen>
+    <dimen name="ewise_highlight_text_size">30sp</dimen>
+    <dimen name="ewise_touch_icon_size">40dp</dimen>
+    <dimen name="ewise_touch_icon_size_small">20dp</dimen>
+    <dimen name="ewise_max_width_month_label">50dp</dimen>
+    <dimen name="ewise_min_width_month_label">50dp</dimen>
 </resources>

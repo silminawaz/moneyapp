@@ -2,13 +2,16 @@
 <resources>
     <color name="colorPrimary">#8EC448</color>
 
-    <color name="coloreWisePrimary">#8EC448</color>
+    <color name="coloreWisePrimary">#8ec448</color>
     <color name="coloreWiseMainTextBlack">#de000000</color>
     <color name="coloreWiseSecondaryTextBlack">#89000000</color>
     <color name="coloreWiseOtherTextBlack">#4c000000</color>
     <color name="coloreWiseMainTextWhite">#ffffff</color>
     <color name="coloreWiseSecondaryTextWhite">#b3ffffff</color>
     <color name="coloreWiseCardViewBackground">#0d000000</color>
+    <color name="coloreWiseLineChartCashflowLine">#43a047</color>
+    <color name="coloreWiseLineChartBalanceLine">#2979ff</color>
+
 
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorTabBar">#9cca6c</color>

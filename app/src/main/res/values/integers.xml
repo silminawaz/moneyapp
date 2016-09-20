@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ewise_cashflow_linechart_max_x_axis_display_values">12</integer>
+    <integer name="ewise_cashflow_linechart_max_y_axis_display_values">12</integer>
+    <integer name="ewise_chart_text_size">10</integer>
+    <integer name="ewise_chart_legend_text_size">12</integer>
+    <integer name="ewise_default_linechart_line_width">2</integer>
+</resources>

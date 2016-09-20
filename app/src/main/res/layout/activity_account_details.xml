@@ -8,7 +8,8 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     tools:context=".AccountDetailsActivity"
-    android:id="@+id/accountdetails_month_select">
+    android:background="@color/coloreWiseCardViewBackground"
+    android:focusableInTouchMode="false">
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -21,16 +22,22 @@
         card_view:elevation="15dp"
         card_view:contentPadding="0dp"
         android:nestedScrollingEnabled="true"
-        android:longClickable="false"
+        android:longClickable="true"
         android:clickable="true"
-        android:outlineProvider="background">
+        android:outlineProvider="background"
+        android:contextClickable="false"
+        android:focusableInTouchMode="true">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:background="@color/colorCardToolbar"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:clickable="true"
+        android:longClickable="true"
+        android:nestedScrollingEnabled="true"
+        android:touchscreenBlocksFocus="false">
 
         <ImageView
             android:id="@+id/accountdetails_accounticon"
@@ -38,7 +45,7 @@
             android:layout_height="40dp"
             android:src="@drawable/default_account"
             android:clickable="true"
-            android:contextClickable="true"
+            android:contextClickable="false"
             android:longClickable="true"
             android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
             android:layout_marginRight="@dimen/fab_margin"
@@ -49,8 +56,8 @@
             android:id="@+id/accountdetails_accountname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textSize="20sp"
+            android:maxLines="1"
+            android:textSize="@dimen/ewise_heading_text_size"
             android:clickable="true"
             android:text="HSBC Savings"
             android:longClickable="true"
@@ -59,29 +66,31 @@
             android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
             android:layout_marginTop="@dimen/abc_dialog_list_padding_vertical_material"
             android:layout_toRightOf="@+id/accountdetails_accounticon"
-            android:textColor="@color/coloreWiseMainTextBlack" />
+            android:textColor="@color/coloreWiseMainTextBlack"
+            android:contextClickable="false" />
 
         <TextView
             android:id="@+id/accountdetails_accountnumber"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="123-XXXXXXX-222"
-            android:textSize="12sp"
+            android:textSize="@dimen/ewise_secondary_text_size"
             android:clickable="true"
             android:longClickable="true"
             android:linksClickable="true"
             android:layout_marginTop="5dp"
             android:textColor="@color/coloreWiseSecondaryTextBlack"
             android:layout_below="@+id/accountdetails_accountname"
-            android:layout_alignLeft="@+id/accountdetails_accountname" />
+            android:layout_alignLeft="@+id/accountdetails_accountname"
+            android:contextClickable="false" />
 
         <TextView
             android:id="@+id/accountdetails_accountcurrency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SGD"
-            android:textSize="25sp"
+            android:textSize="@dimen/ewise_heading_text_size"
             android:clickable="true"
             android:layout_alignTop="@+id/accountdetails_accountbalance"
             android:longClickable="true"
@@ -89,38 +98,42 @@
             android:ellipsize="end"
             android:layout_toRightOf="@+id/accountdetails_accountbalance"
             android:layout_marginLeft="5dp"
-            android:textColor="@color/coloreWisePrimary" />
+            android:textColor="@color/coloreWisePrimary"
+            android:textStyle="bold"
+            android:contextClickable="false" />
 
 
         <TextView
             android:id="@+id/accountdetails_accountbalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="9,999,999.99"
-            android:textSize="25sp"
+            android:text="9999,999,999.99"
+            android:textSize="@dimen/ewise_highlight_text_size"
             android:clickable="true"
             android:layout_alignParentEnd="false"
             android:longClickable="true"
             android:linksClickable="true"
             android:layout_below="@+id/accountdetails_accountnumber"
             android:layout_alignLeft="@+id/accountdetails_accountname"
-            android:textColor="@color/coloreWiseSecondaryTextBlack"/>
+            android:textColor="@color/coloreWiseSecondaryTextBlack"
+            android:contextClickable="false" />
 
 
         <TextView
             android:id="@+id/accountdetails_lastupdated"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="10 mins ago."
-            android:textSize="12sp"
+            android:textSize="@dimen/ewise_secondary_text_size"
             android:clickable="true"
             android:longClickable="true"
             android:linksClickable="true"
             android:layout_marginTop="5dp"
             android:layout_below="@+id/accountdetails_accountbalance"
             android:textColor="@color/coloreWisePrimary"
-            android:layout_alignParentEnd="true" />\
+            android:layout_alignParentEnd="true"
+            android:contextClickable="false" />\
 
         <TextView
             android:id="@+id/accountdetails_balance_label"
@@ -135,54 +148,123 @@
             android:layout_marginLeft="5dp"
             android:layout_alignTop="@+id/accountdetails_accountcurrency"
             android:layout_toRightOf="@+id/accountdetails_accountcurrency"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            android:contextClickable="false" />
 
 
     </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 
-    <TextView
+    <ImageView
+        android:id="@+id/accountdetails_filter_transactions_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/label_account_details_transactions"
-        android:textColor="@color/coloreWiseMainTextBlack"
-        android:id="@+id/accountdetails_transaction_label"
+        android:clickable="true"
+        android:contextClickable="true"
+        android:longClickable="true"
+        android:adjustViewBounds="false"
+        android:layout_alignParentStart="false"
         android:layout_below="@+id/accountdetails_cardview"
-        android:layout_alignStart="@+id/accountdetails_cardview"
-        android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material" />
+        android:paddingTop="@dimen/ewise_vertical_margin"
+        android:visibility="invisible" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="August"
-        android:id="@+id/accountdetails_date_select_text"
-        android:textColor="@color/coloreWiseMainTextBlack"
-        android:layout_alignParentEnd="false"
-        android:layout_toLeftOf="@+id/accountdetails_date_select_btn"
+    <ImageView
+        android:id="@+id/accountdetails_cashflowchart"
+        android:layout_width="@dimen/ewise_touch_icon_size"
+        android:layout_height="@dimen/ewise_touch_icon_size"
+        android:src="@drawable/moneyapp_cashflow_chart"
+        android:clickable="true"
+        android:contextClickable="false"
+        android:longClickable="true"
+        android:adjustViewBounds="false"
+        android:layout_alignParentStart="false"
         android:layout_below="@+id/accountdetails_cardview"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="@dimen/ewise_vertical_margin"
+        android:layout_marginLeft="@dimen/ewise_horizontal_margin"
+        android:layout_marginRight="@dimen/ewise_horizontal_margin"
+        android:layout_alignParentEnd="false"
+        android:layout_toRightOf="@+id/accountdetails_open_transactions_img" />
+
 
     <ImageView
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:id="@+id/accountdetails_date_select_btn"
-        android:layout_below="@+id/accountdetails_cardview"
-        android:layout_alignEnd="@+id/accountdetails_cardview"
-        android:src="@drawable/ic_expand_more"
-        android:layout_alignRight="@+id/accountdetails_cardview" />
+        android:id="@+id/accountdetails_open_transactions_img"
+        android:src="@drawable/ic_action_folder_closed"
+        android:visibility="visible"
+        android:layout_alignTop="@+id/accountdetails_cashflowchart" />
 
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/accountdetails_transaction_select_spinner"
+        android:spinnerMode="dropdown"
+        android:clickable="true"
+        android:visibility="visible"
+        android:nestedScrollingEnabled="false"
+        android:elevation="20dp"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="true"
+        android:textAlignment="center"
+        android:padding="@dimen/ewise_horizontal_margin"
+        android:layout_alignTop="@+id/accountdetails_transactions_groupby_spinner" />
+
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/accountdetails_transactions_groupby_spinner"
+        android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+        android:spinnerMode="dropdown"
+        android:layout_alignTop="@+id/accountdetails_cashflowchart"
+        android:layout_toRightOf="@+id/accountdetails_cashflowchart" />
 
     <android.support.v7.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/accountdetails_transactioncard_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/accountdetails_date_select_text"
+        android:layout_below="@+id/accountdetails_cashflowchart"
         android:nestedScrollingEnabled="true"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp" />
+        android:layout_alignParentEnd="false" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/accountdetails_cashflowchart_layout"
+        android:layout_below="@+id/accountdetails_transactioncard_recycler_view"
+        android:visibility="gone">
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/accountdetails_cashflowchart_cardview"
+            card_view:cardCornerRadius="2dp"
+            card_view:contentPadding="5dp"
+            android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
+            android:layout_marginRight="@dimen/ewise_horizontal_margin_large"
+            android:layout_marginTop="@dimen/ewise_vertical_margin"
+            android:layout_marginBottom="@dimen/ewise_vertical_margin"
+            android:visibility="visible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/accountdetails_cashflowchart_cardview_layout">
+
+                <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/accountdetails_cashflowchart_linechart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                    android:visibility="visible" />
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
 
 </RelativeLayout>

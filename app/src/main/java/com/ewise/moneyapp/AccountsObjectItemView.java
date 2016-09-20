@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,9 @@ public class AccountsObjectItemView extends RecyclerViewItemLayoutView<AccountsO
     @ViewById(R.id.accountbalance)
     TextView accountbalance;
 
+    @ViewById(R.id.accountlayout)
+    RelativeLayout accountlayout;
+
     public interface MyCallback{
         void onItemClicked();
     }
@@ -62,13 +66,21 @@ public class AccountsObjectItemView extends RecyclerViewItemLayoutView<AccountsO
                 //listener.onItemClicked();
             }
         });
-
+/*
         this.accountname.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
 
                 startAccountDetailsActivity (dataObject);
 
+            }
+        });
+*/
+        this.accountlayout.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+
+                startAccountDetailsActivity (dataObject);
             }
         });
 

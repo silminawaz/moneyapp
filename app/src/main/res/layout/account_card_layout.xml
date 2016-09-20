@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/coloreWiseCardViewBackground">
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:background="@android:color/darker_gray"
         android:id="@+id/account_cardview"
         android:layout_gravity="top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardCornerRadius="0dp"
-        card_view:elevation="15dp"
-        card_view:contentPadding="0dp"
+        card_view:cardCornerRadius="2dp"
+        card_view:elevation="0dp"
+        card_view:contentPadding="5dp"
         android:nestedScrollingEnabled="true"
-        android:longClickable="false"
+        android:longClickable="true"
         android:clickable="true"
-        android:outlineProvider="background">
+        android:outlineProvider="background"
+        android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
+        android:layout_marginRight="@dimen/ewise_horizontal_margin_large"
+        android:layout_marginTop="@dimen/ewise_vertical_margin"
+        android:layout_marginBottom="@dimen/ewise_vertical_margin">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
             >
 
             <android.support.v7.widget.Toolbar
@@ -28,7 +31,6 @@
                 android:id="@+id/acctcard_toolbar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/coloreWiseCardViewBackground"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -36,25 +38,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"
-                    android:paddingStart="5dp">
+                    android:paddingStart="@dimen/ewise_vertical_margin"
+                    android:clickable="true"
+                    android:background="@drawable/ewise_background_select_state_list">
 
                     <TextView
                         android:id="@+id/acctcard_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Type of accounts"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/ewise_heading_text_size"
                         android:textColor="@color/coloreWiseMainTextBlack"
                         android:layout_alignParentTop="false"
                         android:layout_alignParentStart="false" />
 
                     <TextView
-                        android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
+                        android:layout_marginLeft="@dimen/ewise_vertical_margin"
                         android:id="@+id/acctcard_numaccts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="(99)"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/ewise_heading_text_size"
                         android:layout_alignTop="@+id/acctcard_title"
                         android:layout_toRightOf="@+id/acctcard_title"
                         android:textColor="@color/coloreWiseMainTextBlack"
@@ -65,34 +69,34 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CCY"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/ewise_primary_text_size"
                         android:textColor="@color/coloreWiseSecondaryTextBlack"
                         android:layout_below="@+id/acctcard_title"
                         android:layout_alignLeft="@+id/acctcard_title" />
 
                     <TextView
-                        android:layout_marginLeft="@dimen/abc_dialog_list_padding_vertical_material"
+                        android:layout_marginLeft="@dimen/ewise_horizontal_margin"
                         android:id="@+id/acctcard_total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="999,999.99"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/ewise_primary_text_size"
                         android:layout_alignTop="@+id/acctcard_currency"
                         android:layout_toRightOf="@+id/acctcard_currency"
                         android:textColor="@color/coloreWiseSecondaryTextBlack" />
 
                     <ImageButton
-                        android:background="@color/coloreWiseCardViewBackground"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="@dimen/ewise_touch_icon_size"
+                        android:layout_height="@dimen/ewise_touch_icon_size"
                         android:id="@+id/acctcard_menu_btn"
                         android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:src="@drawable/ic_expand_more"
-                        android:scaleType="fitCenter"
+                        android:scaleType="fitStart"
                         android:adjustViewBounds="true"
-                        android:nestedScrollingEnabled="false" />
+                        android:nestedScrollingEnabled="false"
+                        android:background="@android:color/transparent" />
 
 
                 </RelativeLayout>
@@ -108,8 +112,13 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/acctcard_toolbar"
                 android:nestedScrollingEnabled="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="@dimen/ewise_horizontal_margin"
+                android:layout_marginLeft="@dimen/ewise_horizontal_margin"
+                android:clickable="true"
+                android:contextClickable="true">
+
+
+                </android.support.v7.widget.RecyclerView>
 
 
 

@@ -61,11 +61,25 @@ public class TransactionCardItemView extends RecyclerViewItemLayoutView<Transact
 
             Log.d("**TRACE 1**", String.format("Binding Transaction Card  : %s", cardDataObject.transactionDate.toString()));
 
+            switch (cardDataObject.groupTransactionsBy){
+                case DAY:
+                    SimpleDateFormat dateFormat = new SimpleDateFormat(getContext().getString(R.string.api_transaction_date_format), Locale.getDefault());
+                    this.transactioncard_date.setText(dateFormat.format(cardDataObject.transactionDate));
+                    break;
+                case MONTH:
+                    this.transactioncard_date.setText(cardDataObject.transactionMonth);
+                    break;
+                case YEAR:
+                    this.transactioncard_date.setText(cardDataObject.transactionYear);
+            }
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH);
-            this.transactioncard_date.setText(dateFormat.format(cardDataObject.transactionDate));
-            BigDecimal cashflowAmount = cardDataObject.totalCashIn.subtract(cardDataObject.totalCashOut);
-            this.transactioncard_cashflow.setText(cashflowAmount.toString());
+
+            Log.d("***TRACE***", String.format("Date: %s | Cashin : %f | Cashout : %f", transactioncard_date.getText(), cardDataObject.totalCashIn.doubleValue(),cardDataObject.totalCashOut.doubleValue()));
+
+            BigDecimal cashflowAmount = cardDataObject.totalCashIn.add(cardDataObject.totalCashOut);
+            Log.d("***TRACE***", String.format("Date: %s | Cashflow : %f", transactioncard_date.getText(), cashflowAmount.doubleValue()));
+
+            this.transactioncard_cashflow.setText(String.format(Locale.getDefault(), "%f", cashflowAmount.doubleValue()));
 
             //initialise and bind child RecyclerView layout
             //Attach adapter and load the data
@@ -74,6 +88,9 @@ public class TransactionCardItemView extends RecyclerViewItemLayoutView<Transact
             transactionlist_recycler_view.setAdapter(transactionsObjectViewAdapter);
             transactionsObjectViewAdapter.swapData(cardDataObject.transactionList);
 
+            this.
+
+            transactionlist_recycler_view.setVisibility(cardDataObject._transactionVisibility);
 
             Log.d("**TRACE 2**", String.format("Binding Transaction Card : %s", cardDataObject.toString()));
 
@@ -102,7 +119,17 @@ public class TransactionCardItemView extends RecyclerViewItemLayoutView<Transact
         }
     }
 
+    public void toggleCardItemVisibility(){
+        transactionlist_recycler_view.setVisibility(transactionlist_recycler_view.isShown() ? View.GONE : View.VISIBLE);
+    }
 
+    public void hideCardItems(){
+        transactionlist_recycler_view.setVisibility(View.GONE);
+    }
+
+    public void showCardItems(){
+        transactionlist_recycler_view.setVisibility(View.VISIBLE);
+    }
 
     private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){
         String sFormat = getContext().getString(R.string.exception_format_string);

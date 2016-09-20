@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.ewise.moneyapp"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -54,4 +54,5 @@ dependencies {
     compile 'com.android.support:cardview-v7:24.1.1'
     compile 'com.android.support:recyclerview-v7:24.1.1'
     compile 'com.google.code.gson:gson:2.7'
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.0-beta1'
 }
