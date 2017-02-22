@@ -3,6 +3,7 @@
     <color name="colorPrimary">#8EC448</color>
 
     <color name="coloreWisePrimary">#8ec448</color>
+    <color name="coloreWiseSecondary">#80deea</color>
     <color name="coloreWiseMainTextBlack">#de000000</color>
     <color name="coloreWiseSecondaryTextBlack">#89000000</color>
     <color name="coloreWiseOtherTextBlack">#4c000000</color>
@@ -20,4 +21,7 @@
     <color name="colorAccountCardHeaderText">#000000</color>
     <color name="colorAccountCardViewText">#4da6ff</color>
     <color name="AccountCardCurrencyTextColor">#30d627</color>
+
+    <color name="colorTransBg">#c8c5e1a5</color>
+
 </resources>

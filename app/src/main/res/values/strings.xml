@@ -6,8 +6,17 @@
     <string name="section_name_goals">Goals</string>
     <string name="section_name_peers">Peers</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="section_format_2">Add institution section: %1$d</string>
 
     <string name="var_base_currency">SGD</string>
+
+    <!-- Floating action button menu items -->
+    <string name="fab_menu_add_provider">Add accounts</string>
+    <string name="fab_menu_manage_providers">Manage accounts</string>
+    <string name="fab_menu_user_profile">User profile</string>
+    <string name="fab_menu_do_transfer">Move money</string>
+    <string name="fab_menu_set_consent">Set permissions</string>
+
 
     <!-- Account card (tile) labels -->
     <string name="label_account_fragment_CASH">Current and Savings</string>
@@ -48,11 +57,15 @@
     <string name="pdv_account_category_ASSETS">ASSETS</string>
     <string name="pdv_account_category_LIABILITIES">LIABILITIES</string>
 
+
     <string name="api_transaction_date_format">yyyy-MM-dd</string>
 
     <string name="transaction_groupby_day_format">yyyy-MM-dd</string>
     <string name="transaction_groupby_month_format">MMMM - yyyy</string>
     <string name="transaction_groupby_year_format">yyyy</string>
+
+    <string name="transaction_filter_all">All</string>
+    <string name="transaction_filter_forecast">Forecast</string>
 
     <string name="ewise_chart_line_width">3</string>
     <string name="ewise_chart_gridline_width">0.5</string>
@@ -75,11 +88,26 @@
     <string name="exception_format_string">***EXCEPTION*** encountered in ***Type*** %1$s ***Method*** %2$s ***Error*** %3$s ***Object*** %4$s</string>
 
 
+    <!-- PDVAPI related user messages -->
+    <string name="pdvapi_prelogin_message">About to Login to PDV</string>
+    <string name="pdvapi_postlogin_message">Login status:</string>
+    <string name="pdvapi_login_failed_message">Login Failed</string>
+    <string name="pdvapi_not_loggedin">Not yet logged in to the Personal Data Vault</string>
+    <string name="pdvapi_login_success_message">Login Success</string>
+    <string name="pdvapi_not_connected">Not connected to PDV Server, check your internet connection</string>
+    <string name="pdvapi_get_institutions_message">Retrieving available institutions / providers</string>
+
+
+    <string name="provider_list_retrieving_message">Retrieving...</string>
+
 
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_account_details">AccountDetailsActivity</string>
+    <string name="title_activity_add_institution">AddInstitutionActivity</string>
+
+
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

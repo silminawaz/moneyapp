@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ewise.moneyapp.adapters.TransactionGroupByFilterAdapter;
+import com.ewise.moneyapp.charts.CashflowLineChart;
 import com.ewise.moneyapp.data.PdvAccountResponse;
 import com.ewise.moneyapp.data.PdvTransactionResponse;
 import com.ewise.moneyapp.data.TransactionCardDataObject;
@@ -29,17 +30,7 @@ import com.ewise.moneyapp.data.TransactionCardDataObject.eGroupTransactionsBy;
 import com.ewise.moneyapp.data.TransactionCardListDataObject;
 import com.ewise.moneyapp.data.TransactionGroupByFilterDataObject;
 import com.ewise.moneyapp.loaders.PdvAccountTransactionResponseLoader;
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
@@ -98,6 +89,8 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
 
     TransactionCardsViewAdapter transactionCardsViewAdapter;
     TransactionGroupByFilterAdapter transactionGroupByFilterAdapter;
+
+    CashflowLineChart cashflowLineChart;
 
     private GestureDetectorCompat mDetector;
 
@@ -194,147 +187,17 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
     }
 
 
-    public void initialiseLineChart (){
+    public void initialiseLineChart () {
 
         //1. setup the chart settings
         accountdetails_cashflowchart_linechart = (LineChart) findViewById(R.id.accountdetails_cashflowchart_linechart);
-        //accountdetails_cashflowchart_linechart = new LineChart(this);
-        accountdetails_cashflowchart_linechart.setDescription(getString(R.string.accountdetails_cashflow_linechart_description));
-        accountdetails_cashflowchart_linechart.setDescriptionTextSize(Float.valueOf(getString(R.string.ewise_chart_description_text_size)).floatValue());
-        accountdetails_cashflowchart_linechart.setNoDataText(getString(R.string.accountdetails_cashflow_linechart_nodatatext));
-        accountdetails_cashflowchart_linechart.setTouchEnabled(true);
-        accountdetails_cashflowchart_linechart.setDragEnabled(true);
-        accountdetails_cashflowchart_linechart.setScaleEnabled(true);
-        accountdetails_cashflowchart_linechart.setDrawGridBackground(false);
-        accountdetails_cashflowchart_linechart.setPinchZoom(true);
-        //accountdetails_cashflowchart_linechart.setMaxVisibleValueCount(12);
 
-        accountdetails_cashflowchart_linechart.setHighlightPerDragEnabled(true); //not sure about this!
+        cashflowLineChart = new CashflowLineChart(this, accountdetails_cashflowchart_linechart, transactionCardsViewAdapter.getItemList(), groupTransactionsBy, 12);
 
-        //other useful stuff - not used for now
-        //accountdetails_cashflowchart_linechart.setBackgroundColor();
-
-
-        //create the data entries for the chart - there will be two lines (dual y axis)
-        //1st Y axis - cashflow
-        List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(0, 10945.50f));
-        entries.add(new Entry(1, 34444.5f));
-        entries.add(new Entry(2, 33333.50f));
-        entries.add(new Entry(3, 41111f));
-        entries.add(new Entry(4, 55555f));
-        entries.add(new Entry(5, 101101f));
-
-        //2nd y axis - account balance
-        List<Entry> entries2 = new ArrayList<>();
-        entries2.add(new Entry(0, 1105555));
-        entries2.add(new Entry(1, 423445));
-        entries2.add(new Entry(2, -333445));
-        entries2.add(new Entry(3, -444445));
-        entries2.add(new Entry(4, 666995));
-        entries2.add(new Entry(5, 999995));
-
-        //create the datasets using the data entries
-        //1. cashflow data set
-        LineDataSet dataSetCashflow = new LineDataSet(entries, getString(R.string.accountdetails_cashflow_linechart_cashflow_label));
-        dataSetCashflow.setLineWidth(Float.valueOf(getString(R.string.ewise_chart_line_width)).floatValue());
-        dataSetCashflow.setColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartCashflowLine));
-        dataSetCashflow.setValueTextColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartCashflowLine));
-        dataSetCashflow.setValueTextSize(Float.valueOf(getString(R.string.ewise_chart_text_size)).floatValue());
-        dataSetCashflow.setAxisDependency(YAxis.AxisDependency.LEFT);
-        dataSetCashflow.setDrawValues(false);
-        dataSetCashflow.setDrawVerticalHighlightIndicator(true);
-
-        //2. account balance data set
-        LineDataSet dataSetBalance = new LineDataSet(entries2, getString(R.string.accountdetails_cashflow_linechart_balance_label));
-        dataSetBalance.setLineWidth(Float.valueOf(getString(R.string.ewise_chart_line_width)).floatValue());
-        dataSetBalance.setColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartBalanceLine));
-        dataSetBalance.setValueTextColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartBalanceLine));
-        dataSetBalance.setValueTextSize(Float.valueOf(getString(R.string.ewise_chart_text_size)).floatValue());
-        dataSetBalance.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        dataSetBalance.setDrawValues(false);
-        dataSetBalance.setDrawVerticalHighlightIndicator(true);
-
-
-        //create the dataset list to be added to the chart data
-        List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-        dataSets.add(dataSetCashflow);
-        dataSets.add(dataSetBalance);
-
-        //create the chartdata using the two data sets
-        LineData lineData = new LineData(dataSets);
-
-        //set the chart data to the chart
-        accountdetails_cashflowchart_linechart.setData(lineData);
-
-        //configure the chart legend
-        Legend legend = accountdetails_cashflowchart_linechart.getLegend();
-        legend.setForm(Legend.LegendForm.SQUARE);
-        legend.setPosition(Legend.LegendPosition.ABOVE_CHART_RIGHT);
-        legend.setTextColor(ContextCompat.getColor(this, R.color.coloreWiseSecondaryTextBlack));
-
-        //configure the x axis
-        XAxis x = accountdetails_cashflowchart_linechart.getXAxis();
-        x.setTextColor(ContextCompat.getColor(this, R.color.coloreWiseMainTextBlack));
-        x.setTextSize(Float.valueOf(getString(R.string.ewise_chart_text_size)));
-        x.setDrawGridLines(false);
-        x.setAvoidFirstLastClipping(true);
-        x.setPosition(XAxis.XAxisPosition.BOTTOM);
-        x.setLabelRotationAngle(315f);
-        x.setAxisLineColor(ContextCompat.getColor(this, R.color.coloreWiseMainTextBlack));
-        x.setGranularity(1f);
-
-        //we have to draw the relevant data string in the x-axis representing each float value in x-axis
-        final String[] x_axis_text = new String[] { /* value = 1 */ "Jan-16",
-                                                    /* value = 2 */ "Feb-16",
-                                                    /* value = 3 */ "Mar-16",
-                                                    /* value = 4 */ "Apr-16",
-                                                    /* value = 5 */ "May-16",
-                                                    /* value = 6 */ "Jun-16"};
-        AxisValueFormatter formatter = new AxisValueFormatter() {
-
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return x_axis_text[(int) value];
-            }
-
-            // we don't draw numbers, so no decimal digits needed
-            @Override
-            public int getDecimalDigits() {  return 0; }
-        };
-
-        x.setValueFormatter(formatter);
-
-        //configure the left Y axis (cashflow)
-        YAxis y_Cashflow = accountdetails_cashflowchart_linechart.getAxisLeft();
-        y_Cashflow.setTextColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartCashflowLine));
-        y_Cashflow.setTextSize(Float.valueOf(getString(R.string.ewise_chart_axis_text_size)));
-        //y_Cashflow.setAxisMaxValue(100f);//temp set y axis max - can reset later with real data
-        y_Cashflow.setDrawGridLines(true);
-        y_Cashflow.setGridColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartCashflowLine));
-        y_Cashflow.setGridLineWidth(Float.valueOf(getString(R.string.ewise_chart_gridline_width)));
-        y_Cashflow.setAxisLineColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartCashflowLine));
-
-
-
-        //configure the right Y axis (balance)
-        YAxis y_Balance = accountdetails_cashflowchart_linechart.getAxisRight();
-        y_Balance.setEnabled(true);//change later
-        y_Balance.setTextColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartBalanceLine));
-        y_Balance.setTextSize(Float.valueOf(getString(R.string.ewise_chart_axis_text_size)));
-        //y_Balance.setAxisMaxValue(1100f);//temp set y axis max - can reset later with real data
-        y_Balance.setDrawGridLines(true);
-        y_Balance.setGridColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartBalanceLine));
-        y_Balance.setGridLineWidth(Float.valueOf(getString(R.string.ewise_chart_gridline_width)));
-        y_Balance.setAxisLineColor(ContextCompat.getColor(this, R.color.coloreWiseLineChartBalanceLine));
-
-
-        //run an animation to draw the chart
-        accountdetails_cashflowchart_linechart.animateXY(1000,2500, Easing.EasingOption.EaseInElastic, Easing.EasingOption.EaseInCubic);
-
-
+        cashflowLineChart.animateChart(500, 500);
 
     }
+
 
 
     /**
@@ -361,12 +224,13 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
      */
     public String[] getTransactionSelectFilter(){
 
-        int numFilters = (groupTransactionsBy == eGroupTransactionsBy.DAY ? 1 : transactionCardsViewAdapter.getItemList().size()+1);
+        int numFilters = (groupTransactionsBy == eGroupTransactionsBy.DAY ? 2 : transactionCardsViewAdapter.getItemList().size()+2);
         String[] filterStrings = new String [numFilters];
 
-        filterStrings[0] = "All";
+        filterStrings[0] = getString(R.string.transaction_filter_all);
+        filterStrings[1] = getString(R.string.transaction_filter_forecast);
 
-        int pos = 1;
+        int pos = 2;
 
         if (groupTransactionsBy == eGroupTransactionsBy.DAY) { return filterStrings; }
 
@@ -469,15 +333,27 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
 
         try {
 
-            transactionCardsViewAdapter.set_showTransactions(transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE ? View.GONE : View.VISIBLE);
-            accountdetails_open_transactions_img.setImageResource(transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE ? R.drawable.ic_action_folder_open : R.drawable.ic_action_folder_closed);
+            accountdetails_open_transactions_img.setBackgroundResource(R.drawable.ewise_background_rectangle_selected);
+
+            if (transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE)
+            {
+                transactionCardsViewAdapter.set_showTransactions (View.GONE);
+                accountdetails_open_transactions_img.setImageResource(R.drawable.ic_action_folder_closed);
+            }
+            else
+            {
+                transactionCardsViewAdapter.set_showTransactions (View.VISIBLE);
+                accountdetails_open_transactions_img.setImageResource(R.drawable.ic_action_folder_open);
+            }
+
             //unselect the cashflow chart
             if (accountdetails_cashflowchart.getTag().equals("selected")){
                 accountdetails_cashflowchart.setBackgroundResource(R.drawable.ewise_background_rectangle_unselected);
                 accountdetails_cashflowchart.setTag("unselected");
                 findViewById(R.id.accountdetails_cashflowchart_layout).setVisibility(View.GONE);
-                this.accountdetails_cashflowchart_linechart.invalidate();
+                this.cashflowLineChart.reDraw();
                 this.accountdetails_transactioncard_recycler_view.setVisibility(View.VISIBLE);
+                accountdetails_open_transactions_img.setBackgroundResource(R.drawable.ewise_background_rectangle_selected);
             }
 
 
@@ -499,16 +375,17 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
 
             if (accountdetails_cashflowchart.getTag().equals("unselected")){
                 accountdetails_cashflowchart.setBackgroundResource(R.drawable.ewise_background_rectangle_selected);
+                accountdetails_open_transactions_img.setBackgroundResource(R.drawable.ewise_background_rectangle_unselected);
                 accountdetails_cashflowchart.setTag("selected");
                 findViewById(R.id.accountdetails_cashflowchart_layout).setVisibility(View.VISIBLE);
-                accountdetails_cashflowchart_linechart.animateXY(2000,2000, Easing.EasingOption.EaseInOutBack, Easing.EasingOption.EaseInOutBack);
+                cashflowLineChart.animateChart(500,500);
                 this.accountdetails_transactioncard_recycler_view.setVisibility(View.GONE);
             } else {
-                accountdetails_cashflowchart.setBackgroundResource(R.drawable.ewise_background_rectangle_unselected);
-                accountdetails_cashflowchart.setTag("unselected");
-                findViewById(R.id.accountdetails_cashflowchart_layout).setVisibility(View.GONE);
-                accountdetails_cashflowchart_linechart.invalidate();
-                this.accountdetails_transactioncard_recycler_view.setVisibility(View.VISIBLE);
+                //accountdetails_cashflowchart.setBackgroundResource(R.drawable.ewise_background_rectangle_unselected);
+                //accountdetails_cashflowchart.setTag("unselected");
+                //findViewById(R.id.accountdetails_cashflowchart_layout).setVisibility(View.GONE);
+                //cashflowLineChart.reDraw();
+                //this.accountdetails_transactioncard_recycler_view.setVisibility(View.VISIBLE);
             }
             accountdetails_cashflowchart.setImageResource(R.drawable.moneyapp_cashflow_chart);
 

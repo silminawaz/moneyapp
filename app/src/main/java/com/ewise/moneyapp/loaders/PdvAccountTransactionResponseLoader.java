@@ -56,7 +56,11 @@ public class PdvAccountTransactionResponseLoader extends AsyncTaskLoader<PdvTran
 
         try {
 
-            //TODO: Change loaders to support loading data via PDV or Aegis APIs instead of from canned data assets
+            //TODO: Change loaders to support loading transaction data via PDV or Aegis APIs instead of from canned data assets
+            //      1. class in com.ewise.moneyapp.data contains the data structure classes used by the app (e.g. PdvTransactionResponse)
+            //      2. create a data access class in com.ewise.moenyapp.api package to access data (create, read, update, delete - data access from network via apis)
+            //      3. create a data mapper class in com.ewise.moneyapp.ApiDataMapper to map between api data and app data classes (found in com.ewise.moneyapp.data package)
+
             //open file
             String fileName = "PdvCashTransactionResponse2.json";
             if (_account != null) {

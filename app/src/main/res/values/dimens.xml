@@ -22,4 +22,10 @@
     <dimen name="ewise_touch_icon_size_small">20dp</dimen>
     <dimen name="ewise_max_width_month_label">50dp</dimen>
     <dimen name="ewise_min_width_month_label">50dp</dimen>
+    <dimen name="standard_12">12dp</dimen>
+    <dimen name="standard_23">23dp</dimen>
+    <dimen name="standard_45">45dp</dimen>
+    <dimen name="standard_55">55dp</dimen>
+    <dimen name="standard_100">100dp</dimen>
+    <dimen name="standard_145">145dp</dimen>
 </resources>

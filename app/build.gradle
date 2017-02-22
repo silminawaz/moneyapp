@@ -2,9 +2,18 @@ apply plugin: 'com.android.application'
 //begin: android annotations
 apply plugin: 'android-apt'
 def AAVersion = '4.1.0'
+def dbflow_version = "3.1.1"
 //end: android annotations
 
 android {
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
 
@@ -12,6 +21,7 @@ android {
         applicationId "com.ewise.moneyapp"
         minSdkVersion 19
         targetSdkVersion 24
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
     }
@@ -22,7 +32,19 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //proguardFiles 'proguard-android-optimize.txt', 'proguard-rules.pro'
         }
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //proguardFiles 'proguard-android-optimize.txt', 'proguard-rules.pro'
+        }
+
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
 
 }
@@ -55,4 +77,35 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.1.1'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.0-beta1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+
+    //** Begin: eWise Android PDV dependencies **
+    compile files('libs/app.jar')
+    compile 'com.squareup.okhttp3:okhttp:3.0.1'
+    compile "com.squareup.okhttp3:okhttp-urlconnection:3.0.1"
+    apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-sqlcipher:3.1.1@aar"
+    compile 'net.zetetic:android-database-sqlcipher:3.5.1'
+    compile 'commons-io:commons-io:2.4'
+    compile 'org.apache.commons:commons-collections4:4.1'  //SN-fix : had to change from 3.2.1 to 4:4.1 to remove build warnings/errors
+    compile 'com.google.android.gms:play-services:9.2.1'
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.scottyab:aescrypt:0.0.1'
+    compile([group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.4.1'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.4.1'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.4.1'])
+    testCompile 'junit:junit:4.12'
+
+    compile 'com.mobsandgeeks:adapter-kit:0.5.3'
+    compile 'com.squareup.dagger:dagger:1.2.2'
+    apt 'com.squareup.dagger:dagger-compiler:1.2.2'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile group: 'org.aspectj', name: 'aspectjrt', version: '1.8.9'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    compile group: 'de.mindpipe.android', name: 'android-logging-log4j', version: '1.0.3'  //**SN** fix : updated from 1.0.2 to 1.0.3
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'  //**SN** fix : updated from 1.2.16 to 1.2.17
+    //** End: eWise Android PDV dependencies **
+
 }

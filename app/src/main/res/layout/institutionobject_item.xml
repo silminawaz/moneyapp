@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/accountinstitutionicon"
+        android:layout_width="@dimen/ewise_touch_icon_size"
+        android:layout_height="@dimen/ewise_touch_icon_size"
+        android:src="@drawable/smartbank"
+        android:clickable="true"
+        android:longClickable="true"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_alignParentStart="false"
+        android:background="@drawable/ewise_background_select_state_list"/>
+
+    <TextView
+        android:id="@+id/accountInstitutionName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textSize="@dimen/ewise_primary_text_size"
+        android:clickable="false"
+        android:text="Default insitution name"
+        android:layout_toRightOf="@+id/accountinstitutionicon"
+        android:textStyle="bold|italic"
+        android:layout_centerVertical="false" />
+
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.25dp"
+        android:background="@color/dim_foreground_material_dark"
+        android:layout_below="@+id/accounticon"
+        android:layout_toRightOf="@+id/accounticon" />
+
+</RelativeLayout>

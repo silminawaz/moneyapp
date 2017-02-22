@@ -15,3 +15,6 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# **SN** Added to eliminate innerclass errors from log4j 1.27
+-keepattributes EnclosingMethod
