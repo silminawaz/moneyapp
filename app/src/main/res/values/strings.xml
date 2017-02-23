@@ -98,8 +98,9 @@
     <string name="pdvapi_get_institutions_message">Retrieving available institutions / providers</string>
 
 
-    <string name="provider_list_retrieving_message">Retrieving...</string>
+    <string name="provider_list_retrieving_message">Retrieving&#8230;</string>
 
+    <string name="default_institution_icon_resource_name">smartbank</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

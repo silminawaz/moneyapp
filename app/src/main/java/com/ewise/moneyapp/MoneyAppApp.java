@@ -160,14 +160,14 @@ public class MoneyAppApp extends Application {
                 pdvApi.getInstitutions(new PdvApiCallback<Providers>() {
                     @Override
                     public void result(Response<Providers> response) {
-                        PdvApiResults results = new PdvApiResults();
-                        results.callBackCompleted = true;
-                        results.providers = response;
+                        PdvApiResults providerResults = new PdvApiResults();
+                        providerResults.callBackCompleted = true;
+                        providerResults.providers = response;
                         if (response.getStatus().equals(StatusCode.STATUS_SUCCESS)){
-                            callback.onGetInstitutionsSuccess(results);
+                            callback.onGetInstitutionsSuccess(providerResults);
                         }
                         else {
-                            callback.onGetInstitutionsFail(results);
+                            callback.onGetInstitutionsFail(providerResults);
                         }
                     }
                 });

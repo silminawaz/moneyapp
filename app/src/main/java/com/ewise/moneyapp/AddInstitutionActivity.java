@@ -85,20 +85,7 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
                         getString(R.string.provider_list_retrieving_message)
                 }));
 
-        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // When the given dropdown item is selected, show its contents in the
-                // container view.
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, AddInstitutionFragment.newInstance(position + 1))
-                        .commit();
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
 
 
         myApp.pdvGetInstitutions(this);  //callbacks will handle the rest
@@ -179,6 +166,29 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
                 Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
                 Log.d("PROVIDERS", Integer.toString(providerList.length));
+
+                spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        // When the given dropdown item is selected, show its contents in the
+                        // container view.
+
+                        Group group = providerResults.providers.getData().getGroups().get(position);
+
+                        String strGroup = PdvApiResults.toJsonString(group);
+
+                        Log.d("D1", strGroup);
+
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.container, AddInstitutionFragment.newInstance(position, strGroup))
+                                .commit();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+
 
                 MyAdapter dataAdapter = new MyAdapter(toolbar.getContext(), providerList);
                 spinner.setAdapter(dataAdapter);
