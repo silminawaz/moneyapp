@@ -1,5 +1,6 @@
 package com.ewise.moneyapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,10 +11,13 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ewise.android.pdv.api.model.response.GetPromptsData;
+import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.data.AccountCardDataObject;
 import com.ewise.moneyapp.data.AccountCardListDataObject;
 import com.ewise.moneyapp.data.PdvAccountResponse;
@@ -138,6 +142,7 @@ public class AccountsFragment extends Fragment  {
         intent.putExtra("com.wise.moneyapp.MESSAGE", message);
         startActivity(intent);
     }
+
 
     /**
      * LoaderManager callback routine for PdvAccountResponse data

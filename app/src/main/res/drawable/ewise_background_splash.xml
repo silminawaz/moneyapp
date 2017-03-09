@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@color/coloreWiseSplashBackground"/>
+
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/ewise_aegis_mm_logo_white_back"/>
+    </item>
+
+
+</layer-list>

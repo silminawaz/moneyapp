@@ -4,6 +4,8 @@ package com.ewise.moneyapp;
  * Created by SilmiNawaz on 20/8/16.
  */
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,11 +18,13 @@ import android.widget.TextView;
 
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.provider.Group;
+import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
 import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.android.pdv.api.model.provider.Providers;
 import com.ewise.moneyapp.Utils.DataLoadCallBackInterface;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -98,7 +102,16 @@ public class AddInstitutionFragment extends Fragment {
         try
         {
             List<Institution> institutionList = group.getInstitutions();
-            institutionItemViewAdapter.swapData(institutionList);
+            List<GroupedInstitution> groupedInstitutionList = new ArrayList<>();
+            for (Institution institution : institutionList){
+                GroupedInstitution groupedInstitution = new GroupedInstitution();
+                groupedInstitution.setInstCode(institution.getInstCode());
+                groupedInstitution.setInstDesc(institution.getInstDesc());
+                groupedInstitution.setGroupId(group.getGroupId());
+                groupedInstitution.setGroupDesc(group.getGroupDesc());
+                groupedInstitutionList.add(groupedInstitution);
+            }
+            institutionItemViewAdapter.swapData(groupedInstitutionList);
             return true;
         }
         catch (Exception e){
@@ -110,6 +123,7 @@ public class AddInstitutionFragment extends Fragment {
 
         return false;
     }
+
 
     private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){
         String sFormat = getString(R.string.exception_format_string);

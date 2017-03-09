@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#8EC448</color>
+    <color name="colorPrimary">#8ec448</color>
 
     <color name="coloreWisePrimary">#8ec448</color>
-    <color name="coloreWiseSecondary">#80deea</color>
+    <color name="coloreWisePrimaryDark">#689f38</color>
+    <color name="coloreWiseAccent">#c5e1a5</color>
+    <color name="coloreWiseSecondary">#8ec448</color>
+    <color name="coloreWiseSplashBackground">#ffffff</color>
     <color name="coloreWiseMainTextBlack">#de000000</color>
     <color name="coloreWiseSecondaryTextBlack">#89000000</color>
     <color name="coloreWiseOtherTextBlack">#4c000000</color>
@@ -12,7 +15,8 @@
     <color name="coloreWiseCardViewBackground">#0d000000</color>
     <color name="coloreWiseLineChartCashflowLine">#43a047</color>
     <color name="coloreWiseLineChartBalanceLine">#2979ff</color>
-
+    <color name="coloreWiseDivider">#4c000000</color>
+    <color name="coloreWiseDisabled">#bdbdbd</color>
 
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorTabBar">#9cca6c</color>
@@ -23,5 +27,6 @@
     <color name="AccountCardCurrencyTextColor">#30d627</color>
 
     <color name="colorTransBg">#c8c5e1a5</color>
+    <color name="coloreWiseHighlight">#ff5722</color>
 
 </resources>

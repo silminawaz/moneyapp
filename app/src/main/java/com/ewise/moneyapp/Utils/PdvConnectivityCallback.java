@@ -15,5 +15,6 @@ public interface PdvConnectivityCallback {
     public void onPdvDisconnected();
     public void onGetInstitutionsFail(PdvApiResults results);
     public void onGetInstitutionsSuccess(PdvApiResults results);
-
+    public void onGetPromptsSuccess(PdvApiResults results);
+    public void onGetPromptsFail(PdvApiResults results);
 }

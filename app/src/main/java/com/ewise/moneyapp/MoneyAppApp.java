@@ -21,7 +21,10 @@ import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
 import com.ewise.android.pdv.api.model.provider.Providers;
+import com.ewise.android.pdv.api.model.response.GetPromptsResponse;
 import com.ewise.android.pdv.api.util.ConnectivityReceiver;
+import com.ewise.moneyapp.Utils.PdvApiRequestParams;
+import com.ewise.moneyapp.Utils.PdvApiRequestQueue;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
@@ -44,10 +47,16 @@ public class MoneyAppApp extends Application {
     public static final String DEFAULT_MM_HOST = "https://qa-50-wmm.ewise.com/api/";
     public static final String DEFAULT_SWAN_HOST = "https://qaswan.ewise.com/";
     public static final String EWISEDEMO = "com.ewise.android.pdv.EwiseSharedPref";
+
+    static final int ACCOUNT_DETAILS_ACTIVITY = 1;
+    static final int ADD_PROVIDER_LIST_REQUEST = 2;
+    static final int ADD_PROVIDER_PROMPTS_REQUEST = 3;
+
     public PdvApi pdvApi;
     public WebView pdvWebView;
     public boolean loggedOnToPdv;
     public PdvConnectivityStatus pdvConnectivityStatus;
+    public PdvApiRequestQueue   pdvApiRequestQueue = null;
     Handler threadHandler = new Handler();
 
     private Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler;
@@ -72,6 +81,7 @@ public class MoneyAppApp extends Application {
         pdvApi = new PdvApiImpl(swanHost, mmHost);
         loggedOnToPdv = false;
         pdvConnectivityStatus = PdvConnectivityStatus.UNKNOWN;
+        pdvApiRequestQueue = new PdvApiRequestQueue();
         setupAppConfig();
 
     }
@@ -115,6 +125,7 @@ public class MoneyAppApp extends Application {
                     threadHandler.post(new Runnable() {
                         @Override
                         public void run() {
+                            Log.d("MOneyAppapp", "calling notifyConnectivitySuccess");
                             notifyConnectivitySuccess(callback);
                         }
                     });
@@ -139,16 +150,21 @@ public class MoneyAppApp extends Application {
         if (pdvConnectivityStatus!=PdvConnectivityStatus.SUCCESS){
 
             pdvConnectivityStatus = PdvConnectivityStatus.SUCCESS;
-            callback.onPdvConnected();
+
         }
+        Log.d("MoneyAppApp", "Calling callback.onPdvConnected");
+        callback.onPdvConnected();
     }
 
     public void notifyConnectivityFail(PdvConnectivityCallback callback){
         if (pdvConnectivityStatus!=PdvConnectivityStatus.ERROR){
 
             pdvConnectivityStatus = PdvConnectivityStatus.ERROR;
-            callback.onPdvDisconnected();
+
         }
+
+        Log.d("MoneyAppApp", "Calling callback.onPdvDisconnected");
+        callback.onPdvDisconnected();
     }
 
     public void pdvGetInstitutions(final PdvConnectivityCallback callback){
@@ -160,14 +176,14 @@ public class MoneyAppApp extends Application {
                 pdvApi.getInstitutions(new PdvApiCallback<Providers>() {
                     @Override
                     public void result(Response<Providers> response) {
-                        PdvApiResults providerResults = new PdvApiResults();
-                        providerResults.callBackCompleted = true;
-                        providerResults.providers = response;
+                        PdvApiResults results = new PdvApiResults();
+                        results.callBackCompleted = true;
+                        results.providers = response;
                         if (response.getStatus().equals(StatusCode.STATUS_SUCCESS)){
-                            callback.onGetInstitutionsSuccess(providerResults);
+                            callback.onGetInstitutionsSuccess(results);
                         }
                         else {
-                            callback.onGetInstitutionsFail(providerResults);
+                            callback.onGetInstitutionsFail(results);
                         }
                     }
                 });
@@ -176,6 +192,34 @@ public class MoneyAppApp extends Application {
 
         new Thread (runPdvGetInstitutions).start();
     }
+
+
+    public void pdvGetPrompts (final String instCode, final PdvConnectivityCallback callback) {
+        Log.d(TAG, "Calling pdvGetPrompts()");
+
+        Runnable runPdvGetPrompts = new Runnable() {
+            @Override
+            public void run() {
+                pdvApi.getPrompts(instCode, new PdvApiCallback.PdvApiGetPromptsCallback() {
+                    @Override
+                    public void result(GetPromptsResponse getPromptsResponse) {
+                        PdvApiResults results = new PdvApiResults();
+                        results.callBackCompleted = true;
+                        results.prompts = getPromptsResponse;
+                        if (results.prompts.getStatus().equals(StatusCode.STATUS_SUCCESS)) {
+                            callback.onGetPromptsSuccess(results);
+                        } else {
+                            callback.onGetPromptsFail(results);
+                        }
+                    }
+                });
+            }
+        };
+
+        new Thread (runPdvGetPrompts).start();
+    }
+
+
 
 
     public static WebView WebView (Activity activity) {

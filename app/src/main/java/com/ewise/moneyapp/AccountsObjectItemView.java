@@ -1,5 +1,6 @@
 package com.ewise.moneyapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -103,8 +104,8 @@ public class AccountsObjectItemView extends RecyclerViewItemLayoutView<AccountsO
 
         //TODO: do async data loading of transactions
 
-        getContext().startActivity(intent);
-
+        Activity activity = (Activity) this.getContext();
+        activity.startActivityForResult(intent, MoneyAppApp.ACCOUNT_DETAILS_ACTIVITY );
     }
 
 

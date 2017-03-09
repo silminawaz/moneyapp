@@ -1,5 +1,7 @@
 package com.ewise.moneyapp;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,9 +28,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ewise.android.pdv.api.PdvApi;
+import com.ewise.android.pdv.api.model.PromptEntry;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.provider.Group;
 import com.ewise.android.pdv.api.model.provider.Providers;
+import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
@@ -37,7 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddInstitutionActivity extends AppCompatActivity implements PdvConnectivityCallback {
-
 
     PdvApiResults providerResults;
 
@@ -76,7 +79,7 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
             String sMethod = this.toString();
             sMethod = sMethod + Thread.currentThread().getStackTrace()[2].getMethodName() + "() ";
             String sObjString = myApp.pdvApi.toString();
-            generalExceptionHandler(e.getClass().getName(), e.getMessage(), sMethod, sObjString);
+            generalExceptionHandler(e.getClass().getName(), sMethod, e.getMessage(), sObjString);
         }
 
         spinner.setAdapter(new MyAdapter(
@@ -113,6 +116,17 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
     public void onPdvDisconnected(){
 
     }
+
+    @Override
+    public void onGetPromptsFail(PdvApiResults results){
+
+    }
+
+    @Override
+    public void onGetPromptsSuccess(PdvApiResults results){
+
+    }
+
 
     @Override
     public void onGetInstitutionsFail(PdvApiResults results){
@@ -200,6 +214,20 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
     }
     //End: PdvConnectivityCallback Interface implementations
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if ((data != null) && (requestCode == MoneyAppApp.ADD_PROVIDER_PROMPTS_REQUEST)){
+            String jsonPromptsData = data.getStringExtra("promptsData");
+            GetPromptsData promptsData = PdvApiResults.objectFromString(jsonPromptsData, GetPromptsData.class);
+            Log.d("AddInst-instCode", PdvApiResults.toJsonString(promptsData));
+            setResult(Activity.RESULT_OK, data);
+            finish();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -259,6 +287,7 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
             mDropDownHelper.setDropDownViewTheme(theme);
         }
     }
+
 
 
     /**

@@ -18,7 +18,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,12 +27,29 @@
         </activity>
         <activity
             android:name=".AccountDetailsActivity_"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AddInstitutionActivity"
             android:label="@string/title_activity_add_institution"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".AddInstitutionPromptsActivity"
+            android:label="@string/title_activity_add_institution_prompts"
+            android:parentActivityName=".AddInstitutionActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ewise.moneyapp.AddInstitutionActivity" />
+        </activity>
+
+        <service
+            android:name=".service.PdvAcaIntentService"
+            android:exported="false" />
+        <service
+            android:name=".service.PdvAcaBoundService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

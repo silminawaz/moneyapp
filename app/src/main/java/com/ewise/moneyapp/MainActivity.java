@@ -1,15 +1,11 @@
 package com.ewise.moneyapp;
 
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,27 +18,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.animation.Animator;
 import android.widget.Toast;
 
 import com.ewise.android.pdv.api.PdvApi;
-import com.ewise.android.pdv.api.PdvApiImpl;
 import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
+import com.ewise.android.pdv.api.model.response.GetPromptsData;
+import com.ewise.moneyapp.Utils.PdvApiName;
+import com.ewise.moneyapp.Utils.PdvApiRequestCallback;
+import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiResults;
-import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
+import com.ewise.moneyapp.Utils.PdvApiStatus;
+import com.ewise.moneyapp.Utils.PdvApiUpdateAccountRequest;
+import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 
-import java.lang.ref.WeakReference;
-import java.net.URL;
-
-import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements AccountsFragment.OnFragmentInteractionListener
+        implements AccountsFragment.OnFragmentInteractionListener, PdvConnectivityCallback, PdvApiUpdateAccountRequest.PdvApiUpdateAccountResponseCallbacks, PdvApiRequestCallback
 {
 
     /**
@@ -65,84 +64,54 @@ public class MainActivity extends AppCompatActivity
     LinearLayout            fabLayout1, fabLayout2, fabLayout3;
     View                    fabBGLayout;
     boolean                 isFABOpen=false;
-    public PdvApiResults    pdvApiResults = new PdvApiResults();
+    public PdvApiResults    pdvApiResults;
     Handler                 handler = new Handler();
+    Handler                 pdvApiRequestHandler = new Handler();
+    PdvApiUpdateAccountRequest updateAccountRequestFragment;
+    private static final String TAG_ACCOUNT_REQUEST_FRAGMENT = "update_account_request_fragment";
 
-/*  // Implementing login using AsyncTask
-    // This is not really necessary because the PDV API is in itself Async in nature so we can use separate threads to execute
-
-    private class LoginToPdvTask extends AsyncTask<Object, Void, Void> {
-
-        PdvApiResults results;  //param needed to update results on background thread
-        boolean loggedOnToPdv = false;
-
+    private Runnable        pdvApiRequestRunnable = new Runnable() {
         @Override
-        protected void onPreExecute(){
-            results = new PdvApiResults();
-            Toast.makeText(getApplicationContext(), R.string.pdvapi_prelogin_message, Toast.LENGTH_LONG).show();
-            Log.d("PDVAPI", getString(R.string.pdvapi_prelogin_message));
-
-        }
-
-        @Override
-        protected Void doInBackground(Object... params){
-            //String username = myApp.getIMEI();
-
-            //      login first time should prevent an existing login from being re-used without proper authorisation - i.e. an authentication mechanism is needed - maybe a login TOKEN
-            String username = "silmi";
-
-            final PdvApi pdvApi = (PdvApi) params[0];
-            pdvApi.setUser(username, new PdvApiCallback<String>() {
-                @Override public void result(final Response response) {
-                    results.setUserResponse = response;
-                    Log.d("SETUSER", response.getStatus());
-                    if (StatusCode.STATUS_SUCCESS.equals(response.getStatus())) {
-                        pdvApi.initialise(new PdvApiCallback.PdvApiInitialiseCallback() {
-                            @Override public void result(final String status) {
-                                results.initialiseStatus = status;
-                                results.callBackCompleted = true;
-                                loggedOnToPdv = true;
-                                Log.d("INIT", status);
-                            }
-                        });
-                    }
-                    else{
-                        results.callBackCompleted = true;
-                        loggedOnToPdv = false;
-                    }
+        public void run() {
+            MoneyAppApp app = (MoneyAppApp) getApplication();
+            if (!app.pdvApiRequestQueue.isRequestInProgress()){
+                PdvApiRequestParams requestParams = app.pdvApiRequestQueue.getNextRequestToExecute();
+                if (requestParams!=null){
+                    app.pdvApiRequestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_INPROGRESS);
+                    pdvApiExecuteRequest(requestParams);
+                    setDataFetchingStatus (true);
                 }
-            });
-
-            return null;
+            }
+            pdvApiRequestHandler.postDelayed(pdvApiRequestRunnable, 5000); //run every 5 seconds
         }
+    };
 
-        @Override
-        protected void onPostExecute(Void v){
-            //wait until callback is completed
-            while (!results.callBackCompleted){
-                //Since login to PDV is essential to continue we will block the UI thread until the call back is completed
+
+    public void setDataFetchingStatus(final boolean status){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (status==true){
+                    findViewById(R.id.linearLayoutFetchingData).setVisibility(View.VISIBLE);
+                    ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_refresh_material_white);
+                }
+                else{
+                    findViewById(R.id.linearLayoutFetchingData).setVisibility(View.GONE);
+                }
+
             }
-
-            if (loggedOnToPdv) {
-                ((MoneyAppApp)getApplication()).loggedOnToPdv = true;
-            }
-
-            pdvApiResults = results; //set the results accessible to the activity context
-
-            String msg  = getString(R.string.pdvapi_postlogin_message);
-            if (results.setUserResponse != null) {
-                msg = msg + " - " + results.setUserResponse.getStatus() + " - " + results.initialiseStatus;
-            }
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-            Log.d("PDVAPI", msg);
-
-        }
-
+        });
     }
-*/
+
+    public void checkPdvConnectivity()
+    {
+        MoneyAppApp app = (MoneyAppApp)getApplication();
+        app.checkConnectivity(this,MoneyAppApp.DEFAULT_SWAN_HOST,this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.setTheme(R.style.AppTheme_NoActionBar); //remove the splash theme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -187,7 +156,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
 
                 if (((MoneyAppApp)getApplication()).loggedOnToPdv == true){
-                        startActivity(new Intent(MainActivity.this, AddInstitutionActivity.class));
+                        startActivityForResult(new Intent(MainActivity.this, AddInstitutionActivity.class), MoneyAppApp.ADD_PROVIDER_LIST_REQUEST);
                 }
                 else
                 {
@@ -205,20 +174,53 @@ public class MainActivity extends AppCompatActivity
         });
 
         MoneyAppApp myApp = ((MoneyAppApp) getApplication());
+        pdvApiResults = new PdvApiResults();
         PdvApi pdvApi = myApp.getPdvApi();
         boolean loggedOnToPdv = myApp.loggedOnToPdv;
         myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
 
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
-            if (!myApp.loggedOnToPdv){
-                loginToPDV();
-            }
+            myApp.checkConnectivity(this, MoneyAppApp.DEFAULT_SWAN_HOST, this);
+            //if successfully connected, the callback will handle the login
+            pdvApiRequestRunnable.run();
         } catch (Exception e) {
             String sMethod = this.toString();
             sMethod = sMethod + Thread.currentThread().getStackTrace()[2].getMethodName() + "() ";
             String sObjString = myApp.pdvApi.toString();
             generalExceptionHandler(e.getClass().getName(), e.getMessage(), sMethod, sObjString);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        //if the result from the add provider form is returned
+        if ((data !=null) && (requestCode == MoneyAppApp.ADD_PROVIDER_LIST_REQUEST)){
+            String jsonPromptsData = data.getStringExtra("promptsData");
+
+            GetPromptsData promptsData = PdvApiResults.objectFromString(jsonPromptsData, GetPromptsData.class);
+
+            findViewById(R.id.linearLayoutFetchingData).setVisibility(View.VISIBLE);
+            ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_refresh_material_white);
+
+
+            Log.d("MainActivity-instCode", PdvApiResults.toJsonString(promptsData));
+
+            //todo: initiate the aggregation service to add accounts....
+            PdvApiRequestParams requestParams = new PdvApiRequestParams();
+            requestParams.pdvApiName = PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS; //trying update accounts
+            MoneyAppApp app = (MoneyAppApp) getApplication();
+            //set requestParams
+            List<String> instIds = new ArrayList<>();
+            Log.d("INSTID", promptsData.getInstId());
+            instIds.add(promptsData.getInstId());
+            requestParams.updateParams.instIds = instIds;
+            requestParams.updateParams.profileId = null;
+            requestParams.updateParams.credPrompts = promptsData.getPrompts();
+            app.pdvApiRequestQueue.add(requestParams); //add this request to the queue...
         }
     }
 
@@ -294,6 +296,7 @@ public class MainActivity extends AppCompatActivity
         String msg = getString(R.string.pdvapi_login_success_message);
         msg = msg + " - setUser(): " + pdvApiResults.setUserResponse.getStatus() + " : " + pdvApiResults.setUserResponse.getMessage() + " - initialise(): " + pdvApiResults.initialiseStatus;
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
+        ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_connected_material_white);//connected
     }
 
     public void notifyPdvLoginFail(){
@@ -302,7 +305,148 @@ public class MainActivity extends AppCompatActivity
         String msg = getString(R.string.pdvapi_login_failed_message);
         msg = msg + " - setUser(): " + pdvApiResults.setUserResponse.getStatus() + " : " + pdvApiResults.setUserResponse.getMessage() + " - initialise(): " + pdvApiResults.initialiseStatus;
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
+        ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_disconnected_material_white);
     }
+
+    @Override
+    public void onPdvConnected() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!((MoneyAppApp)getApplication()).loggedOnToPdv){
+                    loginToPDV();
+                }
+                else
+                {
+                    ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_connected_material_white);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onPdvDisconnected(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_disconnected_material_white);
+
+                //todo: if there are issues with initialising , then set App.loggedOnToPdv = false, so it will login again
+            }
+        });
+    }
+
+    @Override
+    public void onGetInstitutionsFail(PdvApiResults results){
+        //not used
+    }
+
+    @Override
+    public void onGetInstitutionsSuccess(PdvApiResults results){
+        //not used
+    }
+
+    @Override
+    public void onGetPromptsSuccess(PdvApiResults results){
+        //not used
+    }
+
+    @Override
+    public void onGetPromptsFail(PdvApiResults results){
+        //not used
+    }
+
+    //Begin: Implement PdvApiUpdateAccountRequest.PdvApiUpdateAccountResponseCallbacks
+    @Override
+    public void onPdvApiUpdateAccountResponsePrompts(PdvApiResults results){
+        //todo: Handle OTP and Captcha prompts
+
+    }
+
+    @Override
+    public void onPdvApiUpdateAccountResponseData(PdvApiResults results){
+        //todo: Handle accounts "data" response
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "UpdateAccounts() data received", Toast.LENGTH_SHORT);
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onPdvApiUpdateAccountResponseComplete(PdvApiResults results){
+        //todo: Handle accounts "complete" response
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "UpdateAccounts() complete received", Toast.LENGTH_SHORT);
+            }
+        });
+
+        MoneyAppApp app = (MoneyAppApp)getApplication();
+        app.pdvApiRequestQueue.setRequestResults(results);
+        getSupportFragmentManager().beginTransaction().remove(updateAccountRequestFragment).commit();
+        updateAccountRequestFragment = null;
+
+    }
+
+    @Override
+    public void onPdvApiUpdateAccountResponseAllComplete(PdvApiResults results){
+        //todo: Handle accounts "all complete" response
+
+        //todo: execute next request, since this request is complete
+        MoneyAppApp app = (MoneyAppApp)getApplication();
+
+        //update the status of the current request
+        app.pdvApiRequestQueue.setRequestResults(results);
+        getSupportFragmentManager().beginTransaction().remove(updateAccountRequestFragment).commit();
+        updateAccountRequestFragment = null;
+    }
+
+    @Override
+    public void onPdvApiUpdateAccountResponseError(PdvApiResults results){
+        //todo: Handle accounts "error" response
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "UpdateAccounts() error received", Toast.LENGTH_SHORT);
+            }
+        });
+
+    }
+    //End: Implement PdvApiUpdateAccountRequest.PdvApiUpdateAccountResponseCallbacks
+
+    @Override
+    public void executeRequest(PdvApiRequestParams requestParams){
+        //todo: use the requestParams to call the next request - this is executed sequentially via the queue
+    }
+
+    //execute this method when there is anything in the request queue
+    public void pdvApiExecuteRequest(PdvApiRequestParams requestParams){
+        if (requestParams.pdvApiName.equals(PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS)){
+            pdvApiExecuteUpdateAccount(requestParams);
+        }
+    }
+
+    public void pdvApiExecuteUpdateAccount(PdvApiRequestParams requestParams){
+
+        FragmentManager fm = getSupportFragmentManager();
+        updateAccountRequestFragment = (PdvApiUpdateAccountRequest) fm.findFragmentByTag(TAG_ACCOUNT_REQUEST_FRAGMENT);
+
+        // If the Fragment is non-null, then it is currently being
+        // retained across a configuration change.
+        if (updateAccountRequestFragment == null) {
+            updateAccountRequestFragment = new PdvApiUpdateAccountRequest();
+            String sRequestParams = PdvApiResults.toJsonString(requestParams);
+            fm.beginTransaction().add(updateAccountRequestFragment.newInstance(sRequestParams), TAG_ACCOUNT_REQUEST_FRAGMENT);
+        }
+
+
+    }
+
 
     private void showFABMenu(){
         isFABOpen=true;

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.ewise.moneyapp.AddInstitutionPromptsActivity"
+    tools:showIn="@layout/activity_add_institution_prompts"
+    android:fillViewport="true">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/addInstitutionPromptsLayout"
+        android:layout_margin="@dimen/ewise_horizontal_margin"
+        android:layout_alignParentBottom="false">
+
+        <WebView
+            android:id="@+id/ewise_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:layout_width="@dimen/ewise_touch_icon_size"
+                android:layout_height="@dimen/ewise_touch_icon_size"/>
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/rbanks"
+                android:id="@+id/imageInstitutionLogo" />
+
+            <TextView
+                android:text="Institution Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textInstitutionName"
+                android:textSize="@dimen/ewise_heading_text_size"
+                android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
+                android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                android:textColor="@color/coloreWiseSecondaryTextBlack" />
+
+            
+        </LinearLayout>
+
+        <TextView
+            android:text="@string/add_provider_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/addInstitutionText"
+            android:textSize="@dimen/ewise_secondary_text_size"
+            android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
+            android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+            android:textColor="@color/coloreWiseSecondaryTextBlack"
+            android:textColorLink="@color/coloreWisePrimary"
+            android:textStyle="normal|bold|italic" />
+
+        <View style="@style/eWiseHorizontalDivider"
+            android:visibility="gone"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ewise_primary_text_size"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/linearlayoutGetPromptsMsg"
+            android:layout_gravity="center">
+
+            <View
+                android:layout_width="@dimen/ewise_touch_icon_size"
+                android:layout_height="@dimen/ewise_touch_icon_size"/>
+
+            <ProgressBar
+                style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Inverse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBarGetPrompts"
+                android:elevation="24dp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:text="@string/pdvapi_get_prompts_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textGetPromptsMsg"
+                android:textSize="@dimen/ewise_primary_text_size"
+                android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
+                android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                android:textColor="@color/coloreWisePrimary" />
+
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ewise_primary_text_size"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+            android:text="@string/add_provider_button_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnAddProvider"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/coloreWiseMainTextWhite" />
+
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+
+
+</android.support.v4.widget.NestedScrollView>
