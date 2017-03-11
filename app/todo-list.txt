@@ -1,26 +1,33 @@
 WORK IN PROGRESS
-10sep16 - stopped here:
-Tracing loading of transactioncardlist notification loading.
-
+Last Updated on 12/3/17
+1. todo: PdvApiResults - tosjon string is not serialising Pdv response objects??
+2. todo: don't go to other activities when request is in progress
+3. todo: build "ProvidersFragment" to display the currently added providers list, request queue and results
+4. todo: Implement UpdateTransactions()
+5. todo: refresh AcocuntsFragment when the response is receive from UpdateAccounts
+4. todo: retrieve the data into AccountsFragment from the PDV
+5. todo: retrieve the data into AccountDetails activity from the PDV
+6. todo: Implement OTP / captcha (Verify process)
+7. todo: Integrate Chromium / crosswalk version of the PDV library (SDK Library 0.5.x)
 
 
 FEATURES
 
 TODO - 1. use "Loaders" for Asynchronous data access from fragments
 TODO  - 2. Use picasso for image loading
-TODO  - 3. Implement Account Fragment
-TODO  -  3.1.    Main page account cards
-TODO  -  3.2.    Account details & transactions page
+DONE  - 3. Implement Account Fragment
+DONE  -  3.1.    Main page account cards
+DONE  -  3.2.    Account details & transactions page
 TODO  - 4. Implement Budget Fragment
 TODO  - 5. Implement Goals Fragment
 TODO  - 6. Implement Peers Fragment
-
 
 
 BUGS
 TODO - Account Card total has no decimals
 
 REFACTORING
+todo -
 
 Error handling
 TODO - Implement uncaught exception handling

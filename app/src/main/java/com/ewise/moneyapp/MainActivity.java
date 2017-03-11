@@ -49,7 +49,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements AccountsFragment.OnFragmentInteractionListener, PdvConnectivityCallback, PdvApiUpdateAccountRequest.PdvApiUpdateAccountResponseCallbacks, PdvApiRequestCallback
+        implements AccountsFragment.OnFragmentInteractionListener, PdvConnectivityCallback, PdvApiRequestCallback
 {
 
     /**
@@ -96,8 +96,8 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-    PdvApiUpdateAccountRequest updateAccountRequestFragment;
-    private static final String TAG_ACCOUNT_REQUEST_FRAGMENT = "update_account_request_fragment";
+    //PdvApiUpdateAccountRequest updateAccountRequestFragment;
+    //private static final String TAG_ACCOUNT_REQUEST_FRAGMENT = "update_account_request_fragment";
 
     private Runnable        pdvApiRequestRunnable = new Runnable() {
         @Override
@@ -108,14 +108,13 @@ public class MainActivity extends AppCompatActivity
                 PdvApiRequestParams requestParams = app.pdvApiRequestQueue.getNextRequestToExecute();
                 if (requestParams!=null  && pdvAcaServiceIsBound){
                     Log.d("PdvApiRequestRunnable", "request available to execute");
-                    app.pdvApiRequestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_INPROGRESS);
                     pdvApiExecuteRequest(requestParams);
                     setDataFetchingStatus (true);
                 }
             }
             else
             {
-                setDataFetchingStatus(true);//if we come back from 
+                setDataFetchingStatus(true);
             }
             pdvApiRequestHandler.postDelayed(pdvApiRequestRunnable, 5000); //run every 5 seconds
         }
@@ -212,13 +211,18 @@ public class MainActivity extends AppCompatActivity
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MoneyAppApp app = (MoneyAppApp)getApplication();
 
-                if (((MoneyAppApp)getApplication()).loggedOnToPdv == true){
+                if (((MoneyAppApp)getApplication()).loggedOnToPdv && !app.pdvApiRequestQueue.isRequestInProgress()){
                         startActivityForResult(new Intent(MainActivity.this, AddInstitutionActivity.class), MoneyAppApp.ADD_PROVIDER_LIST_REQUEST);
+                }
+                else if (!app.pdvApiRequestQueue.isRequestInProgress())
+                {
+                    Toast.makeText(getApplicationContext(), R.string.pdvapi_not_loggedin, Toast.LENGTH_LONG).show();
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), R.string.pdvapi_not_loggedin, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.pdvapi_request_inprogress, Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -431,68 +435,6 @@ public class MainActivity extends AppCompatActivity
         //not used
     }
 
-    //Begin: Implement PdvApiUpdateAccountRequest.PdvApiUpdateAccountResponseCallbacks
-    @Override
-    public void onPdvApiUpdateAccountResponsePrompts(PdvApiResults results){
-        //todo: Handle OTP and Captcha prompts
-
-    }
-
-    @Override
-    public void onPdvApiUpdateAccountResponseData(PdvApiResults results){
-        //todo: Handle accounts "data" response
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), "UpdateAccounts() data received", Toast.LENGTH_SHORT);
-            }
-        });
-
-
-    }
-
-    @Override
-    public void onPdvApiUpdateAccountResponseComplete(PdvApiResults results){
-        //todo: Handle accounts "complete" response
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), "UpdateAccounts() complete received", Toast.LENGTH_SHORT);
-            }
-        });
-
-        MoneyAppApp app = (MoneyAppApp)getApplication();
-        app.pdvApiRequestQueue.setRequestResults(results);
-        getSupportFragmentManager().beginTransaction().remove(updateAccountRequestFragment).commit();
-        updateAccountRequestFragment = null;
-
-    }
-
-    @Override
-    public void onPdvApiUpdateAccountResponseAllComplete(PdvApiResults results){
-        //todo: Handle accounts "all complete" response
-
-        //todo: execute next request, since this request is complete
-        MoneyAppApp app = (MoneyAppApp)getApplication();
-
-        //update the status of the current request
-        app.pdvApiRequestQueue.setRequestResults(results);
-        getSupportFragmentManager().beginTransaction().remove(updateAccountRequestFragment).commit();
-        updateAccountRequestFragment = null;
-    }
-
-    @Override
-    public void onPdvApiUpdateAccountResponseError(PdvApiResults results){
-        //todo: Handle accounts "error" response
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), "UpdateAccounts() error received", Toast.LENGTH_SHORT);
-            }
-        });
-
-    }
-    //End: Implement PdvApiUpdateAccountRequest.PdvApiUpdateAccountResponseCallbacks
 
     @Override
     public void executeRequest(PdvApiRequestParams requestParams){
@@ -509,19 +451,6 @@ public class MainActivity extends AppCompatActivity
 
     public void pdvApiExecuteUpdateAccount(PdvApiRequestParams requestParams){
 
-        /*  todo: remove old code
-        FragmentManager fm = getSupportFragmentManager();
-        updateAccountRequestFragment = (PdvApiUpdateAccountRequest) fm.findFragmentByTag(TAG_ACCOUNT_REQUEST_FRAGMENT);
-
-        // If the Fragment is non-null, then it is currently being
-        // retained across a configuration change.
-        if (updateAccountRequestFragment == null) {
-            updateAccountRequestFragment = new PdvApiUpdateAccountRequest();
-            String sRequestParams = PdvApiResults.toJsonString(requestParams);
-            Log.d("pdvApiExecuteUpdate..", "about to start updateAccountRequestFragment");
-            fm.beginTransaction().add(updateAccountRequestFragment.newInstance(sRequestParams), TAG_ACCOUNT_REQUEST_FRAGMENT);
-        }
-        */
 
         if (pdvAcaServiceIsBound && pdvAcaBoundService!=null){
             PdvApi pdvApi = ((MoneyAppApp)getApplication()).getPdvApi();
@@ -640,6 +569,11 @@ public class MainActivity extends AppCompatActivity
                 //return AccountFragment.newInstance (position + 1);
                 return AccountsFragment_.newInstance();
             }
+            else if (position == 4){
+                //todo: return the providers fragment
+                return ProvidersFragment.newInstance(position);
+
+            }
             else {
                 return PlaceholderFragment.newInstance(position + 1);
             }
@@ -662,6 +596,8 @@ public class MainActivity extends AppCompatActivity
                     return getString(R.string.section_name_goals);
                 case 3:
                     return getString(R.string.section_name_peers);
+                case 4:
+                    return getString(R.string.section_name_providers);
             }
             return null;
         }

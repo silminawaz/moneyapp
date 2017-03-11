@@ -80,7 +80,6 @@ public class AccountsObjectItemView extends RecyclerViewItemLayoutView<AccountsO
         this.accountlayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-
                 startAccountDetailsActivity (dataObject);
             }
         });
@@ -97,15 +96,19 @@ public class AccountsObjectItemView extends RecyclerViewItemLayoutView<AccountsO
         //TODO: We need both account and the related transactions from the Transaction response for this account... load it up here,
         //      and use gson to serialise and send the data into the activity then retrieve it and render inside the activity.
 
-
-        String accountObjJson = account.toString();
-        Intent intent= new Intent(getContext(), AccountDetailsActivity_.class);
-        intent.putExtra("com.wise.moneyapp.data.PdvAccountResponse.AccountsObject", accountObjJson);
-
-        //TODO: do async data loading of transactions
-
         Activity activity = (Activity) this.getContext();
-        activity.startActivityForResult(intent, MoneyAppApp.ACCOUNT_DETAILS_ACTIVITY );
+        MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+        if (!((MoneyAppApp) activity.getApplication()).pdvApiRequestQueue.isRequestInProgress()){
+            String accountObjJson = account.toString();
+            Intent intent= new Intent(getContext(), AccountDetailsActivity_.class);
+            intent.putExtra("com.wise.moneyapp.data.PdvAccountResponse.AccountsObject", accountObjJson);
+            activity.startActivityForResult(intent, MoneyAppApp.ACCOUNT_DETAILS_ACTIVITY );
+        }
+        else
+        {
+            Toast.makeText(this.getContext(), R.string.pdvapi_request_inprogress, Toast.LENGTH_SHORT);
+        }
+
     }
 
 

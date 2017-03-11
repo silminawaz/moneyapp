@@ -50,21 +50,20 @@ public class PdvAcaBoundService extends Service {
                 {
                     //call the API
                     Log.d("UpdateAccountRequest", "Starting runPdvUpdateAccountsNew runnable");
+                    final PdvApiRequestQueue requestQueue = ((MoneyAppApp)getApplication()).pdvApiRequestQueue;
+                    requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_INPROGRESS);
                     pdvApi.updateAccounts(requestParams.updateParams.instIds, new PdvApiCallback.PdvApiAccountsCallback() {
                         @Override
                         public void result(AccountsResponse accountsResponse) {
-                            PdvApiRequestQueue requestQueue = ((MoneyAppApp)getApplication()).pdvApiRequestQueue;
                             if (accountsResponse.getStatus().equals(StatusCode.STATUS_DATA)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = data");
                                 results.accounts = accountsResponse;
                                 results.callBackData = true;
-                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_INPROGRESS);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_DATA, requestParams, results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = complete");
                                 results.accounts = accountsResponse;
                                 results.callBackCompleted = true;
-                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_INPROGRESS);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_COMPLETE, requestParams, results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_ALL_COMPLETE)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = all complete");
@@ -79,7 +78,6 @@ public class PdvAcaBoundService extends Service {
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = verify");
                                 results.callBackPrompts = true;
-                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_INPROGRESS);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_VERIFY, requestParams, results);
                             }
                         }

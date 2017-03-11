@@ -137,6 +137,7 @@ public class AccountsFragment extends Fragment  {
 
     /** Called when the user clicks the Send button */
     public void sendMessage(View view) {
+
         Intent intent= new Intent(this.getActivity(), AccountDetailsActivity.class);
         String message = "Hello world";
         intent.putExtra("com.wise.moneyapp.MESSAGE", message);

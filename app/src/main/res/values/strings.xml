@@ -5,6 +5,7 @@
     <string name="section_name_spending">Budgets</string>
     <string name="section_name_goals">Goals</string>
     <string name="section_name_peers">Peers</string>
+    <string name="section_name_providers">Providers</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="section_format_2">Add institution section: %1$d</string>
 
@@ -94,6 +95,7 @@
     <string name="pdvapi_postlogin_message">Login status:</string>
     <string name="pdvapi_login_failed_message">Login Failed</string>
     <string name="pdvapi_not_loggedin">Not yet logged in to the Personal Data Vault</string>
+    <string name="pdvapi_request_inprogress">A request is currently in progress, please wait&#8230;</string>
     <string name="pdvapi_login_success_message">Login Success</string>
     <string name="pdvapi_not_connected">Not connected to PDV Server, check your internet connection</string>
     <string name="pdvapi_get_institutions_message">Retrieving available institutions &#8230;</string>
