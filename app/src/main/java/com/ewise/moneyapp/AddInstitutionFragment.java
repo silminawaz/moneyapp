@@ -4,8 +4,6 @@ package com.ewise.moneyapp;
  * Created by SilmiNawaz on 20/8/16.
  */
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,12 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.provider.Group;
 import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
 import com.ewise.android.pdv.api.model.provider.Institution;
-import com.ewise.android.pdv.api.model.provider.Providers;
-import com.ewise.moneyapp.Utils.DataLoadCallBackInterface;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 
 import java.util.ArrayList;

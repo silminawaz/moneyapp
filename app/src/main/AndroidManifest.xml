@@ -44,9 +44,6 @@
         </activity>
 
         <service
-            android:name=".service.PdvAcaIntentService"
-            android:exported="false" />
-        <service
             android:name=".service.PdvAcaBoundService"
             android:enabled="true"
             android:exported="true"></service>

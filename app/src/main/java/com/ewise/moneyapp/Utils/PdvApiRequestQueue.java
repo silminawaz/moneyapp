@@ -11,21 +11,13 @@ import java.util.List;
 /**
  * Created by SilmiNawaz on 8/3/17.
  */
-public class PdvApiRequestQueue implements PdvApiGetNextRequestFromQueue {
+public class PdvApiRequestQueue {
     private static String TAG = "PdvApiRequestQueue";
 
     private List<PdvApiRequestParams> queue;
 
     public PdvApiRequestQueue (){
         queue = new ArrayList<>();
-    }
-
-    @Override
-    public void executeNextRequest(PdvApiRequestCallback callback){
-        //call this when "all complete" is received for any Update API call
-        if (!isRequestInProgress()) {
-            callback.executeRequest(getNextRequestToExecute());
-        }
     }
 
 

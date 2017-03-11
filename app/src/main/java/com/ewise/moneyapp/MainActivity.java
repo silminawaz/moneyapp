@@ -36,11 +36,8 @@ import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.moneyapp.Utils.PdvApiName;
-import com.ewise.moneyapp.Utils.PdvApiRequestCallback;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiResults;
-import com.ewise.moneyapp.Utils.PdvApiStatus;
-import com.ewise.moneyapp.Utils.PdvApiUpdateAccountRequest;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
@@ -49,7 +46,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements AccountsFragment.OnFragmentInteractionListener, PdvConnectivityCallback, PdvApiRequestCallback
+        implements AccountsFragment.OnFragmentInteractionListener, PdvConnectivityCallback
 {
 
     /**
@@ -435,11 +432,6 @@ public class MainActivity extends AppCompatActivity
         //not used
     }
 
-
-    @Override
-    public void executeRequest(PdvApiRequestParams requestParams){
-        //todo: use the requestParams to call the next request - this is executed sequentially via the queue
-    }
 
     //execute this method when there is anything in the request queue
     public void pdvApiExecuteRequest(PdvApiRequestParams requestParams){
