@@ -46,6 +46,7 @@ public class PdvApiUpdateAccountRequest extends Fragment {
      */
     @Override
     public void onAttach(Context context) {
+        Log.d("UpdateAccountRequest", "onAttach()");
         super.onAttach(context);
         callbacks = (PdvApiUpdateAccountResponseCallbacks) context;
         results = new PdvApiResults();
@@ -58,6 +59,7 @@ public class PdvApiUpdateAccountRequest extends Fragment {
      */
     @Override
     public void onDetach() {
+        Log.d("UpdateAccountRequest", "onDetach()");
         super.onDetach();
         callbacks = null;
     }
@@ -66,6 +68,7 @@ public class PdvApiUpdateAccountRequest extends Fragment {
      * Returns a new instance of this fragment for the given request parameters
      */
     public static PdvApiUpdateAccountRequest newInstance(String requestParamsString) {
+        Log.d("UpdateAccountRequest", "newInstance()");
         PdvApiUpdateAccountRequest fragment = new PdvApiUpdateAccountRequest();
         Bundle args = new Bundle();
         args.putString(ARG_REQUEST_PARAMS, requestParamsString);
@@ -80,7 +83,11 @@ public class PdvApiUpdateAccountRequest extends Fragment {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d("UpdateAccountRequest", "Start onCreate() - before super.onCreate()");
+
         super.onCreate(savedInstanceState);
+
+        Log.d("UpdateAccountRequest", "Start onCreate() - after super.onCreate()");
 
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
@@ -98,25 +105,31 @@ public class PdvApiUpdateAccountRequest extends Fragment {
                 try
                 {
                     //call the API
+                    Log.d("UpdateAccountRequest", "Starting runPdvUpdateAccountsNew runnable");
                     MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
                     app.pdvApi.updateAccounts(requestParams.updateParams.instIds, new PdvApiCallback.PdvApiAccountsCallback() {
                         @Override
                         public void result(AccountsResponse accountsResponse) {
                             if (accountsResponse.getStatus().equals(StatusCode.STATUS_DATA)) {
+                                Log.d("UpdateAccountRequest", "updateAccounts() response = data");
                                 results.accounts = accountsResponse;
                                 results.callBackData = true;
                                 callbacks.onPdvApiUpdateAccountResponseData(results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
+                                Log.d("UpdateAccountRequest", "updateAccounts() response = complete");
                                 results.accounts = accountsResponse;
                                 results.callBackCompleted = true;
                                 callbacks.onPdvApiUpdateAccountResponseComplete(results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_ALL_COMPLETE)) {
+                                Log.d("UpdateAccountRequest", "updateAccounts() response = all complete");
                                 results.callBackAllComplete = true;
                                 callbacks.onPdvApiUpdateAccountResponseAllComplete(results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_ERROR)) {
+                                Log.d("UpdateAccountRequest", "updateAccounts() response = error");
                                 results.callBackError = true;
                                 callbacks.onPdvApiUpdateAccountResponseError(results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
+                                Log.d("UpdateAccountRequest", "updateAccounts() response = verify");
                                 results.callBackPrompts = true;
                                 callbacks.onPdvApiUpdateAccountResponsePrompts(results);
                             }

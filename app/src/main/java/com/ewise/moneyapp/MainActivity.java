@@ -1,15 +1,22 @@
 package com.ewise.moneyapp;
 
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +42,7 @@ import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvApiStatus;
 import com.ewise.moneyapp.Utils.PdvApiUpdateAccountRequest;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
+import com.ewise.moneyapp.service.PdvAcaBoundService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +75,27 @@ public class MainActivity extends AppCompatActivity
     public PdvApiResults    pdvApiResults;
     Handler                 handler = new Handler();
     Handler                 pdvApiRequestHandler = new Handler();
+
+    PdvAcaBoundService pdvAcaBoundService;
+    boolean pdvAcaServiceIsBound = false;
+
+    private ServiceConnection pdvAcaServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            PdvAcaBoundService.PdvAcaServiceBinder binder = (PdvAcaBoundService.PdvAcaServiceBinder) iBinder;
+            pdvAcaBoundService = binder.getService();
+            pdvAcaServiceIsBound = true;
+            Log.d("MainActivity", "PdvAcaBoundService -> onServiceConnected()");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            pdvAcaServiceIsBound = false;
+            Log.d("MainActivity", "PdvAcaBoundService -> onServiceDisconnected()");
+
+        }
+    };
+
     PdvApiUpdateAccountRequest updateAccountRequestFragment;
     private static final String TAG_ACCOUNT_REQUEST_FRAGMENT = "update_account_request_fragment";
 
@@ -75,14 +104,43 @@ public class MainActivity extends AppCompatActivity
         public void run() {
             MoneyAppApp app = (MoneyAppApp) getApplication();
             if (!app.pdvApiRequestQueue.isRequestInProgress()){
+                Log.d("PdvApiRequestRunnable", "no requests in progress");
                 PdvApiRequestParams requestParams = app.pdvApiRequestQueue.getNextRequestToExecute();
-                if (requestParams!=null){
+                if (requestParams!=null  && pdvAcaServiceIsBound){
+                    Log.d("PdvApiRequestRunnable", "request available to execute");
                     app.pdvApiRequestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_INPROGRESS);
                     pdvApiExecuteRequest(requestParams);
                     setDataFetchingStatus (true);
                 }
             }
+            else
+            {
+                setDataFetchingStatus(true);//if we come back from 
+            }
             pdvApiRequestHandler.postDelayed(pdvApiRequestRunnable, 5000); //run every 5 seconds
+        }
+    };
+
+    private BroadcastReceiver pdvApiCallbackMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String apiName = intent.getStringExtra("pdvApiName");
+            String callbackStatus = intent.getStringExtra("callbackStatus");
+            String sRequestParams = intent.getStringExtra("requestParams");
+            String sResults = intent.getStringExtra("results");
+
+            Log.d ("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() apiName:" + apiName);
+            Log.d ("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() callbackStatus:" + callbackStatus);
+            Log.d ("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() requestParams:" + sRequestParams);
+            Log.d ("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() results:" + sResults);
+
+            //todo: process the results
+
+            //reset data fetching if there isn't any more requests
+            MoneyAppApp app = (MoneyAppApp) getApplication();
+            if (!app.pdvApiRequestQueue.isRequestInProgress()){
+                setDataFetchingStatus(false);
+            }
         }
     };
 
@@ -173,6 +231,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiCallbackMessageReceiver,
+                new IntentFilter("pdv-aca-bound-service-callback"));
+
         MoneyAppApp myApp = ((MoneyAppApp) getApplication());
         pdvApiResults = new PdvApiResults();
         PdvApi pdvApi = myApp.getPdvApi();
@@ -191,6 +252,20 @@ public class MainActivity extends AppCompatActivity
             generalExceptionHandler(e.getClass().getName(), e.getMessage(), sMethod, sObjString);
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent= new Intent(this, PdvAcaBoundService.class);
+        bindService(intent, pdvAcaServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(pdvAcaServiceConnection);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -427,12 +502,14 @@ public class MainActivity extends AppCompatActivity
     //execute this method when there is anything in the request queue
     public void pdvApiExecuteRequest(PdvApiRequestParams requestParams){
         if (requestParams.pdvApiName.equals(PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS)){
+            Log.d("pdvApiExecuteRequest()", "About to Update accounts with new credentials");
             pdvApiExecuteUpdateAccount(requestParams);
         }
     }
 
     public void pdvApiExecuteUpdateAccount(PdvApiRequestParams requestParams){
 
+        /*  todo: remove old code
         FragmentManager fm = getSupportFragmentManager();
         updateAccountRequestFragment = (PdvApiUpdateAccountRequest) fm.findFragmentByTag(TAG_ACCOUNT_REQUEST_FRAGMENT);
 
@@ -441,7 +518,14 @@ public class MainActivity extends AppCompatActivity
         if (updateAccountRequestFragment == null) {
             updateAccountRequestFragment = new PdvApiUpdateAccountRequest();
             String sRequestParams = PdvApiResults.toJsonString(requestParams);
+            Log.d("pdvApiExecuteUpdate..", "about to start updateAccountRequestFragment");
             fm.beginTransaction().add(updateAccountRequestFragment.newInstance(sRequestParams), TAG_ACCOUNT_REQUEST_FRAGMENT);
+        }
+        */
+
+        if (pdvAcaServiceIsBound && pdvAcaBoundService!=null){
+            PdvApi pdvApi = ((MoneyAppApp)getApplication()).getPdvApi();
+            pdvAcaBoundService.updateAccounts(pdvApi, requestParams);
         }
 
 
