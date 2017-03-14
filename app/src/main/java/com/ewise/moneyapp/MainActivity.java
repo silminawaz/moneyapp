@@ -28,6 +28,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.animation.Animator;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ewise.android.pdv.api.PdvApi;
@@ -73,8 +74,8 @@ public class MainActivity extends AppCompatActivity
     Handler                 handler = new Handler();
     Handler                 pdvApiRequestHandler = new Handler();
 
-    PdvAcaBoundService pdvAcaBoundService;
-    boolean pdvAcaServiceIsBound = false;
+    public PdvAcaBoundService pdvAcaBoundService;
+    public boolean pdvAcaServiceIsBound = false;
 
     private ServiceConnection pdvAcaServiceConnection = new ServiceConnection() {
         @Override
@@ -106,12 +107,16 @@ public class MainActivity extends AppCompatActivity
                 if (requestParams!=null  && pdvAcaServiceIsBound){
                     Log.d("PdvApiRequestRunnable", "request available to execute");
                     pdvApiExecuteRequest(requestParams);
-                    setDataFetchingStatus (true);
+                    setDataFetchingStatus (true, null);
+                }
+                else
+                {
+                    setDataFetchingStatus(false, null);
                 }
             }
             else
             {
-                setDataFetchingStatus(true);
+                setDataFetchingStatus(true, null);
             }
             pdvApiRequestHandler.postDelayed(pdvApiRequestRunnable, 5000); //run every 5 seconds
         }
@@ -135,24 +140,29 @@ public class MainActivity extends AppCompatActivity
             //reset data fetching if there isn't any more requests
             MoneyAppApp app = (MoneyAppApp) getApplication();
             if (!app.pdvApiRequestQueue.isRequestInProgress()){
-                setDataFetchingStatus(false);
+                setDataFetchingStatus(false, null);
             }
         }
     };
 
 
-    public void setDataFetchingStatus(final boolean status){
+    public void setDataFetchingStatus(final boolean status, final String message){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (status==true){
                     findViewById(R.id.linearLayoutFetchingData).setVisibility(View.VISIBLE);
                     ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_refresh_material_white);
+                    if (message!=null){
+                        ((TextView)findViewById(R.id.progressBarText)).setText(message);
+                    }
+                    else{
+                        ((TextView)findViewById(R.id.progressBarText)).setText(getString(R.string.pdv_api_fetching_data));
+                    }
                 }
                 else{
                     findViewById(R.id.linearLayoutFetchingData).setVisibility(View.GONE);
                 }
-
             }
         });
     }
@@ -182,6 +192,7 @@ public class MainActivity extends AppCompatActivity
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -315,6 +326,7 @@ public class MainActivity extends AppCompatActivity
                 //String username = myApp.getIMEI();//todo: get imei number by allowing READ_PHONE_STATE permission
                 //todo: remove hardcoded username (i.e. for production we need to allow a login user name on first time login and Persistent PIN for access)
                 //      login first time should prevent an existing login from being re-used without proper authorisation - i.e. an authentication mechanism is needed - maybe a login TOKEN
+                setDataFetchingStatus(true, getString(R.string.pdv_api_login_to_pdv));
                 String username = "silmi";
                 final MoneyAppApp myApp = (MoneyAppApp)getApplication();
                 final PdvApi pdvApi = myApp.getPdvApi();
@@ -373,6 +385,10 @@ public class MainActivity extends AppCompatActivity
         msg = msg + " - setUser(): " + pdvApiResults.setUserResponse.getStatus() + " : " + pdvApiResults.setUserResponse.getMessage() + " - initialise(): " + pdvApiResults.initialiseStatus;
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
         ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_connected_material_white);//connected
+
+        //if login is successful get the user profile
+        setDataFetchingStatus(true, getString(R.string.pdv_api_fetch_user_profile));
+        ((MoneyAppApp)getApplication()).pdvGetUserProfile(this);
     }
 
     public void notifyPdvLoginFail(){
@@ -414,12 +430,25 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onGetInstitutionsFail(PdvApiResults results){
-        //not used
+        final String msg = getString(R.string.pdvapi_on_getinstitution_fail_message);
+        String.format(msg, results.userProfile.getMessage());
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                displayLongToastMessage(msg);
+            }
+        });
     }
 
     @Override
     public void onGetInstitutionsSuccess(PdvApiResults results){
-        //not used
+        setDataFetchingStatus(false, null);
+        ((MoneyAppApp)getApplication()).checkConnectivity(this, MoneyAppApp.DEFAULT_SWAN_HOST, this);
+
+        //notify reloads for institutions
+        Intent intent = new Intent("pdv-on-get-user-profile-success");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Override
@@ -432,6 +461,37 @@ public class MainActivity extends AppCompatActivity
         //not used
     }
 
+    @Override
+    public void onGetUserProfileSuccess(PdvApiResults results){
+
+
+        //load institution data for later use
+        setDataFetchingStatus(true, getString(R.string.pdv_api_fetch_institutions));
+        ((MoneyAppApp)getApplication()).pdvGetInstitutions(this);
+    }
+
+    @Override
+    public void onGetUserProfileFail(PdvApiResults results){
+
+        final String msg = getString(R.string.pdvapi_on_getuserprofile_fail_message);
+        String.format(msg, results.userProfile.getMessage());
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                displayLongToastMessage(msg);
+            }
+        });
+    }
+
+
+    public void displayLongToastMessage(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_LONG);
+    }
+
+    public void displayShortToastMessage(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT);
+    }
 
     //execute this method when there is anything in the request queue
     public void pdvApiExecuteRequest(PdvApiRequestParams requestParams){
@@ -439,6 +499,7 @@ public class MainActivity extends AppCompatActivity
             Log.d("pdvApiExecuteRequest()", "About to Update accounts with new credentials");
             pdvApiExecuteUpdateAccount(requestParams);
         }
+        //todo: add sync with updateTransactions here
     }
 
     public void pdvApiExecuteUpdateAccount(PdvApiRequestParams requestParams){
@@ -556,12 +617,12 @@ public class MainActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            if (position == 0) {
+            if (position == 2) {
                 //return the AccountFragment class
                 //return AccountFragment.newInstance (position + 1);
                 return AccountsFragment_.newInstance();
             }
-            else if (position == 4){
+            else if (position == 0){
                 //todo: return the providers fragment
                 return ProvidersFragment.newInstance(position);
 
@@ -581,15 +642,13 @@ public class MainActivity extends AppCompatActivity
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return getString(R.string.section_name_accounts);
-                case 1:
-                    return getString(R.string.section_name_spending);
-                case 2:
-                    return getString(R.string.section_name_goals);
-                case 3:
-                    return getString(R.string.section_name_peers);
-                case 4:
                     return getString(R.string.section_name_providers);
+                case 1:
+                    return getString(R.string.section_name_networth);
+                case 2:
+                    return getString(R.string.section_name_accounts);
+                case 3:
+                    return getString(R.string.section_name_spending);
             }
             return null;
         }

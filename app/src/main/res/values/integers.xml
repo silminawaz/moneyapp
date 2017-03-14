@@ -5,4 +5,8 @@
     <integer name="ewise_chart_text_size">10</integer>
     <integer name="ewise_chart_legend_text_size">12</integer>
     <integer name="ewise_default_linechart_line_width">2</integer>
+
+    <integer name="ewise_instid_instcode_begin_index">5</integer>
+    <integer name="ewise_instid_instcode_end_index">8</integer>
+
 </resources>

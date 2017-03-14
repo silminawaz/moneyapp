@@ -17,6 +17,9 @@ public enum PdvApiName {
     DO_TRANSFER ("do_transfer"),
     SET_TRANSFER_PROMPTS ("set_transfer_prompts"),
     GET_LOGIN_URLS ("get_login_urls"),
+    GET_USER_PROFILE ("get_user_profile"),
+    GET_PROMPTS ("get_prompts"),
+    GET_INSTITUTIONS ("get_institutions"),
     STOP ("stop");
 
     private final String stringValue;

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/provider_menu_refresh"
+        android:title="@string/provider_menu_refresh_title"
+        android:icon="@drawable/ic_sync"/>
+
+    <item android:id="@+id/provider_menu_edit"
+        android:title="@string/provider_menu_edit_title"
+        android:icon="@drawable/ic_action_edit"/>
+
+    <item android:id="@+id/provider_menu_delete"
+        android:title="@string/provider_menu_delete_title"
+        android:icon="@drawable/ic_delete"/>
+
+</menu>

@@ -262,6 +262,17 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
     }
 
+    @Override
+    public void onGetUserProfileSuccess(PdvApiResults results){
+
+    }
+
+    @Override
+    public void onGetUserProfileFail(PdvApiResults results){
+
+    }
+
+
 
 
     private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){

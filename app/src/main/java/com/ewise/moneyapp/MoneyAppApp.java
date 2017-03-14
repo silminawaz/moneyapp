@@ -22,9 +22,15 @@ import com.ewise.android.pdv.api.PdvApiImpl;
 import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
+import com.ewise.android.pdv.api.model.UserProviderEntry;
+import com.ewise.android.pdv.api.model.provider.Group;
+import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.android.pdv.api.model.provider.Providers;
 import com.ewise.android.pdv.api.model.response.GetPromptsResponse;
+import com.ewise.android.pdv.api.model.response.GetUserProfileData;
+import com.ewise.android.pdv.api.model.response.GetUserProfileResponse;
 import com.ewise.android.pdv.api.util.ConnectivityReceiver;
+import com.ewise.moneyapp.Utils.PdvApiName;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiRequestQueue;
 import com.ewise.moneyapp.Utils.PdvApiResults;
@@ -33,6 +39,8 @@ import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
 import com.rogansoft.remotelogger.DebugHelper;
 import com.rogansoft.remotelogger.RemoteLogger;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +57,7 @@ public class MoneyAppApp extends Application {
     public static final String DEFAULT_MM_HOST = "https://qa-50-wmm.ewise.com/api/";
     public static final String DEFAULT_SWAN_HOST = "https://qaswan.ewise.com/";
     public static final String EWISEDEMO = "com.ewise.android.pdv.EwiseSharedPref";
+    public static final String INSTCODE_DRAWABLE_PREFIX = "INSTCODE_";
 
     static final int ACCOUNT_DETAILS_ACTIVITY = 1;
     static final int ADD_PROVIDER_LIST_REQUEST = 2;
@@ -59,6 +68,9 @@ public class MoneyAppApp extends Application {
     public boolean loggedOnToPdv;
     public PdvConnectivityStatus pdvConnectivityStatus;
     public PdvApiRequestQueue   pdvApiRequestQueue = null;
+    public GetUserProfileData   userProfileData = null;
+    public Providers providerData = null;
+    public HashMap<String, String> instCodeToGroupMap = null;
     Handler threadHandler = new Handler();
 
     private Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler;
@@ -128,6 +140,9 @@ public class MoneyAppApp extends Application {
         loggedOnToPdv = false;
         pdvConnectivityStatus = PdvConnectivityStatus.UNKNOWN;
         pdvApiRequestQueue = new PdvApiRequestQueue();
+        userProfileData = new GetUserProfileData();
+        providerData = new Providers();
+        instCodeToGroupMap = new HashMap<String, String>();
         setupAppConfig();
 
     }
@@ -223,12 +238,16 @@ public class MoneyAppApp extends Application {
                     @Override
                     public void result(Response<Providers> response) {
                         PdvApiResults results = new PdvApiResults();
+                        results.pdvApiName = PdvApiName.GET_INSTITUTIONS;
                         results.callBackCompleted = true;
                         results.providers = response;
                         if (response.getStatus().equals(StatusCode.STATUS_SUCCESS)){
+                            providerData = results.providers.getData();
+                            updateProviderHashMap();
                             callback.onGetInstitutionsSuccess(results);
                         }
                         else {
+                            results.callBackError=true;
                             callback.onGetInstitutionsFail(results);
                         }
                     }
@@ -250,11 +269,13 @@ public class MoneyAppApp extends Application {
                     @Override
                     public void result(GetPromptsResponse getPromptsResponse) {
                         PdvApiResults results = new PdvApiResults();
+                        results.pdvApiName = PdvApiName.GET_PROMPTS;
                         results.callBackCompleted = true;
                         results.prompts = getPromptsResponse;
                         if (results.prompts.getStatus().equals(StatusCode.STATUS_SUCCESS)) {
                             callback.onGetPromptsSuccess(results);
                         } else {
+                            results.callBackError=true;
                             callback.onGetPromptsFail(results);
                         }
                     }
@@ -265,9 +286,135 @@ public class MoneyAppApp extends Application {
         new Thread (runPdvGetPrompts).start();
     }
 
+    public void pdvGetUserProfile (final PdvConnectivityCallback callback) {
+        Log.d(TAG, "Calling pdvGetUserProfile()");
+
+        Runnable runPdvGetUserProfiles = new Runnable() {
+            @Override
+            public void run() {
+                pdvApi.getUserProfile(new PdvApiCallback.PdvApiGetUserProfileCallback() {
+                    @Override
+                    public void result(GetUserProfileResponse getUserProfileResponse) {
+                        PdvApiResults results = new PdvApiResults();
+                        results.pdvApiName = PdvApiName.GET_USER_PROFILE;
+                        results.callBackCompleted=true;
+                        results.userProfile = getUserProfileResponse;
+                        if (results.userProfile.getStatus().equals(StatusCode.STATUS_SUCCESS)){
+                            userProfileData.setUserprofile(results.userProfile.getData().getUserprofile());
+                            callback.onGetUserProfileSuccess(results);
+                        }
+                        else {
+                            callback.onGetUserProfileFail(results);
+                        }
+                    }
+                });
+            }
+        };
+
+        new Thread (runPdvGetUserProfiles).start();
+    }
 
 
+    public void updateProviderHashMap(){
+        instCodeToGroupMap.clear();
+        for (Group group : providerData.getGroups()){
+            for (Institution institution : group.getInstitutions()){
+                instCodeToGroupMap.put(institution.getInstCode(), group.getGroupId());
+            }
+        }
+    }
 
+    //get InstCode from InstId "S101_1234_XXXXXXX"
+    public String getInstCodeFromInstId(String instId){
+        if (instId.length() > getResources().getInteger(R.integer.ewise_instid_instcode_end_index)+1){
+            String instCode = instId.substring(getResources().getInteger(R.integer.ewise_instid_instcode_begin_index),
+                    getResources().getInteger(R.integer.ewise_instid_instcode_end_index)+1);
+            return instCode;
+        }
+        return null;
+    }
+
+    public String getProviderGroupId(String instId){
+
+        String instCode = getInstCodeFromInstId(instId);
+        if (instCode!=null) {
+            //look for institution code in hashmap
+            String groupId = instCodeToGroupMap.get(instCode);
+            return groupId;
+        }
+        return null;
+    }
+
+    public int getInstitutionGroupIconResourceId (String instId){
+        String groupId = getProviderGroupId(instId);
+        if (groupId != null){
+            groupId = groupId.toLowerCase();
+            int resId = getResources().getIdentifier(groupId, "drawable", getPackageName());
+            if (resId == 0){
+                return R.drawable.rbanks;
+            }
+            else {
+                return resId;
+            }
+        }
+
+        return R.drawable.rbanks;
+    }
+
+    public int getInstitutionIconResourceId (String instId){
+
+        //todo: implement retrieval of all implementaiton icons from server and then map it in memory
+        //** DO NOT RETRIEVE ICONS ONE BY ONE BY INSTID FOR PERFORMANCE REASONS
+        int resId = 0;
+        //for now we just map each institution icon to "INSTCODE_9999" resource id in drawables
+        String instCode = getInstCodeFromInstId(instId);
+        if (instCode!=null){
+            String instCodeResourceName = MoneyAppApp.INSTCODE_DRAWABLE_PREFIX + instCode;
+            resId = getResources().getIdentifier(instCodeResourceName , "drawable", getPackageName());
+            if (resId==0){
+                //get the group resource id
+                resId = getInstitutionGroupIconResourceId(instId);
+            }
+        }
+        return resId;
+    }
+
+
+    public String getInstituionIdSyncStatus (String instId){
+        //find request sync
+        PdvApiRequestParams requestParams = pdvApiRequestQueue.getPendingRequestForInstitution (instId);
+        String syncStatus = getResources().getString(R.string.pdvapi_sync_status_message_ready);
+        if (requestParams!=null) {
+            switch (requestParams.pdvApiStatus) {
+                case PDV_API_STATUS_NOTSTARTED:
+                    syncStatus = getResources().getString(R.string.pdvapi_sync_status_message_not_started);
+                    break;
+                case PDV_API_STATUS_INPROGRESS:
+                    syncStatus = getResources().getString(R.string.pdvapi_sync_status_message_in_progress);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return syncStatus;
+    }
+
+
+    public void syncExistingProvider (String instId){
+        //todo: initiate the aggregation service to add accounts....
+        PdvApiRequestParams requestParams = new PdvApiRequestParams();
+        requestParams.pdvApiName = PdvApiName.UPDATE_TRANSACTIONS; //trying update accounts
+        //set requestParams
+        List<String> instIds = new ArrayList<>();
+        instIds.add(instId);
+        requestParams.updateParams.instIds = instIds;
+        requestParams.updateParams.profileId = null;
+        requestParams.updateParams.credPrompts = null;
+        pdvApiRequestQueue.add(requestParams);
+    }
+
+    //todo: remove unused code
     public static WebView WebView (Activity activity) {
         WindowManager windowManager = (WindowManager) activity.getSystemService(activity.WINDOW_SERVICE);
         final WindowManager.LayoutParams params =

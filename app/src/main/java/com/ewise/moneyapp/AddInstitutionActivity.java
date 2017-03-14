@@ -212,6 +212,17 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
         runOnUiThread(setProviderList);
 
     }
+
+    @Override
+    public void onGetUserProfileSuccess(PdvApiResults results){
+
+    }
+
+    @Override
+    public void onGetUserProfileFail(PdvApiResults results){
+
+    }
+
     //End: PdvConnectivityCallback Interface implementations
 
 

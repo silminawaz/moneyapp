@@ -5,6 +5,7 @@
     <string name="section_name_spending">Budgets</string>
     <string name="section_name_goals">Goals</string>
     <string name="section_name_peers">Peers</string>
+    <string name="section_name_networth">Networth</string>
     <string name="section_name_providers">Providers</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="section_format_2">Add institution section: %1$d</string>
@@ -12,12 +13,18 @@
     <string name="var_base_currency">SGD</string>
 
     <!-- Floating action button menu items -->
-    <string name="fab_menu_add_provider">Add accounts</string>
-    <string name="fab_menu_manage_providers">Manage accounts</string>
+    <string name="fab_menu_add_provider">Add provider</string>
+    <string name="fab_menu_manage_providers">Manage providers</string>
     <string name="fab_menu_user_profile">User profile</string>
     <string name="fab_menu_do_transfer">Move money</string>
     <string name="fab_menu_set_consent">Set permissions</string>
-
+    
+    <!-- Provider popup menu -->
+    <string name="provider_menu_title">Select action</string>
+    <string name="provider_menu_refresh_title">Sync provider</string>
+    <string name="provider_menu_edit_title">Edit provider</string>
+    <string name="provider_menu_delete_title">Delete provider</string>
+    <string name="provider_menu_stop_title">Stop sync</string>
 
     <!-- Account card (tile) labels -->
     <string name="label_account_fragment_CASH">Current and Savings</string>
@@ -88,9 +95,13 @@
 
     <string name="exception_format_string">***EXCEPTION*** encountered in ***Type*** %1$s ***Method*** %2$s ***Error*** %3$s ***Object*** %4$s</string>
 
-    <string name="title_activity_add_institution_prompts">Add Account</string>
+    <string name="title_activity_add_institution_prompts">Add Provider</string>
 
     <!-- PDVAPI related user messages -->
+    <string name="pdv_api_fetching_data">Fetching data&#8230;</string>
+    <string name="pdv_api_login_to_pdv">Logging in to PDV&#8230;</string>
+    <string name="pdv_api_fetch_user_profile">Fetching user profile&#8230;</string>
+    <string name="pdv_api_fetch_institutions">Fetching institutions&#8230;</string>
     <string name="pdvapi_prelogin_message">About to Login to PDV</string>
     <string name="pdvapi_postlogin_message">Login status:</string>
     <string name="pdvapi_login_failed_message">Login Failed</string>
@@ -100,7 +111,14 @@
     <string name="pdvapi_not_connected">Not connected to PDV Server, check your internet connection</string>
     <string name="pdvapi_get_institutions_message">Retrieving available institutions &#8230;</string>
     <string name="pdvapi_get_prompts_message">Retrieving prompts for institution&#8230;</string>
-
+    <string name="pdvapi_on_getuserprofile_fail_message">Error: Failed to retrieve user profile due to error in PDV API call %1$s</string>
+    <string name="pdvapi_on_getinstitution_fail_message">Error: Failed to retrieve institutions due to error in PDV API call %1$s</string>
+    <string name="pdvapi_sync_status_message_not_applicable">NA</string>
+    <string name="pdvapi_sync_status_message_ready">Ready to sync</string>
+    <string name="pdvapi_sync_status_message_not_started">Sync pending&#8230;</string>
+    <string name="pdvapi_sync_status_message_in_progress">Sync in progress&#8230;</string>
+    <string name="pdvapi_sync_status_message_completed">Sync completed&#8230;</string>
+    <string name="provider_credentials_not_on_device_message">Credentials not found in device</string>
 
     <string name="provider_list_retrieving_message">Retrieving&#8230;</string>
 
@@ -114,11 +132,11 @@
     <string name="title_activity_account_details">AccountDetailsActivity</string>
     <string name="title_activity_add_institution">AddInstitutionActivity</string>
 
-    <string name="add_provider_button_text">Add Account</string>
+    <string name="add_provider_button_text">Add Provider</string>
     <string name="add_provider_button_errortext"></string>
     <string name="add_provider_alert_title">Confirm adding account</string>
     <string name="add_provider_alert_message">
-        "Press OK to add Account. Press CANCEL to make changes \n\n"
+        "Press OK to add Provider. Press CANCEL to make changes \n\n"
         "You may continue to use the app while we retrieve the account"
         "details in the background. The accounts will be displayed after"
         " we have retrieved them successfully"
@@ -127,7 +145,7 @@
 
        <string name="add_provider_text">
            "Add your credentials to access online accounts from %1$s. "
-           "We ensure that we safeguard the confidentiality of your account credentials by "
+           "We ensure that we safeguard the confidentiality of your provider credentials by "
            "encrypting these credentials and safely storing them in your device's Personal Data Vault (PDV). "
            "The credentials in your PDV cannot be accessed by any third-parties including ourselves, "
            "they can only be used by this app to access your online %2$s account directly from this device."
@@ -223,7 +241,7 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="pdv_api_fetching_data">Fetching data...</string>
+
 
 
 </resources>

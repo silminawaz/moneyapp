@@ -1,7 +1,10 @@
 package com.ewise.moneyapp.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -9,6 +12,7 @@ import android.util.Log;
 
 import com.ewise.android.pdv.api.PdvApi;
 import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
+import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
 import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.moneyapp.MoneyAppApp;
@@ -31,6 +35,17 @@ public class PdvAcaBoundService extends Service {
 
     public PdvAcaBoundService() {
     }
+
+
+    public void stopPendingRequest (final PdvApi pdvApi) {
+        pdvApi.stop(new PdvApiCallback<String>() {
+            @Override
+            public void result(Response<String> response) {
+                Log.d("PDVAPI-STOP", "Stop() response: " + PdvApiResults.toJsonString(response));
+                sendBroadcastStopResults(response);
+            }
+        });
+    };
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -55,14 +70,14 @@ public class PdvAcaBoundService extends Service {
                     pdvApi.updateAccounts(requestParams.updateParams.instIds, new PdvApiCallback.PdvApiAccountsCallback() {
                         @Override
                         public void result(AccountsResponse accountsResponse) {
+                            Log.d("accountsResponse", PdvApiResults.toJsonString(accountsResponse));
+                            results.accounts = accountsResponse;
                             if (accountsResponse.getStatus().equals(StatusCode.STATUS_DATA)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = data");
-                                results.accounts = accountsResponse;
                                 results.callBackData = true;
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_DATA, requestParams, results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = complete");
-                                results.accounts = accountsResponse;
                                 results.callBackCompleted = true;
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_COMPLETE, requestParams, results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_ALL_COMPLETE)) {
@@ -122,6 +137,23 @@ public class PdvAcaBoundService extends Service {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
     }
+
+    private void sendBroadcastStopResults (Response<String> response){
+
+        String apiName = PdvApiName.STOP.toString();
+        String stringResponse = PdvApiResults.toJsonString(response);
+
+        //todo: remove debug logging
+        Log.d ("PdvAcaBoundService", "sendBroadcastMessage apiName:" + apiName);
+        Log.d ("PdvAcaBoundService", "sendBroadcastMessage stringResponse:" + stringResponse);
+
+        Intent intent = new Intent("pdv-aca-stop-callback");
+        intent.putExtra("apiName", apiName);
+        intent.putExtra("stringResponse", stringResponse);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+    }
+
 
     private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){
         String sFormat = getApplicationContext().getString(R.string.exception_format_string);
