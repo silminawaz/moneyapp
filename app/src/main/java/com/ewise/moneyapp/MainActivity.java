@@ -44,6 +44,8 @@ import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
+import org.xwalk.core.XWalkView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -258,7 +260,7 @@ public class MainActivity extends AppCompatActivity
         pdvApiResults = new PdvApiResults();
         PdvApi pdvApi = myApp.getPdvApi();
         boolean loggedOnToPdv = myApp.loggedOnToPdv;
-        myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
 
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);

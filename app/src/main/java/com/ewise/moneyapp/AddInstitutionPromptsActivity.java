@@ -29,6 +29,8 @@ import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
 
+import org.xwalk.core.XWalkView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +93,7 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
         MoneyAppApp myApp = (MoneyAppApp) getApplication();
         PdvApi pdvApi = myApp.getPdvApi();
-        myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
 

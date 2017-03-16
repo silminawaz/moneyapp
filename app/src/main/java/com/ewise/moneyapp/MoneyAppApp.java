@@ -44,6 +44,8 @@ import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
 import com.rogansoft.remotelogger.DebugHelper;
 import com.rogansoft.remotelogger.RemoteLogger;
 
+import org.xwalk.core.XWalkView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -69,7 +71,7 @@ public class MoneyAppApp extends Application {
     static final int ADD_PROVIDER_PROMPTS_REQUEST = 3;
 
     public PdvApi pdvApi;
-    public WebView pdvWebView;
+    public XWalkView pdvWebView;
     public boolean loggedOnToPdv;
     public PdvConnectivityStatus pdvConnectivityStatus;
     public PdvApiRequestQueue   pdvApiRequestQueue = null;

@@ -18,11 +18,17 @@
         android:layout_margin="@dimen/ewise_horizontal_margin"
         android:layout_alignParentBottom="false">
 
-        <WebView
-            android:id="@+id/ewise_webview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
+        <LinearLayout
+            android:layout_width="1dp"
+            android:layout_height="1dp">
+
+            <org.xwalk.core.XWalkView
+                android:id="@+id/ewise_webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
