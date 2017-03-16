@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,12 +22,14 @@ import android.widget.Toast;
 import com.ewise.android.pdv.api.PdvApi;
 import com.ewise.android.pdv.api.PdvApiImpl;
 import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
+import com.ewise.android.pdv.api.model.PromptEntry;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
 import com.ewise.android.pdv.api.model.UserProviderEntry;
 import com.ewise.android.pdv.api.model.provider.Group;
 import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.android.pdv.api.model.provider.Providers;
+import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.android.pdv.api.model.response.GetPromptsResponse;
 import com.ewise.android.pdv.api.model.response.GetUserProfileData;
 import com.ewise.android.pdv.api.model.response.GetUserProfileResponse;
@@ -34,6 +38,7 @@ import com.ewise.moneyapp.Utils.PdvApiName;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiRequestQueue;
 import com.ewise.moneyapp.Utils.PdvApiResults;
+import com.ewise.moneyapp.Utils.PdvApiStatus;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
 import com.rogansoft.remotelogger.DebugHelper;
@@ -292,22 +297,27 @@ public class MoneyAppApp extends Application {
         Runnable runPdvGetUserProfiles = new Runnable() {
             @Override
             public void run() {
-                pdvApi.getUserProfile(new PdvApiCallback.PdvApiGetUserProfileCallback() {
-                    @Override
-                    public void result(GetUserProfileResponse getUserProfileResponse) {
-                        PdvApiResults results = new PdvApiResults();
-                        results.pdvApiName = PdvApiName.GET_USER_PROFILE;
-                        results.callBackCompleted=true;
-                        results.userProfile = getUserProfileResponse;
-                        if (results.userProfile.getStatus().equals(StatusCode.STATUS_SUCCESS)){
-                            userProfileData.setUserprofile(results.userProfile.getData().getUserprofile());
-                            callback.onGetUserProfileSuccess(results);
+                try {
+                    pdvApi.getUserProfile(new PdvApiCallback.PdvApiGetUserProfileCallback() {
+                        @Override
+                        public void result(GetUserProfileResponse getUserProfileResponse) {
+                            PdvApiResults results = new PdvApiResults();
+                            results.pdvApiName = PdvApiName.GET_USER_PROFILE;
+                            results.callBackCompleted = true;
+                            results.userProfile = getUserProfileResponse;
+                            if (results.userProfile.getStatus().equals(StatusCode.STATUS_SUCCESS)) {
+                                userProfileData.setUserprofile(results.userProfile.getData().getUserprofile());
+                                callback.onGetUserProfileSuccess(results);
+                            } else {
+                                callback.onGetUserProfileFail(results);
+                            }
                         }
-                        else {
-                            callback.onGetUserProfileFail(results);
-                        }
-                    }
-                });
+                    });
+                }
+                catch (Exception e){
+                    Log.e("MoneyAppApp", "pdvGetUserProfile() - exception " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
         };
 
@@ -400,6 +410,33 @@ public class MoneyAppApp extends Application {
         return syncStatus;
     }
 
+    /* *** add a new provider **
+        Use this method to add a new provider
+     */
+    public void addNewProvider (String instCode, String instName, GetPromptsData promptsData){
+        PdvApiRequestParams requestParams = new PdvApiRequestParams();
+        requestParams.pdvApiName = PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS; //trying update accounts
+        List<String> instIds = new ArrayList<>();
+        instIds.add(promptsData.getInstId());
+        requestParams.updateParams.instIds = instIds;
+        requestParams.updateParams.profileId = null;
+        requestParams.updateParams.credPrompts = promptsData.getPrompts();
+        pdvApiRequestQueue.add(requestParams); //add this request to the queue...
+
+        //Add a temporary provider into the Local user profile list and notify the ProviderFragment to refresh
+        UserProviderEntry e = new UserProviderEntry();
+        e.setIid(promptsData.getInstId());
+        e.setUid(promptsData.getPrompts().get(0).getValue());//default new one
+        e.setDesc(instName);
+        synchronized (this) {
+            this.userProfileData.getUserprofile().add(e);
+        }
+
+        //notify the Provider Fragment to refresh itself
+        Log.d("MoneyAppApp", "addNewProvider: About to send Broadcast message pdv-api-adding-new-provider");
+        Intent intent = new Intent("pdv-api-adding-new-provider");
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
 
     public void syncExistingProvider (String instId){
         //todo: initiate the aggregation service to add accounts....
@@ -412,6 +449,21 @@ public class MoneyAppApp extends Application {
         requestParams.updateParams.profileId = null;
         requestParams.updateParams.credPrompts = null;
         pdvApiRequestQueue.add(requestParams);
+    }
+
+
+    public boolean setUserProviderMessage(String instId, Response response){
+        boolean updated = false;
+        for (UserProviderEntry e : userProfileData.getUserprofile()){
+            if (e.getIid().equals(instId)){
+                synchronized (this){
+                    e.setUid(response.getErrorType() + " : " + response.getMessage());
+                    updated = true;
+                }
+            }
+            if (updated) break;
+        }
+        return updated;
     }
 
     //todo: remove unused code

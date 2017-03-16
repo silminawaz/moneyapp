@@ -26,7 +26,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.UserProviderEntry;
+import com.ewise.moneyapp.Utils.PdvApiName;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.adapters.ProviderItemViewAdapter;
@@ -77,6 +79,13 @@ import java.util.List;
 
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(pdvApiOnStopMessageReceiver,
                 new IntentFilter("pdv-aca-stop-callback"));
+
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(pdvApiOnAddingNewProvider,
+                new IntentFilter("pdv-api-adding-new-provider"));
+
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(pdvApiCallbackMessageReceiver,
+                new IntentFilter("pdv-aca-bound-service-callback"));
+
         return rootView;
     }
 
@@ -268,9 +277,40 @@ import java.util.List;
     private BroadcastReceiver pdvApiOnStopMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            //check if an error or success was received and handle it
+            String stringResults = intent.getStringExtra("stringResults");
+            PdvApiResults results = PdvApiResults.objectFromString(stringResults, PdvApiResults.class);
+            Log.d("ProviderFragment", "Received Broadcast message pdv-aca-stop-callback");
+
             providerAdapter.updateSyncStatus();
         }
     };
 
+    private BroadcastReceiver pdvApiOnAddingNewProvider = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("ProviderFragment", "Received Broadcast message pdv-api-adding-new-provider");
+            providerAdapter.updateSyncStatus();
+        }
+    };
+
+    private BroadcastReceiver pdvApiCallbackMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String apiName = intent.getStringExtra("apiName");
+            String callbackStatus = intent.getStringExtra("callbackStatus");
+            String sRequestParams = intent.getStringExtra("requestParams");
+            String sResults = intent.getStringExtra("results");
+
+            Log.d ("ProvidersFragment", "pdvApiCallbackMessageReceiver.onReceive() apiName:" + apiName);
+            Log.d ("ProvidersFragment", "pdvApiCallbackMessageReceiver.onReceive() callbackStatus:" + callbackStatus);
+            Log.d ("ProvidersFragment", "pdvApiCallbackMessageReceiver.onReceive() requestParams:" + sRequestParams);
+            Log.d ("ProvidersFragment", "pdvApiCallbackMessageReceiver.onReceive() results:" + sResults);
+
+            //todo: process the results
+            providerAdapter.updateSyncStatus();
+
+        }
+    };
 
 }

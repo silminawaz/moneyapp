@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.UserProviderEntry;
 import com.ewise.moneyapp.MoneyAppApp;
 import com.ewise.moneyapp.R;
+import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiRequestQueue;
 
 import java.util.List;
@@ -61,6 +64,7 @@ public class ProviderItemViewAdapter extends BaseAdapter {
         ImageView providerIcon = (ImageView) convertView.findViewById(R.id.providerIcon);
         TextView providerName = (TextView) convertView.findViewById(R.id.providerName);
         TextView providerUsername = (TextView) convertView.findViewById(R.id.providerUsername);
+        TextView providerMessage = (TextView) convertView.findViewById(R.id.providerMessage);
         TextView providerSyncStatus = (TextView) convertView.findViewById(R.id.providerSyncStatus);
         ProgressBar providerSyncProgressBar = (ProgressBar) convertView.findViewById(R.id.providerSyncProgressBar);
 
@@ -73,11 +77,24 @@ public class ProviderItemViewAdapter extends BaseAdapter {
         String syncStatus = app.getInstituionIdSyncStatus(providerEntry.getIid());
         String providerUid = providerEntry.getUid();
         if (providerUid==null && !providerEntry.isFoundInDevice()){
-            providerUsername.setTextColor(Color.RED);
             providerUid = mContext.getApplicationContext().getString(R.string.provider_credentials_not_on_device_message);
             syncStatus = "";
         }
         providerUsername.setText(providerUid);
+
+        //providerMessage - display any response messages in the request queue
+        providerMessage.setText("");
+        PdvApiRequestParams p = app.pdvApiRequestQueue.getRequestForInstitution(providerEntry.getIid());
+        if (p!=null) {
+            if (p.results!=null) {
+                Response r = p.results.getResponse();
+                if (r != null) {
+                    providerMessage.setText(r.getMessage());
+                } else {
+                    providerMessage.setText("");
+                }
+            }
+        }
 
         providerIcon.setImageResource(app.getInstitutionIconResourceId(providerEntry.getIid()));
 

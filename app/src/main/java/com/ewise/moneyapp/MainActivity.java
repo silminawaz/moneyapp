@@ -35,6 +35,8 @@ import com.ewise.android.pdv.api.PdvApi;
 import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
+import com.ewise.android.pdv.api.model.consent.ConsentAppVO;
+import com.ewise.android.pdv.api.model.consent.ConsentServiceResponse;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.moneyapp.Utils.PdvApiName;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
@@ -125,7 +127,7 @@ public class MainActivity extends AppCompatActivity
     private BroadcastReceiver pdvApiCallbackMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String apiName = intent.getStringExtra("pdvApiName");
+            String apiName = intent.getStringExtra("apiName");
             String callbackStatus = intent.getStringExtra("callbackStatus");
             String sRequestParams = intent.getStringExtra("requestParams");
             String sResults = intent.getStringExtra("results");
@@ -141,6 +143,12 @@ public class MainActivity extends AppCompatActivity
             MoneyAppApp app = (MoneyAppApp) getApplication();
             if (!app.pdvApiRequestQueue.isRequestInProgress()){
                 setDataFetchingStatus(false, null);
+            }
+
+            //if this response is related to adding a new provider, we need to reload the user profile to take the new profile data from the server
+            //originally we used a temporary UserProviderEntry during adding of the new provider
+            if (apiName.equals(PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS.toString())){
+                app.pdvGetUserProfile(MainActivity.this);
             }
         }
     };
@@ -287,27 +295,32 @@ public class MainActivity extends AppCompatActivity
         //if the result from the add provider form is returned
         if ((data !=null) && (requestCode == MoneyAppApp.ADD_PROVIDER_LIST_REQUEST)){
             String jsonPromptsData = data.getStringExtra("promptsData");
+            String instCode = data.getStringExtra("instCode");
+            String instName = data.getStringExtra("instName");
 
             GetPromptsData promptsData = PdvApiResults.objectFromString(jsonPromptsData, GetPromptsData.class);
 
-            findViewById(R.id.linearLayoutFetchingData).setVisibility(View.VISIBLE);
-            ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_refresh_material_white);
-
+            setDataFetchingStatus(true, null);
 
             Log.d("MainActivity-instCode", PdvApiResults.toJsonString(promptsData));
 
-            //todo: initiate the aggregation service to add accounts....
-            PdvApiRequestParams requestParams = new PdvApiRequestParams();
-            requestParams.pdvApiName = PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS; //trying update accounts
+
             MoneyAppApp app = (MoneyAppApp) getApplication();
-            //set requestParams
+
+            app.addNewProvider(instCode, instName, promptsData);
+
+            /* todo: cleanup commented code / refactored
+            PdvApiRequestParams requestParams = new PdvApiRequestParams();
+            requestParams.pdvApiName = PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS;
             List<String> instIds = new ArrayList<>();
             Log.d("INSTID", promptsData.getInstId());
             instIds.add(promptsData.getInstId());
             requestParams.updateParams.instIds = instIds;
             requestParams.updateParams.profileId = null;
             requestParams.updateParams.credPrompts = promptsData.getPrompts();
-            app.pdvApiRequestQueue.add(requestParams); //add this request to the queue...
+            app.pdvApiRequestQueue.add(requestParams);
+            */
+
         }
     }
 
@@ -327,7 +340,7 @@ public class MainActivity extends AppCompatActivity
                 //todo: remove hardcoded username (i.e. for production we need to allow a login user name on first time login and Persistent PIN for access)
                 //      login first time should prevent an existing login from being re-used without proper authorisation - i.e. an authentication mechanism is needed - maybe a login TOKEN
                 setDataFetchingStatus(true, getString(R.string.pdv_api_login_to_pdv));
-                String username = "silmi";
+                String username = "moneyapp_silmi";
                 final MoneyAppApp myApp = (MoneyAppApp)getApplication();
                 final PdvApi pdvApi = myApp.getPdvApi();
                 pdvApi.setUser(username, new PdvApiCallback<String>() {
@@ -385,6 +398,22 @@ public class MainActivity extends AppCompatActivity
         msg = msg + " - setUser(): " + pdvApiResults.setUserResponse.getStatus() + " : " + pdvApiResults.setUserResponse.getMessage() + " - initialise(): " + pdvApiResults.initialiseStatus;
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
         ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_connected_material_white);//connected
+
+
+        //check and set consent to avoid error
+        //todo: remove this later when error is fixed! new version integrated
+        final MoneyAppApp myApp = (MoneyAppApp)getApplication();
+        final PdvApi pdvApi = myApp.getPdvApi();
+        pdvApi.getConsent(new PdvApiCallback<ConsentServiceResponse>() {
+            @Override
+            public void result(Response<ConsentServiceResponse> response) {
+                ConsentServiceResponse r = response.getData();
+                List<ConsentAppVO> consentAppVOs = r.getConsents();
+                String sAppConsentVOs = PdvApiResults.toJsonString(consentAppVOs);
+                Log.d("GETCONSENT", "consentAppVOs=" + sAppConsentVOs);
+            }
+        });
+
 
         //if login is successful get the user profile
         setDataFetchingStatus(true, getString(R.string.pdv_api_fetch_user_profile));
@@ -495,23 +524,23 @@ public class MainActivity extends AppCompatActivity
 
     //execute this method when there is anything in the request queue
     public void pdvApiExecuteRequest(PdvApiRequestParams requestParams){
+
+        PdvApi pdvApi = ((MoneyAppApp)getApplication()).getPdvApi();
+
         if (requestParams.pdvApiName.equals(PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS)){
             Log.d("pdvApiExecuteRequest()", "About to Update accounts with new credentials");
-            pdvApiExecuteUpdateAccount(requestParams);
+            if (pdvAcaServiceIsBound && pdvAcaBoundService!=null){
+                pdvAcaBoundService.updateAccounts(pdvApi, requestParams);
+            }
         }
-        //todo: add sync with updateTransactions here
+        else if (requestParams.pdvApiName.equals(PdvApiName.UPDATE_TRANSACTIONS)){
+            Log.d("pdvApiExecuteRequest()", "About to Update transactions with existing credentials");
+            if (pdvAcaServiceIsBound && pdvAcaBoundService!=null){
+                pdvAcaBoundService.updateTransactions(pdvApi, requestParams);
+            }
+        }
     }
 
-    public void pdvApiExecuteUpdateAccount(PdvApiRequestParams requestParams){
-
-
-        if (pdvAcaServiceIsBound && pdvAcaBoundService!=null){
-            PdvApi pdvApi = ((MoneyAppApp)getApplication()).getPdvApi();
-            pdvAcaBoundService.updateAccounts(pdvApi, requestParams);
-        }
-
-
-    }
 
 
     private void showFABMenu(){

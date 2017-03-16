@@ -49,6 +49,7 @@ public class PdvApiResults {
     public boolean  callBackAllComplete = false;
     public boolean  callBackPrompts = false;
     public boolean  callBackError = false;
+    public boolean  requestStopped = false;
     public boolean  timeout = false;
     private String requestUUID;
 
@@ -80,6 +81,43 @@ public class PdvApiResults {
 
     //response for updateTransactions(), restoreTransactions() APIs
     public TransactionsResponse     transactions = null;
+
+    //response for Stop() API
+    public Response<String>         stopResponse = null;
+
+    //return common response object
+    public Response getResponse (){
+        Log.d("PdvApiResults", "PdvApiResults.getResponse() - start");
+
+        Response<String> response = new Response<String>(null, null, null, null);
+
+        if (stopResponse!=null){
+            Log.d("PdvApiResults", "PdvApiResults.getResponse() - stopResponse");
+            response.setStatus(stopResponse.getStatus());
+            response.setErrorType(stopResponse.getErrorType());
+            response.setMessage(stopResponse.getMessage());
+            return response;
+        }
+
+        if (accounts!=null) {
+            Log.d("PdvApiResults", "PdvApiResults.getResponse() - accounts");
+            response.setStatus(accounts.getStatus());
+            response.setErrorType(accounts.getErrorType());
+            response.setMessage(accounts.getMessage());
+            return response;
+        }
+
+        if (transactions!=null) {
+            Log.d("PdvApiResults", "PdvApiResults.getResponse() - transactions");
+            response.setStatus(transactions.getStatus());
+            response.setErrorType(transactions.getErrorType());
+            response.setMessage(transactions.getMessage());
+            return response;
+        }
+
+        return null;
+    }
+
 
     public static String toJsonString(Object dataObject){
         Gson gson = new Gson();

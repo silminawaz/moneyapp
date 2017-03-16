@@ -13,6 +13,7 @@ import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -28,20 +29,30 @@ public class PdvApiRequestQueue {
     }
 
 
-    public synchronized void add (PdvApiRequestParams requestParams){
+    public synchronized boolean add (PdvApiRequestParams requestParams){
         //check if there is already a request pending for this institution
+        boolean addRequest = false;
+        String instId = null;
         if (requestParams.updateParams!=null) {
-            boolean addRequest = true;
             List<String> instIds = requestParams.updateParams.instIds;
             if (instIds!= null) {
-                String instId = instIds.get(0);
+                instId = instIds.get(0);
                 PdvApiRequestParams p = getPendingRequestForInstitution(instId);
                 if (p==null) {
-                    requestParams.pdvApiStatus = PdvApiStatus.PDV_API_STATUS_NOTSTARTED;
-                    queue.add(requestParams);
+                    synchronized (this) {
+                        requestParams.pdvApiStatus = PdvApiStatus.PDV_API_STATUS_NOTSTARTED;
+                        queue.add(requestParams);
+                        addRequest=true;
+                    }
                 }
             }
         }
+        if (addRequest){
+            //clear old requests that are completed
+            removeCompletedRequestForInstitution(instId);
+        }
+
+        return addRequest;
     }
 
     public synchronized PdvApiRequestParams getPendingRequestForInstitution (String instId){
@@ -61,6 +72,48 @@ public class PdvApiRequestQueue {
 
         return null;
     }
+
+
+    public synchronized int removeCompletedRequestForInstitution (String instId){
+
+        int returnValue = 0;
+        Iterator<PdvApiRequestParams> iterator = queue.iterator();
+        while (iterator.hasNext()){
+            PdvApiRequestParams p = iterator.next();
+            List<String> instIdList = p.updateParams.instIds;
+            for (String instIdString : instIdList) {
+                if (instIdString.equals(instId)){
+                    //check status...
+                    if (p.pdvApiStatus.equals(PdvApiStatus.PDV_API_STATUS_COMPLETED))
+                    {
+                        synchronized (this) {
+                            iterator.remove();
+                            returnValue++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return returnValue;
+    }
+
+
+
+    public synchronized PdvApiRequestParams getRequestForInstitution (String instId){
+        for (PdvApiRequestParams p : queue) {
+            List<String> instIdList = p.updateParams.instIds;
+            for (String instIdString : instIdList) {
+                if (instIdString.equals(instId)){
+                    Log.d("PdvApiRequestQueue", "getRequestForInstitution() - found requestParam for iid " + PdvApiResults.toJsonString(p));
+                    return p;
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     public synchronized PdvApiRequestParams getNextRequestToExecute(){
         PdvApiRequestParams returnValue = null;
@@ -82,16 +135,16 @@ public class PdvApiRequestQueue {
         return false;
     }
 
-    public synchronized boolean setRequestStatus(String uuid, PdvApiStatus status){
+    public synchronized PdvApiRequestParams setRequestStatus(String uuid, PdvApiStatus status){
         for (PdvApiRequestParams p : queue){
             if (p.getUuid().equals(uuid)){
                 synchronized (this){
                     p.pdvApiStatus = status;
                 }
-                return true;
+                return p;
             }
         }
-        return false;
+        return null;
     }
 
     public synchronized boolean stopSync(String instId, PdvApi pdvApi, PdvAcaBoundService service, Context context){
@@ -100,24 +153,26 @@ public class PdvApiRequestQueue {
         boolean returnValue = false;
         synchronized (this){
             if (p.pdvApiStatus.equals(PdvApiStatus.PDV_API_STATUS_NOTSTARTED)){
-                queue.remove(p);
+                p.pdvApiStatus=PdvApiStatus.PDV_API_STATUS_COMPLETED;
                 returnValue=true;
                 String apiName = PdvApiName.STOP.toString();
                 Response<String> response = new Response("success", (String)null, "Stop successful.", "Stop successful.");
-                String stringResponse = PdvApiResults.toJsonString(response);
+                PdvApiResults results = new PdvApiResults();
+                results.setRequestUUID(p.getUuid());
+                results.requestStopped=true;
+                results.stopResponse = response;
+                p.results= results;
+                String stringResults = PdvApiResults.toJsonString(results);
 
                 //todo: remove debug logging
-                Log.d ("PdvAcaBoundService", "sendBroadcastMessage apiName:" + apiName);
-                Log.d ("PdvAcaBoundService", "sendBroadcastMessage stringResponse:" + stringResponse);
-
                 Intent intent = new Intent("pdv-aca-stop-callback");
-                intent.putExtra("apiName", apiName);
-                intent.putExtra("stringResponse", stringResponse);
+
+                intent.putExtra("stringResults", stringResults);
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
             else{
                 //request is in progress.. we can inform the service to stop it
-                service.stopPendingRequest(pdvApi);
+                service.stopPendingRequest(pdvApi, p.getUuid());
                 returnValue=true;
             }
         }
@@ -135,73 +190,25 @@ public class PdvApiRequestQueue {
         return null;
     }
 
+
+
     public synchronized boolean setRequestResults(PdvApiResults results){
         PdvApiRequestParams p = getRequestParams(results.getRequestUUID());
         if (p!=null){
-            p.results = results;
+            synchronized (this) {
+                results.pdvApiName = p.pdvApiName;
+                p.results = results;
+            }
             return true;
         }
         return false;
     }
 
-    //remove the head of the queue
-    public synchronized PdvApiRequestParams removeHead()
-    {
-        PdvApiRequestParams p = null;
-        if (queue.size()>0){
-            p = queue.remove(0);
-        }
-        return p;
-    }
-
-    //remove item in position (index)
-    public synchronized PdvApiRequestParams remove(int index)
-    {
-        PdvApiRequestParams p = null;
-        if (queue.size()>index){
-            p = queue.remove(index);
-        }
-        return p;
-    }
-
-    //remove all items of a specific status
-    public synchronized boolean remove(PdvApiStatus status){
-        boolean returnValue = false;
-        for (PdvApiRequestParams p : queue){
-            if (p.pdvApiStatus.equals(status)){
-                queue.remove(p);
-                returnValue = true;
-            }
-        }
-        return returnValue;
-    }
-
-    public PdvApiRequestParams peek()
-    {
-        PdvApiRequestParams p = null;
-        if (queue.size()>0)
-        {
-            p = queue.get(0);
-        }
-        return p;
-    }
 
     public int size (){
         return queue.size();
     }
 
-    public boolean isEmpty(){
-        return queue.isEmpty();
-    }
-
-    public PdvApiRequestParams peekAt(int index){
-        PdvApiRequestParams p = null;
-        if (index > 0 && queue.size()>index)
-        {
-            p = queue.get(index);
-        }
-        return p;
-    }
 
 
 

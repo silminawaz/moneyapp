@@ -142,6 +142,9 @@
         " we have retrieved them successfully"
     </string>
 
+    <string name="add_provider_invalid_message">
+        "Please enter valid credentials for user identification and password fields"
+    </string>
 
        <string name="add_provider_text">
            "Add your credentials to access online accounts from %1$s. "

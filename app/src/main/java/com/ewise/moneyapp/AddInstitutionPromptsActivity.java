@@ -129,6 +129,9 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
     private void addInstitution(){
 
         credVals.clear(); //remove any previous values
+        String sEmpty = "";
+        boolean isValid = true;
+        boolean isPasswordValid = true;
 
         int nViews = addInstitutionPromptsLayout.getChildCount();
         for (int i=0; i<nViews; i++){
@@ -136,6 +139,13 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
                 EditText editText = (EditText) addInstitutionPromptsLayout.getChildAt(i);
                 PromptEntry promptEntry = (PromptEntry) editText.getTag();
                 if (promptEntry != null){
+                    if (promptEntry.getIndex()==1 || promptEntry.getType()==1){
+                        String sValue = editText.getText().toString();
+                        sValue = sValue.trim();
+                        if (sValue.equals(sEmpty)){
+                            isValid=false;
+                        }
+                    }
                     promptEntry.setValue(editText.getText().toString());
                     credVals.add(promptEntry);
                 }
@@ -154,7 +164,7 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
         promptsData.setPrompts(credVals);
 
-        showAlertDialog();
+        showAlertDialog(isValid);
 
     }
 
@@ -167,36 +177,54 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
     }
 
-    private void showAlertDialog(){
+    private void showAlertDialog(boolean isValid){
 
         String retVal = null;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
-        // Add the buttons
-        builder.setPositiveButton(R.string.ok_button_text, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-                Intent resultIntent = new Intent();
-                String promptsDataString = PdvApiResults.toJsonString(promptsData);
-                resultIntent.putExtra("promptsData", promptsDataString);
-                resultIntent.putExtra("instCode", groupedInstitution.getInstCode());
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel_button_text, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-                // do nothing - just close this dialog and go back to previous activity
-                dialog.cancel();
-            }
-        });
+        if (isValid) {
+            // Add the buttons
+            builder.setPositiveButton(R.string.ok_button_text, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                    Intent resultIntent = new Intent();
+                    String promptsDataString = PdvApiResults.toJsonString(promptsData);
+                    resultIntent.putExtra("promptsData", promptsDataString);
+                    resultIntent.putExtra("instCode", groupedInstitution.getInstCode());
+                    resultIntent.putExtra("instName", groupedInstitution.getInstDesc());
+                    setResult(Activity.RESULT_OK, resultIntent);
+                    finish();
+                }
+            });
+            builder.setNegativeButton(R.string.cancel_button_text, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                    // do nothing - just close this dialog and go back to previous activity
+                    dialog.cancel();
+                }
+            });
 
 
-        builder.setMessage(R.string.add_provider_alert_message)
-                .setTitle(R.string.add_provider_alert_title)
-                .setIcon(getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName()));
+            builder.setMessage(R.string.add_provider_alert_message)
+                    .setTitle(R.string.add_provider_alert_title)
+                    .setIcon(getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName()));
+        }
+        else{
+            // Add the buttons
+            builder.setNegativeButton(R.string.ok_button_text, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                    // do nothing - just close this dialog and go back to previous activity
+                    dialog.cancel();
+                }
+            });
+
+
+            builder.setMessage(R.string.add_provider_invalid_message)
+                    .setTitle(R.string.add_provider_alert_title)
+                    .setIcon(getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName()));
+        }
 
 
 

@@ -48,6 +48,17 @@
         />
 
     <TextView
+        android:id="@+id/providerMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="message"
+        android:textSize="@dimen/ewise_tertiary_text_size"
+        android:layout_toEndOf="@id/providerIcon"
+        android:layout_below="@+id/providerUsername"
+        />
+
+    <TextView
         android:id="@+id/providerSyncStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

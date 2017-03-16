@@ -1,6 +1,7 @@
 package com.ewise.moneyapp.Utils;
 
 import com.ewise.android.pdv.api.model.PromptEntry;
+import com.ewise.android.pdv.api.model.Response;
 
 import java.util.Date;
 import java.util.List;
