@@ -17,6 +17,13 @@
     <color name="coloreWiseLineChartBalanceLine">#2979ff</color>
     <color name="coloreWiseDivider">#4c000000</color>
     <color name="coloreWiseDisabled">#bdbdbd</color>
+    <!-- Welcome Screens background color-->
+    <color name="coloreWiseClearGreen">#00c389</color>
+    <color name="coloreWiseBlueAegis">#009999</color>
+    <color name="coloreWiseBlueShadowAegis">#007377</color>
+    <color name="coloreWiseDarkGreen">#005f61</color>
+    <color name="coloreWiseDarkGreenShadow">#005e5d</color>
+    <color name="coloreWiseAlternateGreen">#41c0af</color>
 
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorTabBar">#9cca6c</color>

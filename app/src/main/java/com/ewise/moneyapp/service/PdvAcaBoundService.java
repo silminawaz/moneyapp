@@ -181,6 +181,78 @@ public class PdvAcaBoundService extends Service {
         //Thread thread = new Thread (runPdvUpdateAccounts).start();
     }
 
+
+    public void updateTransactionsNewCredentials (final PdvApi pdvApi, final PdvApiRequestParams requestParams){
+        final PdvApiResults results = new PdvApiResults();
+        results.pdvApiName = requestParams.pdvApiName;
+        results.setRequestUUID(requestParams.getUuid());
+
+        Runnable runPdvUpdateTransactionsNew = new Runnable() {
+            @Override
+            public void run() {
+
+                try
+                {
+                    Log.d("PdvAcaBoundService", "Starting runPdvUpdateTransactions runnable");
+                    final PdvApiRequestQueue requestQueue = ((MoneyAppApp)getApplication()).pdvApiRequestQueue;
+                    requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_INPROGRESS);
+                    pdvApi.updateTransactions(requestParams.updateParams.instIds, null, null, new PdvApiCallback.PdvApiTransactionsCallback() {
+                        @Override
+                        public void result(TransactionsResponse transactionsResponse) {
+                            Log.d("transactionsResponse=", PdvApiResults.toJsonString(transactionsResponse));
+                            results.transactions = transactionsResponse;
+                            if (transactionsResponse.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
+                                Log.d("UpdateTransactions", "UpdateTransactions() response status = complete");
+                                results.callBackCompleted = true;
+                                requestQueue.setRequestResults(results);
+                                sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_COMPLETE, requestParams, results);
+                            } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_ALL_COMPLETE)) {
+                                Log.d("UpdateTransactions", "UpdateTransactions() response status = all complete");
+                                results.callBackAllComplete = true;
+                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
+                                requestQueue.setRequestResults(results);
+                                sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ALL_COMPLETE, requestParams, results);
+                            } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_ERROR)) {
+                                Log.d("UpdateTransactions", "UpdateTransactions() response status = error");
+                                results.callBackError = true;
+                                requestQueue.setRequestResults(results);
+                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
+                                sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ERROR, requestParams, results);
+                            } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
+                                Log.d("UpdateTransactions", "UpdateTransactions() response status = verify");
+                                results.callBackPrompts = true;
+                                requestQueue.setRequestResults(results);
+                                sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_VERIFY, requestParams, results);
+                            }
+                        }
+                    }, requestParams.updateParams.credPrompts);
+                }
+                catch (Exception e)
+                {
+                    String sMethod = this.toString();
+                    sMethod = sMethod + Thread.currentThread().getStackTrace()[2].getMethodName() + "() ";
+                    String sObject = "";
+                    if (requestParams!=null){
+                        sObject = " ***Object*** requestParams=" + PdvApiResults.toJsonString(requestParams);;
+                    }
+                    if (results!=null){
+                        sObject = sObject + " ***Object*** pdvApiResults=" + PdvApiResults.toJsonString(results);
+                    }
+                    generalExceptionHandler(e.getClass().getName(),e.getMessage(),sMethod,sObject);
+                }
+
+            }
+        };
+
+        runnablePool.put(requestParams.getUuid(), runPdvUpdateTransactionsNew);
+
+        //call the API
+
+        //Handler handler = new Handler(getHandlerThread().getLooper());
+        //handler.post(runPdvUpdateTransactionsNew);
+        new Thread(runPdvUpdateTransactionsNew).start();
+    }
+
     public void updateTransactions (final PdvApi pdvApi, final PdvApiRequestParams requestParams){
         final PdvApiResults results = new PdvApiResults();
         results.pdvApiName = requestParams.pdvApiName;

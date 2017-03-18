@@ -293,6 +293,8 @@ public class MainActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //todo: remove debug code
+        Log.d("MainActivity", "onActivityResult() - requestCode=" + Integer.toString(requestCode));
 
         //if the result from the add provider form is returned
         if ((data !=null) && (requestCode == MoneyAppApp.ADD_PROVIDER_LIST_REQUEST)){
@@ -342,7 +344,7 @@ public class MainActivity extends AppCompatActivity
                 //todo: remove hardcoded username (i.e. for production we need to allow a login user name on first time login and Persistent PIN for access)
                 //      login first time should prevent an existing login from being re-used without proper authorisation - i.e. an authentication mechanism is needed - maybe a login TOKEN
                 setDataFetchingStatus(true, getString(R.string.pdv_api_login_to_pdv));
-                String username = "moneyapp_silmi";
+                String username = "silmiandroid5demo";
                 final MoneyAppApp myApp = (MoneyAppApp)getApplication();
                 final PdvApi pdvApi = myApp.getPdvApi();
                 pdvApi.setUser(username, new PdvApiCallback<String>() {
@@ -532,7 +534,8 @@ public class MainActivity extends AppCompatActivity
         if (requestParams.pdvApiName.equals(PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS)){
             Log.d("pdvApiExecuteRequest()", "About to Update accounts with new credentials");
             if (pdvAcaServiceIsBound && pdvAcaBoundService!=null){
-                pdvAcaBoundService.updateAccounts(pdvApi, requestParams);
+                //pdvAcaBoundService.updateAccounts(pdvApi, requestParams);
+                pdvAcaBoundService.updateTransactionsNewCredentials(pdvApi, requestParams);
             }
         }
         else if (requestParams.pdvApiName.equals(PdvApiName.UPDATE_TRANSACTIONS)){

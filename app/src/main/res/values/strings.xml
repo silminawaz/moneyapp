@@ -12,6 +12,17 @@
 
     <string name="var_base_currency">SGD</string>
 
+    <!-- welcome messages -->
+    <string name="welcome_message_providers_title">Add your providers</string>
+    <string name="welcome_message_networth_title">View your net worth</string>
+    <string name="welcome_message_accounts_title">Manage your accounts</string>
+    <string name="welcome_message_budgets_title">Manage your spending</string>
+
+    <string name="welcome_message_providers_message">Your account providers like banks, share brokers and other financial institutions with whom you hold various assets and liabilities</string>
+    <string name="welcome_message_networth_message">Add your providers to view your financial net worth</string>
+    <string name="welcome_message_accounts_message">Add your providers to view the summary and detailed informaiton about your accounts</string>
+    <string name="welcome_message_budgets_message">Add your providers and share your data with us so we can help you to better manage your spending</string>
+
     <!-- Floating action button menu items -->
     <string name="fab_menu_add_provider">Add provider</string>
     <string name="fab_menu_manage_providers">Manage providers</string>
