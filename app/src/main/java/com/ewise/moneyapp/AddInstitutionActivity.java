@@ -61,8 +61,8 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
         //sn: todo: call getprompts api and setup the data for the view
         MoneyAppApp myApp = ((MoneyAppApp) getApplication());
         PdvApi pdvApi = myApp.getPdvApi();
-        boolean loggedOnToPdv = myApp.loggedOnToPdv;
-        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
+        myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+        // myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
 
@@ -74,7 +74,7 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
                 onPdvConnected();
             }
 
-            if (myApp.loggedOnToPdv){
+            if (myApp.pdvLoginStatus.isLoggedOnToPdv()){
                 Toast.makeText(getApplicationContext(), R.string.pdvapi_get_institutions_message, Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
@@ -222,6 +222,16 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
 
     @Override
     public void onGetUserProfileFail(PdvApiResults results){
+
+    }
+
+    @Override
+    public void onRestoreAccountsComplete(String instId){
+
+    }
+
+    @Override
+    public void onRestoreAccountsAllComplete(){
 
     }
 

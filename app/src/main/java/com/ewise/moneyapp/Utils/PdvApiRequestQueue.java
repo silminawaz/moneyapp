@@ -23,6 +23,17 @@ public class PdvApiRequestQueue {
     private static String TAG = "PdvApiRequestQueue";
 
     private List<PdvApiRequestParams> queue;
+    private boolean mustRestoreAccounts = true;
+
+    public boolean getAccountsMustBeRestored(){
+        return mustRestoreAccounts;
+    }
+
+    public void resetAccountsMustBeRestored(){
+        synchronized (this){
+            mustRestoreAccounts=false;
+        }
+    }
 
     public PdvApiRequestQueue (){
         queue = new ArrayList<>();
@@ -135,11 +146,24 @@ public class PdvApiRequestQueue {
         return false;
     }
 
+    public synchronized boolean isRequestPending(){
+        boolean returnValue = false;
+        for (PdvApiRequestParams p : queue){
+            if (p.pdvApiStatus.equals(PdvApiStatus.PDV_API_STATUS_INPROGRESS) || p.pdvApiStatus.equals(PdvApiStatus.PDV_API_STATUS_NOTSTARTED)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public synchronized PdvApiRequestParams setRequestStatus(String uuid, PdvApiStatus status){
         for (PdvApiRequestParams p : queue){
             if (p.getUuid().equals(uuid)){
                 synchronized (this){
                     p.pdvApiStatus = status;
+                    if (status.equals(PdvApiStatus.PDV_API_STATUS_COMPLETED)){
+                        mustRestoreAccounts = true;
+                    }
                 }
                 return p;
             }

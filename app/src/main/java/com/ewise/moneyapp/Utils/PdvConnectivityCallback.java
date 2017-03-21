@@ -6,6 +6,8 @@ import android.widget.Toast;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.provider.Providers;
 
+import java.util.List;
+
 /**
  * Created by SilmiNawaz on 22/2/17.
  */
@@ -19,4 +21,6 @@ public interface PdvConnectivityCallback {
     public void onGetPromptsFail(PdvApiResults results);
     public void onGetUserProfileSuccess(PdvApiResults results);
     public void onGetUserProfileFail(PdvApiResults results);
+    public void onRestoreAccountsComplete(String instId);
+    public void onRestoreAccountsAllComplete();
 }

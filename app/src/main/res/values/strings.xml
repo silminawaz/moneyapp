@@ -18,9 +18,9 @@
     <string name="welcome_message_accounts_title">Manage your accounts</string>
     <string name="welcome_message_budgets_title">Manage your spending</string>
 
-    <string name="welcome_message_providers_message">Your account providers like banks, share brokers and other financial institutions with whom you hold various assets and liabilities</string>
-    <string name="welcome_message_networth_message">Add your providers to view your financial net worth</string>
-    <string name="welcome_message_accounts_message">Add your providers to view the summary and detailed informaiton about your accounts</string>
+    <string name="welcome_message_providers_message">Add your account providers like banks, share brokers and other financial institutions with whom you hold various assets and liabilities</string>
+    <string name="welcome_message_networth_message">Add your providers to view your financial net worth and breakdown across various categories</string>
+    <string name="welcome_message_accounts_message">Add your providers to view the summary and detailed information about your accounts, such as balances, transaction history, cash-flow graphs etc.</string>
     <string name="welcome_message_budgets_message">Add your providers and share your data with us so we can help you to better manage your spending</string>
 
     <!-- Floating action button menu items -->
@@ -143,6 +143,7 @@
     <string name="title_activity_account_details">AccountDetailsActivity</string>
     <string name="title_activity_add_institution">AddInstitutionActivity</string>
 
+    <string name="share_data_button_text">Share Data</string>
     <string name="add_provider_button_text">Add Provider</string>
     <string name="add_provider_button_errortext"></string>
     <string name="add_provider_alert_title">Confirm adding account</string>
@@ -164,6 +165,17 @@
            "The credentials in your PDV cannot be accessed by any third-parties including ourselves, "
            "they can only be used by this app to access your online %2$s account directly from this device."
     </string>
+
+    <string name="dialog_otp_text">Enter one-time pin</string>
+    <string name="dialog_captcha_text">Enter captcha text</string>
+
+    <string name="sync_all_text">Sync all providers</string>
+
+    <string name="service_execution_error_title_stop_pending_request">Stop Pending Request</string>
+    <string name="service_execution_error_title_update_account_request">Update Account Request for %1$s</string>
+    <string name="service_execution_error_title_update_transactions_request">Update Transactions Request for %1$s</string>
+    <string name="service_execution_error_message_looper_null">Unable to execute service due to null thread looper</string>
+
 
 
     <string name="large_text">

@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:descendantFocusability="blocksDescendants">
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical">
 
 
     <ListView
@@ -17,11 +17,60 @@
         android:background="@color/dim_foreground_material_dark" />
 
     <Button
-        android:text="@string/add_provider_button_text"
+        android:text="@string/sync_all_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnProvider"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/coloreWiseMainTextWhite" />
+        android:id="@+id/btnSyncAllProvider"
+        android:background="@color/coloreWisePrimary"
+        android:textColor="@color/coloreWiseMainTextWhite"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/providerWelcomeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:paddingTop="@dimen/ewise_touch_icon_size_xl"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_message_providers_title"
+            android:textColor="@color/coloreWiseMainTextBlack"
+            android:textSize="@dimen/ewise_welcome_title_size"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="@dimen/ewise_welcome_screen_image_size"
+            android:layout_height="@dimen/ewise_welcome_screen_image_size"
+            android:src="@drawable/welcome_image_providers"
+            android:paddingTop="@dimen/ewise_welcome_desc_padding"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="@dimen/ewise_welcome_desc_padding"
+            android:paddingRight="@dimen/ewise_welcome_desc_padding"
+            android:text="@string/welcome_message_providers_message"
+            android:textAlignment="center"
+            android:textColor="@color/coloreWiseMainTextBlack"
+            android:textSize="@dimen/ewise_welcome_desc_size" />
+
+        <Button
+            android:id="@+id/addProviderButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_provider_button_text"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="@color/coloreWisePrimary"
+            android:textColorLink="@color/coloreWiseAccent"
+            android:textStyle="italic"
+            android:layout_marginTop="@dimen/ewise_vertical_margin_xl" />
+
+    </LinearLayout>
 
 </LinearLayout>

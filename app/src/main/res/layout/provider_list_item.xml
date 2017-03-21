@@ -70,7 +70,7 @@
         />
 
     <ProgressBar
-        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Inverse"
+        style="@android:style/Widget.ProgressBar.Inverse"
         android:layout_width="@dimen/ewise_touch_icon_size_small"
         android:layout_height="@dimen/ewise_touch_icon_size_small"
         android:id="@+id/providerSyncProgressBar"

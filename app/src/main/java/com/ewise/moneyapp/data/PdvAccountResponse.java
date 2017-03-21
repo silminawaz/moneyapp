@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,6 +49,61 @@ public class PdvAccountResponse {
      */
 
     public List<AccountsObject> accounts;
+    private boolean accountsRefreshed;
+
+    public DataUpdateType addUpdateAccount (AccountsObject account){
+        //if an account exists , update it, if not add it
+        if (accounts == null) {
+            accounts = new ArrayList<AccountsObject>();
+        }
+        if (account == null) return DataUpdateType.DATA_UPDATE_TYPE_ERROR;
+        for (AccountsObject a : accounts){
+            if (a.instId.equals(account.instId) && a.accountHash.equals(account.accountHash)){
+                synchronized (this){
+                    a.updatedAt = account.updatedAt;
+                    a.data = account.data;
+                    a.currency = account.currency;
+                    a.accountId = account.accountId;
+                    a.accountName = account.accountName;
+                    a.accountNumber = account.accountNumber;
+                    a.availBalance = account.availBalance;
+                    a.balance = account.balance;
+                    a.category = account.category;
+                    accountsRefreshed=true;
+                    return DataUpdateType.DATA_UPDATE_TYPE_UPDATED;
+                }
+            }
+        }
+
+        accountsRefreshed=true;
+        accounts.add(account);
+        return DataUpdateType.DATA_UPDATE_TYPE_ADDED;
+    }
+
+    public boolean getAccountsRefreshed(){
+        return accountsRefreshed;
+    }
+
+    public void resetAccountsRefreshed(){
+        synchronized (this) {
+            accountsRefreshed = false;
+        }
+    }
+
+
+    public int removeAccountsForInstId (String instId){
+        int removed = 0;
+        if (accounts!=null) {
+            for (Iterator<AccountsObject> iterator = accounts.iterator(); iterator.hasNext(); ) {
+                AccountsObject object = iterator.next();
+                if (object.instId.equals(instId)) {
+                    iterator.remove();
+                    removed++;
+                }
+            }
+        }
+        return removed;
+    }
 
     public static PdvAccountResponse objectFromData(String str) {
 

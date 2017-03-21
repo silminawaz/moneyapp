@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            
+        </ScrollView>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/networthWelcomeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:paddingTop="@dimen/ewise_touch_icon_size_xl"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_message_networth_title"
+            android:textColor="@color/coloreWiseMainTextBlack"
+            android:textSize="@dimen/ewise_welcome_title_size"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="@dimen/ewise_welcome_screen_image_size"
+            android:layout_height="@dimen/ewise_welcome_screen_image_size"
+            android:src="@drawable/welcome_image_net_worth_2"
+            android:paddingTop="@dimen/ewise_welcome_title_size"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="@dimen/ewise_welcome_desc_padding"
+            android:paddingRight="@dimen/ewise_welcome_desc_padding"
+            android:text="@string/welcome_message_networth_message"
+            android:textAlignment="center"
+            android:textColor="@color/coloreWiseMainTextBlack"
+            android:textSize="@dimen/ewise_welcome_desc_size" />
+
+        <Button
+            android:id="@+id/networthAddProviderButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_provider_button_text"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="@color/coloreWisePrimaryDark"
+            android:textColorLink="@color/coloreWiseAccent"
+            android:textStyle="italic"
+            android:layout_marginTop="@dimen/ewise_vertical_margin_xl"/>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

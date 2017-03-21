@@ -3,12 +3,15 @@ package com.ewise.moneyapp;
 import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 import com.ewise.android.pdv.api.PdvApi;
 import com.ewise.android.pdv.api.PdvApiImpl;
 import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
+import com.ewise.android.pdv.api.model.AccountEntry;
 import com.ewise.android.pdv.api.model.PromptEntry;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
@@ -29,11 +33,14 @@ import com.ewise.android.pdv.api.model.UserProviderEntry;
 import com.ewise.android.pdv.api.model.provider.Group;
 import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.android.pdv.api.model.provider.Providers;
+import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.android.pdv.api.model.response.GetPromptsResponse;
 import com.ewise.android.pdv.api.model.response.GetUserProfileData;
 import com.ewise.android.pdv.api.model.response.GetUserProfileResponse;
 import com.ewise.android.pdv.api.util.ConnectivityReceiver;
+import com.ewise.moneyapp.APIDataMappers.PdvAccountDataMapper;
+import com.ewise.moneyapp.Utils.PdvApiCallbackCounter;
 import com.ewise.moneyapp.Utils.PdvApiName;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiRequestQueue;
@@ -41,12 +48,17 @@ import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvApiStatus;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
+import com.ewise.moneyapp.Utils.PdvLoginStatus;
+import com.ewise.moneyapp.data.DataUpdateType;
+import com.ewise.moneyapp.data.PdvAccountResponse;
+import com.ewise.moneyapp.service.PdvAcaBoundService;
 import com.rogansoft.remotelogger.DebugHelper;
 import com.rogansoft.remotelogger.RemoteLogger;
 
 import org.xwalk.core.XWalkView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,15 +82,75 @@ public class MoneyAppApp extends Application {
     static final int ADD_PROVIDER_LIST_REQUEST = 2;
     static final int ADD_PROVIDER_PROMPTS_REQUEST = 3;
 
+
     public PdvApi pdvApi;
-    public XWalkView pdvWebView;
-    public boolean loggedOnToPdv;
+    public WebView pdvWebView;
+//**XWALK**    public XWalkView pdvWebView;
+    public PdvLoginStatus pdvLoginStatus;
     public PdvConnectivityStatus pdvConnectivityStatus;
     public PdvApiRequestQueue   pdvApiRequestQueue = null;
     public GetUserProfileData   userProfileData = null;
     public Providers providerData = null;
     public HashMap<String, String> instCodeToGroupMap = null;
+    public PdvAccountResponse pdvAccountResponse = null;
     Handler threadHandler = new Handler();
+
+
+    private PdvApiCallbackCounter restoreAccountsCallBackCounter = null;
+    private Date lastRestoredDateTime = null;
+
+    private PdvAcaBoundService pdvAcaBoundService;
+    private boolean pdvAcaServiceIsBound = false;
+
+
+    public PdvAcaBoundService getPdvAcaBoundService(){
+        if (pdvAcaServiceIsBound){
+            return pdvAcaBoundService;
+        }
+        else{
+            return null;
+        }
+    }
+
+    private ServiceConnection pdvAcaServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            PdvAcaBoundService.PdvAcaServiceBinder binder = (PdvAcaBoundService.PdvAcaServiceBinder) iBinder;
+            pdvAcaBoundService = binder.getService();
+            pdvAcaServiceIsBound = true;
+            Log.d("MoneyAppApp", "PdvAcaBoundService -> onServiceConnected()");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            pdvAcaServiceIsBound = false;
+            Log.d("MoneyAppApp", "PdvAcaBoundService -> onServiceDisconnected()");
+
+        }
+    };
+
+    private void setLastRestoredDateTime(){
+        if (lastRestoredDateTime==null){
+            lastRestoredDateTime=new Date();
+        }
+        else {
+            lastRestoredDateTime.setTime(System.currentTimeMillis());
+        }
+    }
+
+    public boolean mustRestoreAccounts(){
+        if (lastRestoredDateTime==null){
+            return true;
+        }
+        else{
+            if (getPdvAcaBoundService()!=null) {
+                return getPdvAcaBoundService().isRefreshedAfter(lastRestoredDateTime);
+            }
+            else{
+                return false;
+            }
+        }
+    }
 
     private Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler;
 
@@ -86,10 +158,30 @@ public class MoneyAppApp extends Application {
 
         public void uncaughtException(Thread thread, Throwable e){
             Log.e("MoneyApp", "uncaught exception: ", e );
+            e.printStackTrace(); // not all Android versions will print the stack trace automatically
+            Intent intent = new Intent ();
+            //todo: **SN** to create send_log ativity to report crashes
+            intent.setAction ("com.ewise.moneyapp.SEND_LOG");
+            intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity (intent);
+
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(10);
 
             defaultUncaughtExceptionHandler.uncaughtException(thread, e);
         }
     };
+
+    public void handleUncaughtException (Thread thread, Throwable e)
+    {
+
+        Intent intent = new Intent ();
+        intent.setAction ("com.mydomain.SEND_LOG"); // see step 5.
+        intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
+        startActivity (intent);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(10);
+    }
 
     @Override
     public void onCreate(){
@@ -114,6 +206,8 @@ public class MoneyAppApp extends Application {
 
             @Override
             public void onActivityPaused(Activity activity) {
+                //todo: if mainactivity is paused, then the BoundService calls cannot be handled by main activity
+                //      so we need to handle the bradcast receivers here in application class and use whatever
 
             }
 
@@ -139,18 +233,25 @@ public class MoneyAppApp extends Application {
 
 
         defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(handler);
+        Thread.currentThread().setDefaultUncaughtExceptionHandler(handler);
 
         final String mmHost = DEFAULT_MM_HOST;
         final String swanHost = DEFAULT_SWAN_HOST;
         pdvApi = new PdvApiImpl(swanHost, mmHost);
-        loggedOnToPdv = false;
+        pdvLoginStatus=new PdvLoginStatus();
         pdvConnectivityStatus = PdvConnectivityStatus.UNKNOWN;
         pdvApiRequestQueue = new PdvApiRequestQueue();
         userProfileData = new GetUserProfileData();
         providerData = new Providers();
         instCodeToGroupMap = new HashMap<String, String>();
+        pdvAccountResponse = new PdvAccountResponse();
+        restoreAccountsCallBackCounter = new PdvApiCallbackCounter();
+
+        Intent intent= new Intent(this, PdvAcaBoundService.class);
+        bindService(intent, pdvAcaServiceConnection, Context.BIND_AUTO_CREATE);
+
         setupAppConfig();
+
 
     }
 
@@ -193,7 +294,7 @@ public class MoneyAppApp extends Application {
                     threadHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d("MOneyAppapp", "calling notifyConnectivitySuccess");
+                            Log.d("MoneyAppapp", "calling notifyConnectivitySuccess");
                             notifyConnectivitySuccess(callback);
                         }
                     });
@@ -244,25 +345,36 @@ public class MoneyAppApp extends Application {
                 pdvApi.getInstitutions(new PdvApiCallback<Providers>() {
                     @Override
                     public void result(Response<Providers> response) {
-                        PdvApiResults results = new PdvApiResults();
-                        results.pdvApiName = PdvApiName.GET_INSTITUTIONS;
-                        results.callBackCompleted = true;
-                        results.providers = response;
-                        if (response.getStatus().equals(StatusCode.STATUS_SUCCESS)){
-                            providerData = results.providers.getData();
-                            updateProviderHashMap();
-                            callback.onGetInstitutionsSuccess(results);
+
+                        try {
+
+
+                            PdvApiResults results = new PdvApiResults();
+                            results.pdvApiName = PdvApiName.GET_INSTITUTIONS;
+                            results.callBackCompleted = true;
+                            results.providers = response;
+                            if (response.getStatus().equals(StatusCode.STATUS_SUCCESS)) {
+                                providerData = results.providers.getData();
+                                updateProviderHashMap();
+                                callback.onGetInstitutionsSuccess(results);
+                            } else {
+                                results.callBackError = true;
+                                callback.onGetInstitutionsFail(results);
+                            }
                         }
-                        else {
-                            results.callBackError=true;
-                            callback.onGetInstitutionsFail(results);
+                        catch(Exception e){
+
+                            Log.e("MoneyAppApp", "pdvGetInstitutions() - exception " + e.getMessage());
+                            e.printStackTrace();
                         }
                     }
                 });
             }
         };
 
-        new Thread (runPdvGetInstitutions).start();
+
+        new Thread(runPdvGetInstitutions).start();
+
     }
 
 
@@ -325,6 +437,90 @@ public class MoneyAppApp extends Application {
 
         new Thread (runPdvGetUserProfiles).start();
     }
+
+    public void pdvRestoreAllProviderAccounts(final PdvConnectivityCallback callback){
+        Log.d(TAG, "Calling pdvRestoreAllProviderAccounts() - START");
+
+        if (restoreAccountsCallBackCounter.getValue()!=0){
+            Log.d(TAG, "pdvRestoreAllProviderAccounts() - A restore is in progress, resetting counter");
+            synchronized (this){
+                restoreAccountsCallBackCounter.reset();
+                callback.onRestoreAccountsAllComplete(); // complete the previous call
+                setLastRestoredDateTime();
+            }
+        }
+
+        if (userProfileData.getUserprofile() == null) return;
+
+        for (UserProviderEntry p : userProfileData.getUserprofile()){
+            if (p.isFoundInDevice()) {
+                pdvRestoreAccounts(p.getIid(), callback);
+            }
+        }
+
+        Log.d(TAG, "Calling pdvRestoreAllProviderAccounts() - END");
+    }
+
+    public void pdvRestoreAccounts (final String instId, final PdvConnectivityCallback callback) {
+        Log.d(TAG, "Calling pdvRestoreAccounts() - START");
+        synchronized (this){
+            restoreAccountsCallBackCounter.increment();
+        }
+        Runnable runPdvRestoreAccounts = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    pdvApi.restoreAccounts(instId, new PdvApiCallback.PdvApiAccountsCallback() {
+                        @Override
+                        public void result(AccountsResponse accountsResponse) {
+                            PdvApiResults results = new PdvApiResults();
+                            results.pdvApiName = PdvApiName.RESTORE_ACCOUNTS;
+                            results.callBackCompleted = true;
+                            results.accounts = accountsResponse;
+                            if (results.accounts.getStatus().equals(StatusCode.STATUS_DATA)){
+                                //save the data for the institution
+                                if (pdvAccountResponse.addUpdateAccount(PdvAccountDataMapper.getMappedObject(results.accounts.getData(), getApplicationContext())).equals(DataUpdateType.DATA_UPDATE_TYPE_ERROR)){
+                                    Log.e("MoneyAppApp", "pdvRestoreAccounts() - Error adding or updating account in pdvAccountResponse. "
+                                            + " InstId=" + results.accounts.getData().getInstId()
+                                            + " | accountHash=" + results.accounts.getData().getAccountHash());
+                                }
+                            }
+                            else if (results.accounts.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
+                                List<String> instIdList = new ArrayList<String>();
+                                instIdList.add(instId);
+                                callback.onRestoreAccountsComplete(accountsResponse.getInstId());
+                                synchronized (this){
+                                    restoreAccountsCallBackCounter.decrement();
+                                }
+                            }
+                            else if (results.accounts.getStatus().equals(StatusCode.STATUS_ALL_COMPLETE)) {
+                                if (restoreAccountsCallBackCounter.getValue() == 0) {
+                                    pdvApiRequestQueue.resetAccountsMustBeRestored();
+
+                                    callback.onRestoreAccountsAllComplete();
+                                    setLastRestoredDateTime();
+                                }
+                            }
+                            else if (results.accounts.getStatus().equals(StatusCode.STATUS_ERROR)) {
+                                Log.e("MoneyAppApp", "pdvRestoreAccounts() - Error adding or updating account in pdvAccountResponse. "
+                                        + " InstId=" + accountsResponse.getInstId()
+                                        + " | errorType=" + accountsResponse.getErrorType()
+                                        + " | message=" + accountsResponse.getMessage());
+                            }
+                        }
+                    });
+                }
+                catch (Exception e){
+                    Log.e("MoneyAppApp", "pdvGetUserProfile() - exception - " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        new Thread (runPdvRestoreAccounts).start();
+        Log.d(TAG, "Calling pdvRestoreAccounts() - END");
+    }
+
 
 
     public void updateProviderHashMap(){
@@ -466,6 +662,26 @@ public class MoneyAppApp extends Application {
             if (updated) break;
         }
         return updated;
+    }
+
+    public UserProviderEntry getUserProviderEntry(String instId){
+        for (UserProviderEntry e : userProfileData.getUserprofile()){
+            if (e.getIid().equals(instId)){
+                return e;
+            }
+        }
+        return null;
+    }
+
+    public boolean isProviderFoundInDevice(){
+        if (userProfileData.getUserprofile()!=null) {
+            for (UserProviderEntry e : userProfileData.getUserprofile()) {
+                if (e.isFoundInDevice()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     //todo: remove unused code

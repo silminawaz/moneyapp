@@ -1,23 +1,29 @@
 package com.ewise.moneyapp;
 
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -32,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ewise.android.pdv.api.PdvApi;
+import com.ewise.android.pdv.api.callbacks.CallbackStatus;
 import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
@@ -41,6 +48,7 @@ import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.moneyapp.Utils.PdvApiName;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiResults;
+import com.ewise.moneyapp.Utils.PdvApiStatus;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
@@ -48,6 +56,8 @@ import org.xwalk.core.XWalkView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kotlin.jvm.Synchronized;
 
 
 public class MainActivity extends AppCompatActivity
@@ -80,6 +90,10 @@ public class MainActivity extends AppCompatActivity
 
     public PdvAcaBoundService pdvAcaBoundService;
     public boolean pdvAcaServiceIsBound = false;
+    public boolean isPdvConnected = false;
+
+    ImageView imagePdvConnected;
+    boolean loginInProgress;
 
     private ServiceConnection pdvAcaServiceConnection = new ServiceConnection() {
         @Override
@@ -105,22 +119,23 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void run() {
             MoneyAppApp app = (MoneyAppApp) getApplication();
-            if (!app.pdvApiRequestQueue.isRequestInProgress()){
-                Log.d("PdvApiRequestRunnable", "no requests in progress");
-                PdvApiRequestParams requestParams = app.pdvApiRequestQueue.getNextRequestToExecute();
-                if (requestParams!=null  && pdvAcaServiceIsBound){
-                    Log.d("PdvApiRequestRunnable", "request available to execute");
-                    pdvApiExecuteRequest(requestParams);
-                    setDataFetchingStatus (true, null);
+
+            checkPdvConnectivity();
+
+            if (app.pdvLoginStatus.isLoggedOnToPdv() && isPdvConnected) {
+                if (!app.pdvApiRequestQueue.isRequestInProgress()) {
+                    Log.d("PdvApiRequestRunnable", "no requests in progress");
+                    PdvApiRequestParams requestParams = app.pdvApiRequestQueue.getNextRequestToExecute();
+                    if (requestParams != null && pdvAcaServiceIsBound) {
+                        Log.d("PdvApiRequestRunnable", "request available to execute");
+                        pdvApiExecuteRequest(requestParams);
+                        setDataFetchingStatus(true, null);
+                    } else {
+                        setDataFetchingStatus(false, null);
+                    }
+                } else {
+                    setDataFetchingStatus(true, null);
                 }
-                else
-                {
-                    setDataFetchingStatus(false, null);
-                }
-            }
-            else
-            {
-                setDataFetchingStatus(true, null);
             }
             pdvApiRequestHandler.postDelayed(pdvApiRequestRunnable, 5000); //run every 5 seconds
         }
@@ -139,28 +154,110 @@ public class MainActivity extends AppCompatActivity
             Log.d ("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() requestParams:" + sRequestParams);
             Log.d ("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() results:" + sResults);
 
-            //todo: process the results
 
             //reset data fetching if there isn't any more requests
             MoneyAppApp app = (MoneyAppApp) getApplication();
             if (!app.pdvApiRequestQueue.isRequestInProgress()){
+                Log.d ("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() - no more requests in progress");
                 setDataFetchingStatus(false, null);
+            }
+
+
+            PdvApiResults results = PdvApiResults.objectFromString(sResults, PdvApiResults.class);
+            //PdvApiRequestParams requestParams = PdvApiResults.objectFromString(sRequestParams, PdvApiRequestParams.class);
+
+            //Handle OTP
+            //todo: process the results
+            if (callbackStatus.equals(StatusCode.STATUS_VERIFY)) {
+                Log.d ("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() - StatusCode = verify - OTP required");
+
+                DialogFragment otpFragment = null;
+                if (results.transactions!=null) {
+                    //Handle OTP/Captcha for updateTransactions
+                    otpFragment = EwiseOTPFragment.newInstance(results.transactions.getInstId(),
+                            String.format(results.transactions.getMessage() + " %s.",
+                                    app.getUserProviderEntry(results.transactions.getInstId()).getDesc()),
+                            null  //todo: implement base64Image of captcha in v0.5.n
+                    );
+
+                }
+                else if (results.accounts!=null) {
+                    //Handle OTP/Captcha for updateAccounts
+                    otpFragment = EwiseOTPFragment.newInstance(results.accounts.getInstId(),
+                            String.format(results.accounts.getMessage() + " %s.",
+                                    app.getUserProviderEntry(results.accounts.getInstId()).getDesc()),
+                            null  //todo: implement base64Image of captcha in v0.5.n
+                    );
+
+                }
+
+                if (otpFragment!=null) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    Fragment prev = getSupportFragmentManager().findFragmentByTag("OTP_DIALOG");
+                    if (prev != null) {
+                        Log.d("MainActivity", "pdvApiCallbackMessageReceiver() - Removing previous OTP_DIALOG");
+                        ft.remove(prev);
+                    }
+
+                    Log.d("MainActivity", "pdvApiCallbackMessageReceiver() - showing OTP_DIALOG");
+                    otpFragment.show(getSupportFragmentManager(), "OTP_DIALOG");
+                }
+
             }
 
             //if this response is related to adding a new provider, we need to reload the user profile to take the new profile data from the server
             //originally we used a temporary UserProviderEntry during adding of the new provider
             if (apiName.equals(PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS.toString())){
-                app.pdvGetUserProfile(MainActivity.this);
+                //reload only if the callback was a success and no errors
+                if (!results.callBackError && results.callBackAllComplete) {
+                    app.pdvGetUserProfile(MainActivity.this);
+                }
             }
         }
     };
 
+    private BroadcastReceiver pdvApiServiceErrorMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String title = intent.getStringExtra("title");
+            final String message = intent.getStringExtra("message");
+
+            Log.d("MainActivity", "pdvApiServiceErrorMessageReceiver.onReceive() title:" + title);
+            Log.d("MainActivity", "pdvApiServiceErrorMessageReceiver.onReceive() message:" + message);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showErrorAlertDialog(title, message);
+                }
+            });
+        }
+
+    };
+
+    private void showErrorAlertDialog(String title, String message){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setNegativeButton(R.string.ok_button_text, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                // do nothing - just close this dialog and go back to previous activity
+                dialog.cancel();
+            }
+        });
+        builder.setMessage(message)
+                .setTitle(title);
+                //.setIcon(getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName()));
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
 
     public void setDataFetchingStatus(final boolean status, final String message){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (status==true){
+                if (status){
                     findViewById(R.id.linearLayoutFetchingData).setVisibility(View.VISIBLE);
                     ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_refresh_material_white);
                     if (message!=null){
@@ -188,6 +285,7 @@ public class MainActivity extends AppCompatActivity
         this.setTheme(R.style.AppTheme_NoActionBar); //remove the splash theme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -231,7 +329,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 MoneyAppApp app = (MoneyAppApp)getApplication();
 
-                if (((MoneyAppApp)getApplication()).loggedOnToPdv && !app.pdvApiRequestQueue.isRequestInProgress()){
+                if (app.pdvLoginStatus.isLoggedOnToPdv() && !app.pdvApiRequestQueue.isRequestInProgress()){
                         startActivityForResult(new Intent(MainActivity.this, AddInstitutionActivity.class), MoneyAppApp.ADD_PROVIDER_LIST_REQUEST);
                 }
                 else if (!app.pdvApiRequestQueue.isRequestInProgress())
@@ -253,14 +351,26 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiCallbackMessageReceiver,
-                new IntentFilter("pdv-aca-bound-service-callback"));
+
+        imagePdvConnected = (ImageView) findViewById(R.id.imagePDVConnected);
+
+        imagePdvConnected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MoneyAppApp app = (MoneyAppApp)getApplication();
+                if (!app.pdvLoginStatus.isLoggedOnToPdv() && !app.pdvLoginStatus.isLoginInProgress()){
+                    //attempt to login
+
+
+                }
+            }
+        });
 
         MoneyAppApp myApp = ((MoneyAppApp) getApplication());
         pdvApiResults = new PdvApiResults();
         PdvApi pdvApi = myApp.getPdvApi();
-        boolean loggedOnToPdv = myApp.loggedOnToPdv;
-        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
+        myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+//**XWALK**        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
 
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
@@ -277,15 +387,33 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+
         super.onResume();
+
         Intent intent= new Intent(this, PdvAcaBoundService.class);
         bindService(intent, pdvAcaServiceConnection, Context.BIND_AUTO_CREATE);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiCallbackMessageReceiver,
+                new IntentFilter("pdv-aca-bound-service-callback"));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiServiceErrorMessageReceiver,
+                new IntentFilter("pdv-aca-service-error"));
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unbindService(pdvAcaServiceConnection);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(pdvApiCallbackMessageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(pdvApiServiceErrorMessageReceiver);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        //unbindService(pdvAcaServiceConnection);
+
     }
 
 
@@ -313,18 +441,6 @@ public class MainActivity extends AppCompatActivity
 
             app.addNewProvider(instCode, instName, promptsData);
 
-            /* todo: cleanup commented code / refactored
-            PdvApiRequestParams requestParams = new PdvApiRequestParams();
-            requestParams.pdvApiName = PdvApiName.UPDATE_ACCOUNTS_WITH_NEW_CREDENTIALS;
-            List<String> instIds = new ArrayList<>();
-            Log.d("INSTID", promptsData.getInstId());
-            instIds.add(promptsData.getInstId());
-            requestParams.updateParams.instIds = instIds;
-            requestParams.updateParams.profileId = null;
-            requestParams.updateParams.credPrompts = promptsData.getPrompts();
-            app.pdvApiRequestQueue.add(requestParams);
-            */
-
         }
     }
 
@@ -347,6 +463,7 @@ public class MainActivity extends AppCompatActivity
                 String username = "silmiandroid5demo";
                 final MoneyAppApp myApp = (MoneyAppApp)getApplication();
                 final PdvApi pdvApi = myApp.getPdvApi();
+                myApp.pdvLoginStatus.notifyLogonInProgress();
                 pdvApi.setUser(username, new PdvApiCallback<String>() {
                     @Override
                     public void result(final Response response) {
@@ -397,7 +514,6 @@ public class MainActivity extends AppCompatActivity
 
     public void notifyPdvLoginSuccess(){
         //todo: whatever required when login is successful including UI updates
-        ((MoneyAppApp)getApplication()).loggedOnToPdv = true;
         String msg = getString(R.string.pdvapi_login_success_message);
         msg = msg + " - setUser(): " + pdvApiResults.setUserResponse.getStatus() + " : " + pdvApiResults.setUserResponse.getMessage() + " - initialise(): " + pdvApiResults.initialiseStatus;
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
@@ -408,6 +524,7 @@ public class MainActivity extends AppCompatActivity
         //todo: remove this later when error is fixed! new version integrated
         final MoneyAppApp myApp = (MoneyAppApp)getApplication();
         final PdvApi pdvApi = myApp.getPdvApi();
+
         pdvApi.getConsent(new PdvApiCallback<ConsentServiceResponse>() {
             @Override
             public void result(Response<ConsentServiceResponse> response) {
@@ -426,7 +543,6 @@ public class MainActivity extends AppCompatActivity
 
     public void notifyPdvLoginFail(){
         //todo: whatever required when login is successful including UI updates
-        ((MoneyAppApp)getApplication()).loggedOnToPdv = false;
         String msg = getString(R.string.pdvapi_login_failed_message);
         msg = msg + " - setUser(): " + pdvApiResults.setUserResponse.getStatus() + " : " + pdvApiResults.setUserResponse.getMessage() + " - initialise(): " + pdvApiResults.initialiseStatus;
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
@@ -438,12 +554,14 @@ public class MainActivity extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!((MoneyAppApp)getApplication()).loggedOnToPdv){
+                isPdvConnected = true;
+                if (((MoneyAppApp)getApplication()).pdvLoginStatus.isLoggedOffFromPdv()){
                     loginToPDV();
                 }
                 else
                 {
                     ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_connected_material_white);
+
                 }
             }
         });
@@ -454,9 +572,12 @@ public class MainActivity extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                isPdvConnected = false;
                 ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_disconnected_material_white);
 
-                //todo: if there are issues with initialising , then set App.loggedOnToPdv = false, so it will login again
+                //todo: what to do if PDV is disconnected
+                //((MoneyAppApp)getApplication()).pdvLoginStatus.notifyLoggedOffFromPdv();
+                Toast.makeText(MainActivity.this, getString(R.string.pdvapi_not_connected), Toast.LENGTH_LONG);
             }
         });
     }
@@ -472,6 +593,8 @@ public class MainActivity extends AppCompatActivity
                 displayLongToastMessage(msg);
             }
         });
+        ((MoneyAppApp)getApplication()).pdvLoginStatus.notifyLoggedOffFromPdv();
+
     }
 
     @Override
@@ -482,6 +605,8 @@ public class MainActivity extends AppCompatActivity
         //notify reloads for institutions
         Intent intent = new Intent("pdv-on-get-user-profile-success");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        ((MoneyAppApp)getApplication()).pdvLoginStatus.notifyLoggedOnToPdv();
+
     }
 
     @Override
@@ -515,6 +640,16 @@ public class MainActivity extends AppCompatActivity
                 displayLongToastMessage(msg);
             }
         });
+    }
+
+    @Override
+    public void onRestoreAccountsComplete(String instId){
+
+    }
+
+    @Override
+    public void onRestoreAccountsAllComplete(){
+
     }
 
 
@@ -660,6 +795,12 @@ public class MainActivity extends AppCompatActivity
                 //todo: return the providers fragment
                 return ProvidersFragment.newInstance(position);
 
+            }
+            else if (position == 1){
+                return NetworthFragment.newInstance(position);
+            }
+            else if (position == 3){
+                return BudgetsFragment.newInstance(position);
             }
             else {
                 return PlaceholderFragment.newInstance(position + 1);

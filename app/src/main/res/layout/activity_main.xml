@@ -19,7 +19,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/coloreWisePrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -79,7 +79,7 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorTabBar"/>
+            android:background="@color/coloreWisePrimary"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -93,7 +93,7 @@
     android:layout_width="1dp"
     android:layout_height="1dp">
 
-        <org.xwalk.core.XWalkView
+        <WebView
             android:id="@+id/ewise_webview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

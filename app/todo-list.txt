@@ -1,7 +1,7 @@
 WORK IN PROGRESS
 Last Updated on 12/3/17
-1. todo: PdvApiResults - tosjon string is not serialising Pdv response objects??
-todo: handle error responses from api - show alert message
+
+# todo: restoreAccounts , will reorder the instution
 2. todo: don't go to other activities when request is in progress
 3. todo: build "ProvidersFragment" to display the currently added providers list, request queue and results
 4. todo: Implement UpdateTransactions()

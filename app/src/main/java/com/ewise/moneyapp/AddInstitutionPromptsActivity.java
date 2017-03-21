@@ -93,7 +93,8 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
         MoneyAppApp myApp = (MoneyAppApp) getApplication();
         PdvApi pdvApi = myApp.getPdvApi();
-        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
+        myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+//**XWALK**        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
 
@@ -105,7 +106,7 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
                 onPdvConnected();
             }
 
-            if (myApp.loggedOnToPdv){
+            if (myApp.pdvLoginStatus.isLoggedOnToPdv()){
                 //Toast.makeText(getApplicationContext(), R.string.pdvapi_get_prompts_message, Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
@@ -181,7 +182,6 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
     private void showAlertDialog(boolean isValid){
 
-        String retVal = null;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
@@ -302,7 +302,15 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
     }
 
+    @Override
+    public void onRestoreAccountsComplete(String instId){
 
+    }
+
+    @Override
+    public void onRestoreAccountsAllComplete(){
+
+    }
 
 
     private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){

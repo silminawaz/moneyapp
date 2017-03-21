@@ -15,9 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
+import com.ewise.android.pdv.api.model.PromptEntry;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.moneyapp.Utils.PdvApiResults;
+import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.data.AccountCardDataObject;
 import com.ewise.moneyapp.data.AccountCardListDataObject;
 import com.ewise.moneyapp.data.PdvAccountResponse;
@@ -40,13 +43,16 @@ import java.util.Locale;
  */
 
 @EFragment(R.layout.fragment_account_recycler)
-public class AccountsFragment extends Fragment  {
+public class AccountsFragment extends Fragment  implements PdvConnectivityCallback {
 
 
     private OnFragmentInteractionListener mListener;
 
     @ViewById(R.id.account_recycler_view)
     RecyclerView account_recycler_view;
+
+    @ViewById(R.id.accountsWelcomeLayout)
+    LinearLayout welcomeLayout;
 
 
     private AccountCardsViewAdapter cardsViewAdapter;
@@ -89,9 +95,18 @@ public class AccountsFragment extends Fragment  {
         cardsViewAdapter = new AccountCardsViewAdapter(this.getContext());
         account_recycler_view.setAdapter(cardsViewAdapter);
 
+        MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+        welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
 
+        if (app.isProviderFoundInDevice()) {
+            if (app.mustRestoreAccounts()) {
+                app.pdvRestoreAllProviderAccounts(this);
+            } else {
+                updateAccountsPage();
+            }
+        }
 
-        getLoaderManager().initLoader(R.id.PdvAccountResponse_Loader_id, null, loaderCallbacks);
+        //getLoaderManager().initLoader(R.id.PdvAccountResponse_Loader_id, null, loaderCallbacks);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -171,4 +186,80 @@ public class AccountsFragment extends Fragment  {
             cardsViewAdapter.resetData();
         }
     };
+
+    //Begin: PdvConnectivityCallback Interface implementations
+    @Override
+    public void onPdvConnected(){
+
+    }
+
+    @Override
+    public void onPdvDisconnected(){
+
+    }
+
+    @Override
+    public void onGetPromptsFail(PdvApiResults results){
+
+    }
+
+    @Override
+    public void onGetPromptsSuccess(PdvApiResults results){
+
+    }
+
+    @Override
+    public void onGetInstitutionsFail(PdvApiResults results){
+
+    }
+
+    @Override
+    public void onGetInstitutionsSuccess(PdvApiResults results) {
+
+    }
+
+    @Override
+    public void onGetUserProfileSuccess(PdvApiResults results){
+
+    }
+
+    @Override
+    public void onGetUserProfileFail(PdvApiResults results){
+
+    }
+
+    @Override
+    public void onRestoreAccountsComplete(String instId){
+
+    }
+
+    @Override
+    public void onRestoreAccountsAllComplete(){
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateAccountsPage();
+            }
+        });
+
+    }
+    //End: PdvApiConnectivityCallback interface implementation overrides
+
+
+    public void updateAccountsPage()
+    {
+
+        MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+        //todo: get preferred currency code from API (currently hard coded in resources)
+        Currency ccy = Currency.getInstance(Locale.getDefault());
+        String baseCurrency = getString(R.string.var_base_currency);
+        if(app.pdvAccountResponse.accounts!=null) {
+            AccountCardListDataObject cardList = new AccountCardListDataObject(getContext(), app.pdvAccountResponse, baseCurrency);
+            List<AccountCardDataObject> cardDataList = cardList.getAccountCardList();
+            cardsViewAdapter.swapData(cardDataList);
+        }
+    }
+
+
 }

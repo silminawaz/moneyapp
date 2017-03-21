@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,6 +51,8 @@ import java.util.List;
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     ListView providerList;
+    LinearLayout welcomeLayout;
+    Button addProviderButton;
 
     private ProviderItemViewAdapter providerAdapter;
 
@@ -72,8 +76,15 @@ import java.util.List;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Log.d("ProviderFragment", "onCreateView() - START");
         View rootView = inflater.inflate(R.layout.fragment_providers, container, false);
         providerList = (ListView) rootView.findViewById(R.id.providerList);
+        welcomeLayout = (LinearLayout) rootView.findViewById(R.id.providerWelcomeLayout);
+        addProviderButton = (Button) rootView.findViewById(R.id.addProviderButton);
+        //if there are any legitimate providers , we can hide the welcome layout.
+        MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+        welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(pdvApiOnGetUserProfileSuccessMessageReceiver,
                 new IntentFilter("pdv-on-get-user-profile-success"));
 
@@ -85,6 +96,8 @@ import java.util.List;
 
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(pdvApiCallbackMessageReceiver,
                 new IntentFilter("pdv-aca-bound-service-callback"));
+
+        Log.d("ProviderFragment", "onCreateView() - END");
 
         return rootView;
     }
@@ -227,6 +240,41 @@ import java.util.List;
         }
         providerAdapter = new ProviderItemViewAdapter(getContext(), providers);
         providerList.setAdapter(providerAdapter);
+        welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+
+        addProviderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+
+                if (app.pdvLoginStatus.isLoggedOnToPdv() && !app.pdvApiRequestQueue.isRequestInProgress()){
+                    startActivityForResult(new Intent(getActivity(), AddInstitutionActivity.class), MoneyAppApp.ADD_PROVIDER_LIST_REQUEST);
+                }
+                else if (!app.pdvApiRequestQueue.isRequestInProgress())
+                {
+                    Toast.makeText(getContext(), R.string.pdvapi_not_loggedin, Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(getContext(), R.string.pdvapi_request_inprogress, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onPause(){
+        Log.d("ProviderFragment", "onPause() - START");
+
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(pdvApiCallbackMessageReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(pdvApiOnStopMessageReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(pdvApiOnGetUserProfileSuccessMessageReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(pdvApiOnAddingNewProvider);
+        Log.d("ProviderFragment", "onPause() - END");
+
     }
 
     //method to handle user clicking the popup menu (Sync, Edit, Delete provider)
@@ -270,6 +318,7 @@ import java.util.List;
             MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
             if (app.userProfileData.getUserprofile()!=null){
                 providerAdapter.swapData(app.userProfileData.getUserprofile());
+                welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
             }
         }
     };
@@ -291,6 +340,8 @@ import java.util.List;
         public void onReceive(Context context, Intent intent) {
             Log.d("ProviderFragment", "Received Broadcast message pdv-api-adding-new-provider");
             providerAdapter.updateSyncStatus();
+            MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+            welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
         }
     };
 

@@ -2,9 +2,11 @@
 <resources>
     <color name="colorPrimary">#8ec448</color>
 
-    <color name="coloreWisePrimary">#8ec448</color>
-    <color name="coloreWisePrimaryDark">#689f38</color>
-    <color name="coloreWiseAccent">#c5e1a5</color>
+    <color name="coloreWisePrimary">#00c389</color>
+    <color name="coloreWisePrimaryDark">#005f61</color>
+    <color name="coloreWisePrimaryOld">#8ec448</color>
+    <color name="coloreWisePrimaryDarkOld">#689f38</color>
+    <color name="coloreWiseAccent">#4c000000</color>
     <color name="coloreWiseSecondary">#8ec448</color>
     <color name="coloreWiseSplashBackground">#ffffff</color>
     <color name="coloreWiseMainTextBlack">#de000000</color>
@@ -24,11 +26,13 @@
     <color name="coloreWiseDarkGreen">#005f61</color>
     <color name="coloreWiseDarkGreenShadow">#005e5d</color>
     <color name="coloreWiseAlternateGreen">#41c0af</color>
+    <color name="coloreWiseWelcomeButtonText">#ff5722</color>
+
 
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorTabBar">#9cca6c</color>
     <color name="colorCardToolbar">#e3e3e3</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
     <color name="colorAccountCardHeaderText">#000000</color>
     <color name="colorAccountCardViewText">#4da6ff</color>
     <color name="AccountCardCurrencyTextColor">#30d627</color>

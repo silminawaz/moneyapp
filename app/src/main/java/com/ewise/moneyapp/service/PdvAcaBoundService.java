@@ -11,6 +11,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.ewise.android.pdv.api.PdvApi;
@@ -26,14 +27,42 @@ import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiRequestQueue;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvApiStatus;
+import com.ewise.moneyapp.data.PdvAccountResponse;
 
+import org.antlr.v4.codegen.model.Loop;
+
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class PdvAcaBoundService extends Service {
 
     private final IBinder pdvAcaServiceBinder = new PdvAcaServiceBinder();
     private HashMap <String, Runnable> runnablePool = null;
     private HandlerThread handlerThread = null;
+    private Date lastRefreshedDateTime = null;
+
+    private void setLastRefreshedDateTime(){
+        if (lastRefreshedDateTime==null) {
+            lastRefreshedDateTime = new Date();
+        }
+        else{
+            lastRefreshedDateTime.setTime(System.currentTimeMillis());
+        }
+    }
+
+    public Date getLastRefreshedDateTime(){
+        return lastRefreshedDateTime;
+    }
+
+    public boolean isRefreshedAfter(Date checkDateTime){
+        if (lastRefreshedDateTime==null) return false;
+        if (lastRefreshedDateTime.after(checkDateTime)){
+            return true;
+        }
+        return false;
+    }
 
     public class PdvAcaServiceBinder extends Binder {
         public PdvAcaBoundService getService(){
@@ -42,30 +71,86 @@ public class PdvAcaBoundService extends Service {
     }
 
     public PdvAcaBoundService() {
+        super();
+
+    }
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        Log.d("PdvApiBoundService", "onCreate() - START");
         runnablePool = new HashMap<String, Runnable>();
         handlerThread = new HandlerThread("eWisePdvApiRunThread");
         handlerThread.start();
+        Log.d("PdvApiBoundService", "onCreate() - END");
+
     }
 
     @Override
     public void onDestroy(){
-        handlerThread.quitSafely();
+        Log.d("PdvApiBoundService", "onDestroy() - START");
+        Looper looper = waitAndGetLooper();
+        if (looper!=null){
+            Handler handler = new Handler(looper);
+            Iterator it = runnablePool.entrySet().iterator();
+            while (it.hasNext()){
+                handler.removeCallbacks((Runnable)((Map.Entry) it.next()).getValue());
+            }
+        }
+        handlerThread.quit();
+        handlerThread = null;
         runnablePool.clear();
         runnablePool = null;
+        Log.d("PdvApiBoundService", "onDestroy() - END");
+    }
+
+    public HashMap<String, Runnable> getRunnablePool(){
+        if (this.runnablePool == null){
+            runnablePool = new HashMap<String, Runnable>();
+        }
+
+        return runnablePool;
+
     }
 
     private HandlerThread getHandlerThread(){
         if (handlerThread==null){
+            Log.d("PdvApiBoundService", "getHandlerThread() - handlerThread is NULL");
             handlerThread = new HandlerThread("eWisePdvApiRunThread");
         }
         else
         {
-            if (handlerThread.getLooper()==null){
+            Log.d("PdvApiBoundService", "getHandlerThread() - handlerThread is NOT NULL");
+            if (handlerThread.getState() == Thread.State.NEW)
+            {
+                Log.d("PdvApiBoundService", "getHandlerThread().start() - about to execute");
                 handlerThread.start();
             }
+
         }
         return handlerThread;
     }
+
+    private Looper waitAndGetLooper(){
+        Looper looper = getHandlerThread().getLooper();
+        long waitTime = 500;
+        while (looper==null){
+            try {
+                synchronized (this) {
+                    Log.d("PdvAcaBoundService", "Waiting for looper to be available. wait time = " + Long.toString(waitTime));
+                    wait(waitTime);
+                    looper = getHandlerThread().getLooper();
+                    waitTime += 500;
+                    if (waitTime>5000) break;
+                }
+            } catch (InterruptedException e) {
+                Log.d("PdvAcaBoundService", e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return looper;
+    }
+
 
     public void stopPendingRequest (final PdvApi pdvApi, final String requestUUID) {
 
@@ -90,13 +175,21 @@ public class PdvAcaBoundService extends Service {
         };
 
 
-        Handler handler = new Handler(getHandlerThread().getLooper());
-        handler.post(runPdvApiStop);
+        Looper looper = waitAndGetLooper();
 
-        //errors - lets try and kill the runnable
-        Runnable runnable = runnablePool.get(requestUUID);
-        handler.removeCallbacks(runnable);
-        runnablePool.remove(requestUUID);
+        if (looper!=null) {
+            Handler handler = new Handler(looper);
+            handler.post(runPdvApiStop);
+
+            //errors - lets try and kill the runnable
+            Runnable runnable = getRunnablePool().get(requestUUID);
+            handler.removeCallbacks(runnable);
+            getRunnablePool().remove(requestUUID);
+        }
+        else
+        {
+            sendBroadcastServiceError(getResources().getString(R.string.service_execution_error_title_stop_pending_request), getResources().getString(R.string.service_execution_error_message_looper_null));
+        }
         //new Thread(runPdvApiStop).start();
     }
 
@@ -105,6 +198,7 @@ public class PdvAcaBoundService extends Service {
         return pdvAcaServiceBinder;
     }
 
+    //DO NOT USE THIS API.. ITS A VERY INEFFICIENT API WITH MULTIPLE "DATA" status callbacks
     public void updateAccounts (final PdvApi pdvApi, final PdvApiRequestParams requestParams){
         final PdvApiResults results = new PdvApiResults();
         results.pdvApiName = requestParams.pdvApiName;
@@ -123,9 +217,9 @@ public class PdvAcaBoundService extends Service {
                         @Override
                         public void result(AccountsResponse accountsResponse) {
                             Log.d("accountsResponse", PdvApiResults.toJsonString(accountsResponse));
-                            results.accounts = accountsResponse;
                             if (accountsResponse.getStatus().equals(StatusCode.STATUS_DATA)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = data");
+                                results.accounts = accountsResponse;
                                 results.callBackData = true;
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_DATA, requestParams, results);
@@ -136,18 +230,20 @@ public class PdvAcaBoundService extends Service {
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_COMPLETE, requestParams, results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_ALL_COMPLETE)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = all complete");
+                                results.accounts = accountsResponse;
                                 results.callBackAllComplete = true;
-                                requestQueue.setRequestResults(results);
                                 requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ALL_COMPLETE, requestParams, results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_ERROR)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = error");
+                                results.accounts = accountsResponse;
                                 results.callBackError = true;
                                 requestQueue.setRequestResults(results);
-                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
+                                setLastRefreshedDateTime();
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ERROR, requestParams, results);
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = verify");
+                                results.accounts = accountsResponse;
                                 results.callBackPrompts = true;
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_VERIFY, requestParams, results);
@@ -172,12 +268,25 @@ public class PdvAcaBoundService extends Service {
             }
         };
 
-        runnablePool.put(requestParams.getUuid(), runPdvUpdateAccounts);
+        getRunnablePool().put(requestParams.getUuid(), runPdvUpdateAccounts);
 
         //call the API
+        Looper looper = waitAndGetLooper();
+        if (looper!=null) {
+            Handler handler = new Handler(looper);
+            if (handler != null) {
+                Log.d("PdvAcaBoundService", "runPdvUpdateAccounts - handler is not null - running updateAccounts");
+                handler.post(runPdvUpdateAccounts);
+            } else {
+                Log.d("PdvAcaBoundService", "runPdvUpdateAccounts - handler is NULL - cannot run updateAccounts on the handler thread");
 
-        Handler handler = new Handler(getHandlerThread().getLooper());
-        handler.post(runPdvUpdateAccounts);
+            }
+        }
+        else{
+            String title = getResources().getString(R.string.service_execution_error_title_update_account_request);
+            String.format(title, requestParams.updateParams.instIds.get(0));
+            sendBroadcastServiceError(title, getResources().getString(R.string.service_execution_error_message_looper_null));
+        }
         //Thread thread = new Thread (runPdvUpdateAccounts).start();
     }
 
@@ -200,9 +309,9 @@ public class PdvAcaBoundService extends Service {
                         @Override
                         public void result(TransactionsResponse transactionsResponse) {
                             Log.d("transactionsResponse=", PdvApiResults.toJsonString(transactionsResponse));
-                            results.transactions = transactionsResponse;
                             if (transactionsResponse.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = complete");
+                                results.transactions = transactionsResponse;
                                 results.callBackCompleted = true;
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_COMPLETE, requestParams, results);
@@ -210,16 +319,18 @@ public class PdvAcaBoundService extends Service {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = all complete");
                                 results.callBackAllComplete = true;
                                 requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
-                                requestQueue.setRequestResults(results);
+                                ((MoneyAppApp)getApplication()).pdvAccountResponse.resetAccountsRefreshed();
+                                setLastRefreshedDateTime();
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ALL_COMPLETE, requestParams, results);
                             } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_ERROR)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = error");
+                                results.transactions = transactionsResponse;
                                 results.callBackError = true;
                                 requestQueue.setRequestResults(results);
-                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ERROR, requestParams, results);
                             } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = verify");
+                                results.transactions = transactionsResponse;
                                 results.callBackPrompts = true;
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_VERIFY, requestParams, results);
@@ -244,13 +355,28 @@ public class PdvAcaBoundService extends Service {
             }
         };
 
-        runnablePool.put(requestParams.getUuid(), runPdvUpdateTransactionsNew);
+
+        getRunnablePool().put(requestParams.getUuid(), runPdvUpdateTransactionsNew);
 
         //call the API
+        Looper looper = waitAndGetLooper();
+        if (looper!=null) {
+            Handler handler = new Handler(looper);
+            if (handler != null) {
+                Log.d("PdvAcaBoundService", "runPdvUpdateAccounts - handler is not null - running updateAccounts");
+                handler.post(runPdvUpdateTransactionsNew);
+            } else {
+                Log.d("PdvAcaBoundService", "runPdvUpdateAccounts - handler is NULL - cannot run updateTransactions on the handler thread");
 
-        //Handler handler = new Handler(getHandlerThread().getLooper());
-        //handler.post(runPdvUpdateTransactionsNew);
-        new Thread(runPdvUpdateTransactionsNew).start();
+            }
+        }
+        else{
+            String title = getResources().getString(R.string.service_execution_error_title_update_transactions_request);
+            String.format(title, requestParams.updateParams.instIds.get(0));
+            sendBroadcastServiceError(title, getResources().getString(R.string.service_execution_error_message_looper_null));
+        }
+
+        //new Thread(runPdvUpdateTransactionsNew).start();
     }
 
     public void updateTransactions (final PdvApi pdvApi, final PdvApiRequestParams requestParams){
@@ -271,9 +397,9 @@ public class PdvAcaBoundService extends Service {
                         @Override
                         public void result(TransactionsResponse transactionsResponse) {
                             Log.d("transactionsResponse=", PdvApiResults.toJsonString(transactionsResponse));
-                            results.transactions = transactionsResponse;
                             if (transactionsResponse.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = complete");
+                                results.transactions = transactionsResponse;
                                 results.callBackCompleted = true;
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_COMPLETE, requestParams, results);
@@ -281,16 +407,17 @@ public class PdvAcaBoundService extends Service {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = all complete");
                                 results.callBackAllComplete = true;
                                 requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
-                                requestQueue.setRequestResults(results);
+                                setLastRefreshedDateTime();
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ALL_COMPLETE, requestParams, results);
                             } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_ERROR)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = error");
+                                results.transactions = transactionsResponse;
                                 results.callBackError = true;
                                 requestQueue.setRequestResults(results);
-                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ERROR, requestParams, results);
                             } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = verify");
+                                results.transactions = transactionsResponse;
                                 results.callBackPrompts = true;
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_VERIFY, requestParams, results);
@@ -315,12 +442,27 @@ public class PdvAcaBoundService extends Service {
             }
         };
 
-        runnablePool.put(requestParams.getUuid(), runPdvUpdateTransactions);
+        getRunnablePool().put(requestParams.getUuid(), runPdvUpdateTransactions);
 
         //call the API
+        Looper looper = waitAndGetLooper();
+        if (looper!=null) {
 
-        Handler handler = new Handler(getHandlerThread().getLooper());
-        handler.post(runPdvUpdateTransactions);
+            Handler handler = new Handler(looper);
+            if (handler != null) {
+                Log.d("PdvAcaBoundService", "runPdvUpdateAccounts - handler is NOT NULL - about to run runPdvUpdateTransactions on the handler thread");
+                handler.post(runPdvUpdateTransactions);
+
+            } else {
+                Log.d("PdvAcaBoundService", "runPdvUpdateAccounts - handler is NULL - CANNOT run runPdvUpdateTransactions on the handler thread");
+
+            }
+        }
+        else{
+            String title = getResources().getString(R.string.service_execution_error_title_update_transactions_request);
+            String.format(title, requestParams.updateParams.instIds.get(0));
+            sendBroadcastServiceError(title, getResources().getString(R.string.service_execution_error_message_looper_null));
+        }
         //Thread thread = new Thread (runPdvUpdateAccounts).start();
     }
 
@@ -358,6 +500,19 @@ public class PdvAcaBoundService extends Service {
 
     }
 
+    private void sendBroadcastServiceError (String title, String message){
+
+        //todo: remove debug logging
+        Log.d ("PdvAcaBoundService", "sendBroadcastServiceError method:" + title);
+        Log.d ("PdvAcaBoundService", "sendBroadcastServiceError message:" + message);
+
+
+        Intent intent = new Intent("pdv-aca-service-error");
+        intent.putExtra("title", title);
+        intent.putExtra("message", message);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+    }
 
     private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){
         String sFormat = getApplicationContext().getString(R.string.exception_format_string);

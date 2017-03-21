@@ -121,7 +121,7 @@ public class CashflowLineChart {
         //create the data entries for the chart - there will be two lines (dual y axis)
         //1st Y axis - cashflow
         List<Entry> entries = new ArrayList<>();
-        Log.d("**TRACE-Format**", String.format("cardlistsize = %d", transactioncardList.size()));
+        //Log.d("**TRACE-Format**", String.format("cardlistsize = %d", transactioncardList.size()));
         String[] x_axis_text = new String[transactioncardList.size()];
 
         //get values from transactionCardList
@@ -143,7 +143,7 @@ public class CashflowLineChart {
 
             }
             x_axis_text[x] = x_axis_text_value;
-            Log.d("**TRACE-Format**", String.format("x_axis_text[%d] = %s", x, x_axis_text_value));
+            //Log.d("**TRACE-Format**", String.format("x_axis_text[%d] = %s", x, x_axis_text_value));
             x++;
         }
 
@@ -292,7 +292,7 @@ public class CashflowLineChart {
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
             // "value" represents the position of the label on the axis (x or y)
-            Log.d("**TRACE-Format**", String.format("value: %d", (int) value));
+            //Log.d("**TRACE-Format**", String.format("value: %d", (int) value));
             if (((int) value < mValues.length) && ((int) value >=0)) {
                 return mValues[(int) value];
             }
