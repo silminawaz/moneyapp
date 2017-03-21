@@ -17,6 +17,7 @@
     <dimen name="ewise_secondary_text_size">12sp</dimen>
     <dimen name="ewise_dropdown_text_size_large">16sp</dimen>
     <dimen name="ewise_heading_text_size">20sp</dimen>
+    <dimen name="ewise_subheading_text_size">12sp</dimen>
     <dimen name="ewise_highlight_text_size">30sp</dimen>
     <dimen name="ewise_touch_icon_size">40dp</dimen>
     <dimen name="ewise_touch_icon_size_small">20dp</dimen>
@@ -36,5 +37,7 @@
     <dimen name="ewise_welcome_title_size">20dp</dimen>
     <dimen name="ewise_welcome_desc_size">14dp</dimen>
     <dimen name="ewise_welcome_desc_padding">40dp</dimen>
+    <dimen name="ewise_networth_summary_label_width">150dp</dimen>
+    <dimen name="ewise_networth_piechart_size">240dp</dimen>
 
 </resources>

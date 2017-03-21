@@ -176,6 +176,35 @@
     <string name="service_execution_error_title_update_transactions_request">Update Transactions Request for %1$s</string>
     <string name="service_execution_error_message_looper_null">Unable to execute service due to null thread looper</string>
 
+    <!-- Networth screen -->
+    <string name="networth_summary_card_heading">Your networth</string>
+    <string name="networth_summary_card_subheading">What you are worth</string>
+    <string name="networth_summary_assets_label_text">You own (assets)</string>
+    <string name="networth_summary_liabilities_label_text">You owe (liabilities)</string>
+    <string name="networth_summary_total_label_text">Your networth</string>
+    <string name="networth_assets_card_heading">Your Assets</string>
+    <string name="networth_assets_card_subheading">What you own</string>
+    <string name="networth_assets_card_total">Total assets</string>
+
+    <string name="networth_liabilities_card_heading">Your Liabilities</string>
+    <string name="networth_liabilities_card_subheading">What you owe</string>
+    <string name="networth_liabilities_card_total">Total liabilities</string>
+
+    <string name="networth_assets_category_CASH">Savings and current</string>
+    <string name="networth_assets_category_OVERDRAFT">Overdrafts</string>
+    <string name="networth_assets_category_INVESTMENT">Investments</string>
+    <string name="networth_assets_category_SUPERANNUATION">Retirement</string>
+    <string name="networth_assets_category_PROPERTY">Property</string>
+    <string name="networth_assets_category_INSURANCE">Insurance</string>
+    <string name="networth_assets_category_TAX">Tax</string>
+    <string name="networth_assets_category_EFFECTS">Effect</string>
+    <string name="networth_assets_category_ASSETS">Other assets</string>
+
+    <string name="networth_liabilities_category_CREDIT">Credit cards</string>
+    <string name="networth_liabilities_category_LOAN">Loans</string>
+    <string name="networth_liabilities_MORTGAGE">Mortgages</string>
+    <string name="networth_liabilities_INVESTLOAN">Investment loans</string>
+    <string name="networth_liabilities_LIABILITIES">Other liabilities</string>
 
 
     <string name="large_text">

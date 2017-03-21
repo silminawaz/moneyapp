@@ -27,6 +27,9 @@
     <color name="coloreWiseDarkGreenShadow">#005e5d</color>
     <color name="coloreWiseAlternateGreen">#41c0af</color>
     <color name="coloreWiseWelcomeButtonText">#ff5722</color>
+    <!-- Networth screen colours -->
+    <color name="coloreWiseNetworthAssets">#00c389</color>
+    <color name="coloreWiseNetworthLiabilities">#ff1744</color>
 
 
     <color name="colorPrimaryDark">#303F9F</color>
