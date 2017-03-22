@@ -12,6 +12,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -149,15 +150,26 @@ public class AccountCardDataObject {
 
         try {
 
-            // TODO : add multi-currency support later - for now just add up the balances for this type of account for only display currency accounts
             Currency currency = Currency.getInstance(account.currency);
             MathContext mc = new MathContext(currency.getDefaultFractionDigits(), RoundingMode.HALF_UP);
-            //CurrencyExchangeRateItem rateItem = rates.getCurrencyRatesForCurrencyPair(acctCurrency, this.preferredCurrencyCode);
+            CurrencyExchangeRates rates = CurrencyExchangeRates.getInstance();
+
+            String toCurrency = preferredCurrencyCode;
+            String fromCurrency = preferredCurrencyCode;
+            if (account.currency!=null){
+                if(!account.currency.isEmpty()) {
+                    fromCurrency=account.currency;
+                }
+            }
+
             BigDecimal acctBalance = new BigDecimal("0.0", mc);
-            acctBalance = acctBalance.add(new BigDecimal(account.balance, mc));
             BigDecimal acctFunds = new BigDecimal("0.0", mc);
+
+            acctBalance = acctBalance.add(new BigDecimal(account.balance, mc));
+            if (!fromCurrency.equals(toCurrency)) { acctBalance = rates.exchangeAmountToCurrency(toCurrency, fromCurrency, acctBalance);}
             if (account.availBalance.length()>0) {
                 acctFunds = acctFunds.add(new BigDecimal(account.availBalance, mc));
+                if (!fromCurrency.equals(toCurrency)) { acctFunds = rates.exchangeAmountToCurrency(toCurrency, fromCurrency, acctFunds);}
             }
             this.preferredCurrencyBalance = this.preferredCurrencyBalance.add(acctBalance);
             this.preferredCurrencyFunds = this.preferredCurrencyFunds.add(acctFunds);

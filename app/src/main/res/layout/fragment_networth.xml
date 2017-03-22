@@ -136,7 +136,9 @@
                                 android:id="@+id/networthSummaryBarChart"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:visibility="visible" />
+                                android:visibility="visible"
+                                android:minHeight="50dp"
+                                android:minWidth="100dp" />
 
 
                         </LinearLayout>
@@ -246,7 +248,9 @@
                                     android:id="@+id/networthAssetsPieChart"
                                     android:layout_width="@dimen/ewise_networth_piechart_size"
                                     android:layout_height="@dimen/ewise_networth_piechart_size"
-                                    android:visibility="visible" />
+                                    android:visibility="visible"
+                                    android:minHeight="100dp"
+                                    android:minWidth="100dp" />
 
 
                             </LinearLayout>
@@ -322,7 +326,7 @@
                                     android:layout_width="@dimen/ewise_networth_summary_label_width"
                                     android:textStyle="bold"
                                     android:text="@string/networth_assets_card_total"
-                                    android:textSize="@dimen/ewise_secondary_text_size" />
+                                    android:textSize="@dimen/ewise_primary_text_size" />
 
                                 <TextView
                                     android:id="@+id/netWorthAssetsTotalAmount"
@@ -330,14 +334,14 @@
                                     android:layout_width="wrap_content"
                                     android:text="9,999,999.99"
                                     android:textStyle="bold"
-                                    android:textSize="@dimen/ewise_secondary_text_size" />
+                                    android:textSize="@dimen/ewise_primary_text_size" />
 
                                 <TextView
                                     android:id="@+id/netWorthAssetsTotalCurrency"
                                     android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
                                     android:text="@string/var_base_currency"
-                                    android:textSize="@dimen/ewise_secondary_text_size"
+                                    android:textSize="@dimen/ewise_primary_text_size"
                                     android:textStyle="bold|italic"
                                     android:layout_marginStart="@dimen/ewise_horizontal_margin"/>
 
@@ -415,7 +419,8 @@
                                     android:layout_width="@dimen/ewise_networth_piechart_size"
                                     android:layout_height="@dimen/ewise_networth_piechart_size"
                                     android:visibility="visible"
-                                    />
+                                    android:minHeight="100dp"
+                                    android:minWidth="100dp" />
 
 
                             </LinearLayout>
@@ -491,7 +496,7 @@
                                     android:layout_width="@dimen/ewise_networth_summary_label_width"
                                     android:textStyle="bold"
                                     android:text="@string/networth_liabilities_card_total"
-                                    android:textSize="@dimen/ewise_secondary_text_size" />
+                                    android:textSize="@dimen/ewise_primary_text_size" />
 
                                 <TextView
                                     android:id="@+id/netWorthLiabilitiesTotalAmount"
@@ -499,14 +504,14 @@
                                     android:layout_width="wrap_content"
                                     android:text="9,999,999.99"
                                     android:textStyle="bold"
-                                    android:textSize="@dimen/ewise_secondary_text_size" />
+                                    android:textSize="@dimen/ewise_primary_text_size" />
 
                                 <TextView
                                     android:id="@+id/netWorthLiabilitiesTotalCurrency"
                                     android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
                                     android:text="@string/var_base_currency"
-                                    android:textSize="@dimen/ewise_secondary_text_size"
+                                    android:textSize="@dimen/ewise_primary_text_size"
                                     android:textStyle="bold|italic"
                                     android:layout_marginStart="@dimen/ewise_horizontal_margin"/>
 

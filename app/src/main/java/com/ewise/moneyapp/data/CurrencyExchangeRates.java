@@ -7,7 +7,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,9 +34,81 @@ public class CurrencyExchangeRates {
     }
 
     private CurrencyExchangeRates() {
+        exchangeRatesForCurrencyPairs= new HashMap<String, ExchangeRateItemsObject>();
+        String[] currencyPairs =       {"SGDSGD", "SGDAUD", "SGDUSD", "SGDEUR", "SGDGBP", "SGDCHF", "SGDHKD", "SGDINR"};
+        String[] exchangeRates =       {"1.0",    "1.1",    "0.75",    "0.66",  "0.57",    "0.71",   "5.56",  "46.81"};
+        boolean[] rateQuoteDirect =    {true,      true,      true,     true,    true,      true,     true,    true,};
+
+        int i=0;
+        for (String currencyPair: currencyPairs) {
+            ExchangeRateItemsObject rate = new ExchangeRateItemsObject();
+            rate.baseCurrencyCode=currencyPair.substring(0,2);
+            rate.quoteCurrencyCode = currencyPair.substring(3,5);
+            rate.exchangeRate = exchangeRates[i];
+            rate.rateQuoteDirect = rateQuoteDirect[i];
+            exchangeRatesForCurrencyPairs.put(currencyPair, rate);
+            i++;
+        }
     }
 
     public List<ExchangeRateItemsObject> exchangeRateItems;
+
+    private HashMap<String, ExchangeRateItemsObject> exchangeRatesForCurrencyPairs;
+
+
+    public HashMap<String, ExchangeRateItemsObject> getExchangeRatesForCurrencyPairs (){
+
+        //todo: retrieve this from a service later - for now we retrieve hardcoded currencypairs
+
+        return exchangeRatesForCurrencyPairs;
+    }
+
+    public BigDecimal exchangeAmountToCurrency (String toCurrency, String fromCurrency, BigDecimal amount){
+//        Currency accountCurr = Currency.getInstance(account.currency);
+        MathContext mc = new MathContext(7, RoundingMode.HALF_UP);
+
+        String currencyPair = toCurrency+fromCurrency;
+        ExchangeRateItemsObject exchangeRate = exchangeRatesForCurrencyPairs.get(currencyPair);
+        if (exchangeRate==null){
+            currencyPair = fromCurrency+toCurrency;
+            exchangeRate = exchangeRatesForCurrencyPairs.get(currencyPair);
+        }
+        if (exchangeRate!=null){
+            BigDecimal rate = new BigDecimal(exchangeRate.exchangeRate, mc);
+            if (exchangeRate.rateQuoteDirect){
+                //Most rates will be quoted this way...
+                //"SGDUSD"=0.75; "USDSGD"=1.40
+                //Pair=SGDUSD:0.75 (direct); fromCurrency=USD, toCurrency=SGD, Amount=100; convertedAmount=100/0.75 = 140 SGD
+                //Pair=SGDUSD:0.75 (direct); fromCurrency=SGD, toCurrency=USD, Amount=100; convertedAmount=100*0.75 = 75 USD
+                //Pair=USDSGD:1.40 (direct); fromCurrency=SGD, toCurrency=USD, Amount=100; convertedAmount=100/1.40 = 75 USD
+                //Pair=USDSGD:1.40 (direct); fromCurrency=USD, toCurrency=SGD, Amount=100; convertedAmount=100*1.40 = 140 SGD
+                if (fromCurrency.equals(exchangeRate.baseCurrencyCode)){
+                    return amount.multiply(rate);
+                }
+                else{
+                    return amount.divide(rate);
+                }
+            }
+            else
+            {
+                //this is now rare, but can happen if we extract currency pairs from a treasury system
+                //"SGDUSD"=1.40; "USDSGD"=0.75 (Rates are usually quoted this way for few currencies like GBP)
+                //Pair=SGDUSD:1.40 (indirect); fromCurrency=USD, toCurrency=SGD, Amount=100; convertedAmount=100*1.40 = 140 SGD
+                //Pair=SGDUSD:1.40 (indirect); fromCurrency=SGD, toCurrency=USD, Amount=100; convertedAmount=100/1.40 = 0.75 USD
+                //Pair=USDSGD:0.75 (indirect); fromCurrency=SGD, toCurrency=USD, Amount=100; convertedAmount=100*0.75 = 75 USD
+                //Pair=USDSGD:0.75 (indirect); fromCurrency=USD, toCurrency=SGD, Amount=100; convertedAmount=100/0.75 = 140 SGD
+                if (toCurrency.equals(exchangeRate.baseCurrencyCode)){
+                    return amount.multiply(rate);
+                }
+                else{
+                    return amount.divide(rate);
+                }
+            }
+        }
+
+        return amount;
+
+    }
 
     public static CurrencyExchangeRates objectFromData(String str) {
 
@@ -80,10 +157,13 @@ public class CurrencyExchangeRates {
 
 
     public static class ExchangeRateItemsObject {
+        public String currencyPair;
         public String baseCurrencyCode;
         public String quoteCurrencyCode;
         public String exchangeRate;
         public boolean rateQuoteDirect;
+
+
 
         public static ExchangeRateItemsObject objectFromData(String str) {
 
