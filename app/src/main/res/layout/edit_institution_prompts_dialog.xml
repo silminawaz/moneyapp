@@ -9,24 +9,67 @@
         android:layout_height="1dp"
         android:layout_gravity="fill_horizontal" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/coloreWisePrimary"
+        android:gravity="start">
+
     <TextView
         android:text="@string/provider_menu_edit_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/ewise_heading_text_size"
+        android:textSize="@dimen/ewise_heading_text_size_large"
         android:textStyle="bold"
         android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
         android:layout_marginTop="@dimen/ewise_vertical_margin_large"
-        android:textColor="@color/coloreWisePrimary"
+        android:textColor="@color/coloreWiseMainTextWhite"
         android:textAllCaps="true"
-        android:textAlignment="center" />
+        android:textAlignment="viewStart"
+        android:background="@color/coloreWisePrimary"
+        android:gravity="start"
+        android:layout_gravity="start"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:layout_gravity="center"
+        android:background="@color/coloreWisePrimary">
+
+        <ImageView
+            android:layout_width="@dimen/ewise_touch_icon_size_xl"
+            android:layout_height="@dimen/ewise_touch_icon_size_xl"
+            android:src="@drawable/rbanks"
+            android:id="@+id/imageInstitutionLogo"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/ewise_horizontal_margin_xl"
+            android:layout_marginEnd="@dimen/ewise_horizontal_margin_xl"
+            android:layout_marginBottom="@dimen/ewise_vertical_margin_xl"/>
+
+        <TextView
+            android:text="Institution Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textInstitutionName"
+            android:textSize="@dimen/ewise_heading_text_size"
+            android:elegantTextHeight="true"
+            android:layout_marginStart="@dimen/ewise_horizontal_margin_large"
+            android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+            android:textColor="@color/coloreWiseMainTextWhite"
+            />
+
+
+    </LinearLayout>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.ewise.moneyapp.AddInstitutionPromptsActivity"
         android:fillViewport="true">
 
@@ -51,47 +94,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center">
-
-                <ImageView
-                    android:layout_width="@dimen/ewise_touch_icon_size_xl"
-                    android:layout_height="@dimen/ewise_touch_icon_size_xl"
-                    app:srcCompat="@drawable/rbanks"
-                    android:id="@+id/imageInstitutionLogo" />
-
-                <TextView
-                    android:text="Institution Name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textInstitutionName"
-                    android:textSize="@dimen/ewise_heading_text_size"
-                    android:elegantTextHeight="true"
-                    android:layout_marginStart="@dimen/ewise_horizontal_margin_large"
-                    android:layout_marginTop="@dimen/ewise_vertical_margin_large"
-                    android:textColor="@color/coloreWiseSecondaryTextBlack"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:gravity="start|center_vertical|"
-                    />
-
-
-            </LinearLayout>
-
-            <TextView
-                android:text="@string/edit_provider_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/addInstitutionText"
-                android:textSize="@dimen/ewise_secondary_text_size"
-                android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
-                android:layout_marginTop="@dimen/ewise_vertical_margin_large"
-                android:textColor="@color/coloreWiseSecondaryTextBlack"
-                android:textColorLink="@color/coloreWisePrimary"
-                android:textStyle="normal|bold|italic" />
 
             <View style="@style/eWiseHorizontalDivider"
                 android:visibility="gone"/>
@@ -118,14 +120,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:visibility="visible">
-
-                    <TextView
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:text="123456-0019001-001-0000-1111" />
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -137,6 +132,16 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.25dp"
+                android:background="@color/coloreWisePrimaryDark"
+                android:paddingTop="@dimen/ewise_vertical_margin"
+                android:paddingBottom="@dimen/ewise_vertical_margin"
+                android:layout_marginBottom="@dimen/ewise_vertical_margin_xl"
+                android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -178,7 +183,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -189,7 +194,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/ewise_primary_text_size"
-                        android:text="Dummy Field"/>
+                        android:text="Dummy Field"
+                        android:visibility="gone"/>
 
                 </LinearLayout>
 
@@ -225,11 +231,11 @@
 
                     <View
                         android:layout_width="@dimen/ewise_horizontal_margin_large"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="match_parent"/>
 
                     <View
                         android:layout_width="@dimen/ewise_horizontal_margin_large"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="match_parent"/>
 
                     <Button
                         android:text="@string/edit_provider_save_button_text"
@@ -250,6 +256,17 @@
 
             </LinearLayout>
 
+            <TextView
+                android:text="@string/edit_provider_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/addInstitutionText"
+                android:textSize="@dimen/ewise_secondary_text_size"
+                android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
+                android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                android:textColor="@color/coloreWiseSecondaryTextBlack"
+                android:textColorLink="@color/coloreWisePrimary"
+                android:textStyle="normal|bold|italic" />
 
 
         </LinearLayout>

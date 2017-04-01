@@ -178,9 +178,16 @@
     <string name="edit_provider_delete_button_text">Delete provider</string>
     <string name="edit_provider_cancel_button_text">Cancel</string>
     <string name="edit_provider_text">
-        "WARNING: You should only edit provider credentials if you cannot sync your provider accounts anymore becuase your password or other security details have changed\n"
+        "\n"
+        "NOTE:\n\n"
+        "1. You should only edit provider credentials if "
+        "(a) credentials are not found in this device, or "
+        "(b) your password or other security credentials have changed.\n\n"
+        "2. The credentials will not be validated at the time of saving credentials.  They will be validated  the next time you sync your provider.\n\n"
+        "3. If your userid has changed, please remove and add the provider again."
     </string>
-    <string name="edit_provider_account_header_text">Accounts found for this provider:</string>
+    <string name="edit_provider_account_header_text">Provider accounts:</string>
+    <string name="edit_provider_account_not_found_text">No accounts available</string>
 
 
     <string name="dialog_otp_text">Enter one-time pin</string>

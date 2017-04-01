@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.UserProviderEntry;
+import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.moneyapp.MoneyAppApp;
 import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
@@ -72,8 +73,16 @@ public class ProviderItemViewAdapter extends BaseAdapter {
 
         UserProviderEntry providerEntry = (UserProviderEntry) getItem(position);
 
-        providerName.setText(providerEntry.getDesc());
-
+        if (!providerEntry.getDesc().equals("")) {
+            providerName.setText(providerEntry.getDesc());
+        }
+        else{
+            //this is to handle a bug in the SDK where the provider entry description is not set after call to setCredential()
+            Institution inst = app.getInstitution(providerEntry.getIid());
+            if (inst!=null){
+                providerName.setText(inst.getInstDesc());
+            }
+        }
         String syncStatus = app.getInstituionIdSyncStatus(providerEntry.getIid());
         String providerUid = providerEntry.getUid();
         if (providerUid==null && !providerEntry.isFoundInDevice()){

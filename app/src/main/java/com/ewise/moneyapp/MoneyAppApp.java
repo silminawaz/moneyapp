@@ -465,7 +465,7 @@ public class MoneyAppApp extends Application {
     public void pdvGetCredential (final String instId, final PdvConnectivityCallback callback) {
         Log.d(TAG, "Calling pdvGetCredential()");
 
-        Runnable runPdvpdvGetCredential = new Runnable() {
+        Runnable runPdvGetCredential = new Runnable() {
             @Override
             public void run() {
                 try {
@@ -491,7 +491,40 @@ public class MoneyAppApp extends Application {
             }
         };
 
-        new Thread (runPdvpdvGetCredential).start();
+        new Thread (runPdvGetCredential).start();
+    }
+
+
+    public void pdvSetCredential (final String instId, final List<PromptEntry> prompts, final PdvConnectivityCallback callback) {
+        Log.d(TAG, "Calling pdvGetCredential()");
+
+        Runnable runPdvSetCredential = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    pdvApi.setCredential(instId,prompts, new PdvApiCallback<String>() {
+                        @Override
+                        public void result(Response<String> response) {
+                            PdvApiResults results = new PdvApiResults();
+                            results.pdvApiName = PdvApiName.SET_CREDENTIAL;
+                            results.callBackCompleted = true;
+                            results.setCredentialResponse = response;
+                            if (results.setCredentialResponse.getStatus().equals(StatusCode.STATUS_SUCCESS)) {
+                                callback.onSetCredentialSuccess(results);
+                            } else {
+                                callback.onSetCredentialFail(results);
+                            }
+                        }
+                    });
+                }
+                catch (Exception e){
+                    Log.e("MoneyAppApp", "pdvGetCredential() - exception " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        new Thread (runPdvSetCredential).start();
     }
 
     public void pdvRestoreAllProviderAccounts(final PdvConnectivityCallback callback){
@@ -650,6 +683,24 @@ public class MoneyAppApp extends Application {
         return null;
     }
 
+    public Institution getInstitution(String instId){
+        if (providerData!=null) {
+            String groupId = getProviderGroupId(instId);
+            String instCode = getInstCodeFromInstId(instId);
+            for (Group group : providerData.getGroups()){
+                if (group.getGroupId().equals(groupId)){
+                    for (Institution inst : group.getInstitutions()){
+                        if (inst.getInstCode().equals(instCode)){
+                            return inst;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     public String getProviderGroupId(String instId){
 
         String instCode = getInstCodeFromInstId(instId);
@@ -790,6 +841,22 @@ public class MoneyAppApp extends Application {
             }
         }
         return false;
+
+    }
+
+    public List<PdvAccountResponse.AccountsObject> getAccountsForUserProvider (String instId){
+        List<PdvAccountResponse.AccountsObject> accountsObjectList = null;
+        if (this.pdvAccountResponse!=null){
+            if (pdvAccountResponse.accounts!=null){
+                accountsObjectList = new ArrayList<>();
+                for (PdvAccountResponse.AccountsObject account: pdvAccountResponse.accounts){
+                    if (account.instId.equals(instId)){
+                        accountsObjectList.add(account);
+                    }
+                }
+            }
+        }
+        return accountsObjectList;
     }
 
     //todo: remove unused code

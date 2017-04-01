@@ -85,6 +85,9 @@ public class PdvApiResults {
     //response for getCredential()
     public Response<GetPromptsData> credential = null;
 
+    //response for setCredential()
+    public Response<String>         setCredentialResponse = null;
+
     //response for Stop() API
     public Response<String>         stopResponse = null;
 
