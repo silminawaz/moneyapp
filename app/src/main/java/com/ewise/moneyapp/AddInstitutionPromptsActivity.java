@@ -312,6 +312,34 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
     }
 
+    @Override
+    public void onRestoreTransactionsAllComplete(PdvApiResults results){}
+
+    @Override
+    public void onRestoreTransactionsFail(PdvApiResults results){}
+
+    @Override
+    public void onGetCredentialSuccess(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetCredentialFail(PdvApiResults results) {
+
+    }
+
+
+    @Override
+    public void onSetCredentialSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onSetCredentialFail(PdvApiResults results)
+    {
+
+    }
+
 
     private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){
         String sFormat = getString(R.string.exception_format_string);

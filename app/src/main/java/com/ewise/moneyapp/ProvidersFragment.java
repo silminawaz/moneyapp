@@ -8,7 +8,9 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +38,7 @@ import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.adapters.ProviderItemViewAdapter;
 import com.ewise.moneyapp.data.ProviderPopupMenuItemData;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
+import com.google.android.gms.vision.text.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +46,7 @@ import java.util.List;
 /**
      * A placeholder fragment containing a simple view.
      */
-    public class ProvidersFragment extends Fragment {
+    public class ProvidersFragment extends Fragment implements MainActivity.FragmentUpdateListener {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -53,6 +56,12 @@ import java.util.List;
     ListView providerList;
     LinearLayout welcomeLayout;
     Button addProviderButton;
+
+    LinearLayout loginErrorLayout;
+    TextView loginErrorText;
+    Button loginRetryButton;
+
+    LoginStatus loginStatus;
 
     private ProviderItemViewAdapter providerAdapter;
 
@@ -82,6 +91,10 @@ import java.util.List;
         providerList = (ListView) rootView.findViewById(R.id.providerList);
         welcomeLayout = (LinearLayout) rootView.findViewById(R.id.providerWelcomeLayout);
         addProviderButton = (Button) rootView.findViewById(R.id.addProviderButton);
+        loginErrorLayout = (LinearLayout) rootView.findViewById(R.id.loginErrorLayout);
+        loginErrorText = (TextView) rootView.findViewById(R.id.loginErrorText);
+        loginRetryButton = (Button) rootView.findViewById(R.id.loginRetryButton);
+
         //if there are any legitimate providers , we can hide the welcome layout.
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
         welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
@@ -97,6 +110,11 @@ import java.util.List;
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(pdvApiCallbackMessageReceiver,
                 new IntentFilter("pdv-aca-bound-service-callback"));
 
+        //set the fragment listener
+        ((MainActivity)getActivity()).setProviderFragmentListener(this);
+
+        loginStatus = LoginStatus.LOGIN_STATUS_UNKNOWN;
+
         Log.d("ProviderFragment", "onCreateView() - END");
 
         return rootView;
@@ -106,6 +124,10 @@ import java.util.List;
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
+        if (((MainActivity)getActivity()).activityLoginStatus.equals(LoginStatus.LOGIN_STATUS_FAILED)){
+            loginErrorLayout.setVisibility(View.VISIBLE);
+        }
 
         final ProviderPopupMenuItemData[] popupMenuItems = {
                 new ProviderPopupMenuItemData(R.drawable.ic_sync, getString(R.string.provider_menu_refresh_title)),
@@ -261,6 +283,13 @@ import java.util.List;
             }
         });
 
+        loginRetryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).resetLoginRetryCount();
+            }
+        });
+
 
     }
 
@@ -288,7 +317,8 @@ import java.util.List;
             providerAdapter.updateSyncStatus();
 
         } else if (itemString.equals(getString(R.string.provider_menu_edit_title))) {
-            //edit the provider - show the edit provider activity
+            //edit the provider - show the edit provider dialogFragment
+            showEditProviderDialog(provider);
 
 
         } else if (itemString.equals(getString(R.string.provider_menu_delete_title))) {
@@ -308,6 +338,54 @@ import java.util.List;
 
         }
      }
+
+    public void showEditProviderDialog(UserProviderEntry providerEntry){
+        //mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag("edit_institution_prompts_dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        DialogFragment newFragment = EditProviderDialogFragment.newInstance(providerEntry);
+        newFragment.show(ft, "edit_institution_prompts_dialog");
+    }
+
+    @Override
+    public void onLoginFailed(){
+
+        //display the login layout
+        if (loginErrorLayout!=null) {
+            loginErrorLayout.setVisibility(View.VISIBLE);
+        }
+
+        loginStatus = LoginStatus.LOGIN_STATUS_FAILED;
+    }
+
+    @Override
+    public void onLoginSuccess(){
+        //hide the login layout
+        if (loginErrorLayout!=null) {
+            loginErrorLayout.setVisibility(View.GONE);
+        }
+
+        loginStatus = LoginStatus.LOGIN_STATUS_SUCCESS;
+    }
+
+    @Override
+    public void onLoginRetry(){
+        //hide the login layout
+        if (loginErrorLayout!=null) {
+            loginErrorLayout.setVisibility(View.GONE);
+        }
+        loginStatus = LoginStatus.LOGIN_STATUS_RETRY;
+    }
 
 
     private BroadcastReceiver pdvApiOnGetUserProfileSuccessMessageReceiver = new BroadcastReceiver() {

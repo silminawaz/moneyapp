@@ -1,6 +1,10 @@
 WORK IN PROGRESS
 Last Updated on 12/3/17
 
+SDK Bugs / issues
+# todo: SDK Issues : webview getting alert window calls from session crashes app and cannot be handled (DBS SG) if the ACA doesnt complete and the session times out waiting for something (like OTP entry etc)
+# todo: SDK issues : cant check pdv connectivity while other reqeusts are in progress
+
 # todo: restoreAccounts , will reorder the instution
 2. todo: don't go to other activities when request is in progress
 3. todo: build "ProvidersFragment" to display the currently added providers list, request queue and results

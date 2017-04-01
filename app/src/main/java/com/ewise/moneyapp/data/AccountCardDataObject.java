@@ -103,11 +103,46 @@ public class AccountCardDataObject {
                 title = context.getString(R.string.label_account_fragment_OTHERASSETS);
                 return;
             case OTHERLIABILITIES:
-                title = context.getString(R.string.label_account_fragment_UNKNOWN);
+                title = context.getString(R.string.label_account_fragment_OTHERLIABILITIES);
                 return;
             case UNKNOWN:
-
+                title = context.getString(R.string.label_account_fragment_UNKNOWN);
+                return;
         }
+    }
+
+    //Set the title for the account card
+    public String getTitle() {
+
+        switch (category) {
+            case CASH:
+                return context.getString(R.string.label_account_fragment_CASH);
+            case CREDIT:
+                return context.getString(R.string.label_account_fragment_CREDIT);
+            case LOAN:
+                return context.getString(R.string.label_account_fragment_LOAN);
+            case INVESTMENT:
+                return context.getString(R.string.label_account_fragment_INVESTMENT);
+            case RETIREMENT:
+                return context.getString(R.string.label_account_fragment_RETIREMENT);
+            case INSURANCE:
+                return context.getString(R.string.label_account_fragment_INSURANCE);
+            case PROPERTY:
+                return context.getString(R.string.label_account_fragment_PROPERTY);
+            case BILLS:
+                return context.getString(R.string.label_account_fragment_BILLS);
+            case REWARDS:
+                return context.getString(R.string.label_account_fragment_REWARDS);
+            case OTHERASSETS:
+                return context.getString(R.string.label_account_fragment_OTHERASSETS);
+            case OTHERLIABILITIES:
+                return context.getString(R.string.label_account_fragment_OTHERLIABILITIES);
+            case UNKNOWN:
+                return context.getString(R.string.label_account_fragment_UNKNOWN);
+        }
+
+        return context.getString(R.string.label_account_fragment_UNKNOWN);
+
     }
 
 

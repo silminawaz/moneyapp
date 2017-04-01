@@ -12,6 +12,8 @@ import com.ewise.moneyapp.data.TransactionCardDataObject.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +29,11 @@ public class TransactionCardListDataObject {
     private AccountsObject _account = null;
 
     private Context _context = null;
+
+    public enum TransactionSortOrder{
+        DATE_ASCENDING,
+        DATE_DESCENDING
+    }
 
 
     public TransactionCardListDataObject (Context context, PdvTransactionResponse transactionResponse, AccountsObject account, eGroupTransactionsBy groupTransactionsBy){
@@ -72,7 +79,9 @@ public class TransactionCardListDataObject {
                 }
                 else {
                     //TODO: PDV response date may change to object
-                    Date transactionDate = new SimpleDateFormat(_context.getString(R.string.api_transaction_date_format), Locale.getDefault()).parse(transaction.date);
+
+                    String apiDateFormat = (transaction.date.length()>8) ? ( _context.getString(R.string.api_transaction_date_format)) : ( _context.getString(R.string.api_transaction_date_format_2));
+                    Date transactionDate = new SimpleDateFormat(apiDateFormat, Locale.getDefault()).parse(transaction.date);
                     switch (groupTransactionsBy) {
                         case DAY:
                             if (!transactionDate.equals(transactionCard.transactionDate)){{reloadTransactionCard=true;}}
@@ -108,7 +117,8 @@ public class TransactionCardListDataObject {
         try
         {
             //TODO: PDV response date may change to object
-            SimpleDateFormat format = new SimpleDateFormat(_context.getString(R.string.api_transaction_date_format), Locale.getDefault());
+            String apiDateFormat = (transaction.date.length()>8) ? ( _context.getString(R.string.api_transaction_date_format)) : ( _context.getString(R.string.api_transaction_date_format_2));
+            SimpleDateFormat format = new SimpleDateFormat(apiDateFormat, Locale.getDefault());
             Date transactionDate = format.parse(transaction.date);  //TODO: transaction.date may change to an object in real api response
             for (TransactionCardDataObject transactionCard : this._transactionCardList){
                 if (groupTransactionsBy == eGroupTransactionsBy.DAY) {
@@ -152,6 +162,67 @@ public class TransactionCardListDataObject {
 
     public List<TransactionCardDataObject> get_transactionCardList(){
         return _transactionCardList;
+    }
+
+    public List<TransactionCardDataObject> get_transactionCardList(final TransactionSortOrder sortOrder){
+
+        List<TransactionCardDataObject> sortedList = _transactionCardList;
+        if (sortOrder.equals(TransactionSortOrder.DATE_ASCENDING)) {
+            Collections.sort(sortedList, new Comparator<TransactionCardDataObject>() {
+                @Override
+                public int compare(TransactionCardDataObject t1, TransactionCardDataObject t2) {
+                    //return 0 : t1 == t2
+                    //return <0 : t1 before t2 (ascending)
+                    //return >0 : t1 after t2 (descending)
+                    return t1.transactionDate.compareTo(t2.transactionDate);
+                }
+            });
+        }
+        else {
+            Collections.sort(sortedList, new Comparator<TransactionCardDataObject>() {
+                @Override
+                public int compare(TransactionCardDataObject t1, TransactionCardDataObject t2) {
+                    //return 0 : t1 == t2
+                    //return <0 : t1 after t2 (descending)
+                    //return >0 : t1 before t2 (ascending)
+                    return t2.transactionDate.compareTo(t1.transactionDate);
+                }
+            });
+        }
+
+
+        return sortedList;
+    }
+
+
+    public static List<TransactionCardDataObject> sortTransactionList(final TransactionSortOrder sortOrder, List<TransactionCardDataObject> transactionCardList){
+
+        List<TransactionCardDataObject> sortedList = transactionCardList;
+        if (sortOrder.equals(TransactionSortOrder.DATE_ASCENDING)) {
+            Collections.sort(sortedList, new Comparator<TransactionCardDataObject>() {
+                @Override
+                public int compare(TransactionCardDataObject t1, TransactionCardDataObject t2) {
+                    //return 0 : t1 == t2
+                    //return <0 : t1 before t2 (ascending)
+                    //return >0 : t1 after t2 (descending)
+                    return t1.transactionDate.compareTo(t2.transactionDate);
+                }
+            });
+        }
+        else {
+            Collections.sort(sortedList, new Comparator<TransactionCardDataObject>() {
+                @Override
+                public int compare(TransactionCardDataObject t1, TransactionCardDataObject t2) {
+                    //return 0 : t1 == t2
+                    //return <0 : t1 after t2 (descending)
+                    //return >0 : t1 before t2 (ascending)
+                    return t2.transactionDate.compareTo(t1.transactionDate);
+                }
+            });
+        }
+
+
+        return sortedList;
     }
 
     private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){

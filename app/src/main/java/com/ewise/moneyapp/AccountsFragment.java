@@ -54,6 +54,9 @@ public class AccountsFragment extends Fragment  implements PdvConnectivityCallba
     @ViewById(R.id.accountsWelcomeLayout)
     LinearLayout welcomeLayout;
 
+    @ViewById(R.id.pageLoadingLayout)
+    LinearLayout pageLoadingLayout;
+
 
     private AccountCardsViewAdapter cardsViewAdapter;
 
@@ -98,11 +101,12 @@ public class AccountsFragment extends Fragment  implements PdvConnectivityCallba
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
         welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
 
-        if (app.isProviderFoundInDevice()) {
+        if (app.isProviderFoundInDevice() && app.pdvLoginStatus.isLoggedOnToPdv()) {
             if (app.mustRestoreAccounts()) {
+                pageLoadingLayout.setVisibility(View.VISIBLE);
                 app.pdvRestoreAllProviderAccounts(this);
             } else {
-                updateAccountsPage();
+                updatePageData();
             }
         }
 
@@ -236,28 +240,59 @@ public class AccountsFragment extends Fragment  implements PdvConnectivityCallba
     @Override
     public void onRestoreAccountsAllComplete(){
 
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                updateAccountsPage();
+                updatePageData();
             }
         });
+
+    }
+
+    @Override
+    public void onRestoreTransactionsAllComplete(PdvApiResults results){}
+
+    @Override
+    public void onRestoreTransactionsFail(PdvApiResults results){}
+
+    @Override
+    public void onGetCredentialSuccess(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetCredentialFail(PdvApiResults results) {
+
+    }
+
+    @Override
+    public void onSetCredentialSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onSetCredentialFail(PdvApiResults results)
+    {
 
     }
     //End: PdvApiConnectivityCallback interface implementation overrides
 
 
-    public void updateAccountsPage()
+    public void updatePageData()
     {
 
+        pageLoadingLayout = (LinearLayout) getActivity().findViewById(R.id.pageLoadingLayout);
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
-        //todo: get preferred currency code from API (currently hard coded in resources)
-        Currency ccy = Currency.getInstance(Locale.getDefault());
-        String baseCurrency = getString(R.string.var_base_currency);
-        if(app.pdvAccountResponse.accounts!=null) {
-            AccountCardListDataObject cardList = new AccountCardListDataObject(getContext(), app.pdvAccountResponse, baseCurrency);
-            List<AccountCardDataObject> cardDataList = cardList.getAccountCardList();
-            cardsViewAdapter.swapData(cardDataList);
+        AccountCardListDataObject accountCardListDO = app.getAccountCardListDO(getContext());
+        if (accountCardListDO!=null){
+            List<AccountCardDataObject> cardDataList = accountCardListDO.getAccountCardList();
+            if (cardDataList!=null){
+                cardsViewAdapter.swapData(cardDataList);
+                if (pageLoadingLayout!=null) {
+                    pageLoadingLayout.setVisibility(View.GONE);
+                }
+            }
         }
     }
 

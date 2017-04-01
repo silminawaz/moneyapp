@@ -1,5 +1,7 @@
 package com.ewise.moneyapp.Utils;
 
+import android.util.Log;
+
 /**
  * Created by SilmiNawaz on 21/3/17.
  */
@@ -8,7 +10,7 @@ public class PdvLoginStatus{
     private int loginStatus;
 
     public PdvLoginStatus(){
-        this.loginStatus=0;
+        notifyLoggedOffFromPdv();
     }
 
     public int toInt () { return loginStatus; }
@@ -44,6 +46,7 @@ public class PdvLoginStatus{
     public void notifyLoggedOffFromPdv()
     {
         synchronized (this) {
+            Log.d("PdvLoginStatus", "notifyLoggedOffFromPdv() - setting to LoggedOff (0)");
             loginStatus = 0;
         }
     }
@@ -51,6 +54,7 @@ public class PdvLoginStatus{
     public void notifyLogonInProgress()
     {
         synchronized (this) {
+            Log.d("PdvLoginStatus", "notifyLogonInProgress() - setting to LogonInProgress (1)");
             loginStatus = 1;
         }
     }
@@ -58,6 +62,7 @@ public class PdvLoginStatus{
     public void notifyLoggedOnToPdv()
     {
         synchronized (this) {
+            Log.d("PdvLoginStatus", "notifyLoggedOnToPdv() - setting to LoggedOn (2)");
             loginStatus = 2;
         }
     }

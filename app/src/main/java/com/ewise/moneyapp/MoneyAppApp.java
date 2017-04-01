@@ -26,6 +26,7 @@ import com.ewise.android.pdv.api.PdvApi;
 import com.ewise.android.pdv.api.PdvApiImpl;
 import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
 import com.ewise.android.pdv.api.model.AccountEntry;
+import com.ewise.android.pdv.api.model.InstitutionAndAccounts;
 import com.ewise.android.pdv.api.model.PromptEntry;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
@@ -38,6 +39,7 @@ import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.android.pdv.api.model.response.GetPromptsResponse;
 import com.ewise.android.pdv.api.model.response.GetUserProfileData;
 import com.ewise.android.pdv.api.model.response.GetUserProfileResponse;
+import com.ewise.android.pdv.api.model.response.TransactionsResponse;
 import com.ewise.android.pdv.api.util.ConnectivityReceiver;
 import com.ewise.moneyapp.APIDataMappers.PdvAccountDataMapper;
 import com.ewise.moneyapp.Utils.PdvApiCallbackCounter;
@@ -49,6 +51,7 @@ import com.ewise.moneyapp.Utils.PdvApiStatus;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
 import com.ewise.moneyapp.Utils.PdvLoginStatus;
+import com.ewise.moneyapp.data.AccountCardListDataObject;
 import com.ewise.moneyapp.data.DataUpdateType;
 import com.ewise.moneyapp.data.PdvAccountResponse;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
@@ -73,6 +76,7 @@ import static java.util.Arrays.asList;
  */
 public class MoneyAppApp extends Application {
     private static final String TAG = MoneyAppApp.class.getName();
+    public static final String DEFAULT_USERNAME = "silmiandroid5demo3";
     public static final String DEFAULT_MM_HOST = "https://qa-50-wmm.ewise.com/api/";
     public static final String DEFAULT_SWAN_HOST = "https://qaswan.ewise.com/";
     public static final String EWISEDEMO = "com.ewise.android.pdv.EwiseSharedPref";
@@ -82,10 +86,13 @@ public class MoneyAppApp extends Application {
     static final int ADD_PROVIDER_LIST_REQUEST = 2;
     static final int ADD_PROVIDER_PROMPTS_REQUEST = 3;
 
+    static final int MAX_AUTO_LOGIN_RETRY_COUNT = 3;
+
 
     public PdvApi pdvApi;
     public WebView pdvWebView;
 //**XWALK**    public XWalkView pdvWebView;
+    public String userName;
     public PdvLoginStatus pdvLoginStatus;
     public PdvConnectivityStatus pdvConnectivityStatus;
     public PdvApiRequestQueue   pdvApiRequestQueue = null;
@@ -110,6 +117,22 @@ public class MoneyAppApp extends Application {
         else{
             return null;
         }
+    }
+
+    public String getBaseCurrency(){
+
+        //todo: implement base currency via configuration or service
+        return getString(R.string.var_base_currency);
+    }
+
+    public AccountCardListDataObject getAccountCardListDO(Context context){
+
+        if (pdvAccountResponse!=null){
+            if (pdvAccountResponse.accounts!=null){
+                return new AccountCardListDataObject(context, pdvAccountResponse, getBaseCurrency());
+            }
+        }
+        return null;
     }
 
     private ServiceConnection pdvAcaServiceConnection = new ServiceConnection() {
@@ -438,6 +461,39 @@ public class MoneyAppApp extends Application {
         new Thread (runPdvGetUserProfiles).start();
     }
 
+
+    public void pdvGetCredential (final String instId, final PdvConnectivityCallback callback) {
+        Log.d(TAG, "Calling pdvGetCredential()");
+
+        Runnable runPdvpdvGetCredential = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    pdvApi.getCredential(instId, new PdvApiCallback<GetPromptsData>() {
+                        @Override
+                        public void result(Response<GetPromptsData> response) {
+                            PdvApiResults results = new PdvApiResults();
+                            results.pdvApiName = PdvApiName.GET_CREDENTIAL;
+                            results.callBackCompleted = true;
+                            results.credential = response;
+                            if (results.credential.getStatus().equals(StatusCode.STATUS_SUCCESS)) {
+                                callback.onGetCredentialSuccess(results);
+                            } else {
+                                callback.onGetCredentialFail(results);
+                            }
+                        }
+                    });
+                }
+                catch (Exception e){
+                    Log.e("MoneyAppApp", "pdvGetCredential() - exception " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        new Thread (runPdvpdvGetCredential).start();
+    }
+
     public void pdvRestoreAllProviderAccounts(final PdvConnectivityCallback callback){
         Log.d(TAG, "Calling pdvRestoreAllProviderAccounts() - START");
 
@@ -511,7 +567,7 @@ public class MoneyAppApp extends Application {
                     });
                 }
                 catch (Exception e){
-                    Log.e("MoneyAppApp", "pdvGetUserProfile() - exception - " + e.getMessage());
+                    Log.e("MoneyAppApp", "pdvRestoreAccounts() - exception - " + e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -521,6 +577,58 @@ public class MoneyAppApp extends Application {
         Log.d(TAG, "Calling pdvRestoreAccounts() - END");
     }
 
+
+    public void pdvRestoreAccountTransactions (final String instId, final String accountHash, final String startDate, final String endDate, final PdvConnectivityCallback callback) {
+        Log.d(TAG, "Calling pdvRestoreAccountTransactions() - START");
+
+        Runnable runPdvRestoreAccountTransactions = new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    InstitutionAndAccounts institutionAndAccounts = new InstitutionAndAccounts();
+                    institutionAndAccounts.setInstitutionId(instId);
+                    List<String> accountIds = new ArrayList<>();
+                    accountIds.add(accountHash);
+                    institutionAndAccounts.setAccountIds(accountIds);
+                    List<InstitutionAndAccounts> institutionAndAccountsList = new ArrayList<>();
+                    institutionAndAccountsList.add(institutionAndAccounts);
+
+                    pdvApi.restoreTransactions(institutionAndAccountsList, startDate, endDate, new PdvApiCallback.PdvApiTransactionsCallback() {
+                        @Override
+                        public void result(TransactionsResponse transactionsResponse) {
+                            PdvApiResults results = new PdvApiResults();
+                            results.pdvApiName = PdvApiName.RESTORE_TRANSACTIONS;
+                            results.callBackCompleted = true;
+                            results.transactions = transactionsResponse;
+                            if (results.transactions.getStatus().equals(StatusCode.STATUS_ALL_COMPLETE)) {
+                                if (callback!=null) {
+                                    callback.onRestoreTransactionsAllComplete(results);
+                                }
+                            }
+                            else if (results.transactions.getStatus().equals(StatusCode.STATUS_ERROR)) {
+                                results.callBackError=true;
+                                Log.e("MoneyAppApp", "pdvRestoreAccountTransactions() - Error restoring transactions in pdvTransactionsResponse "
+                                        + " InstId=" + transactionsResponse.getInstId()
+                                        + " | errorType=" + transactionsResponse.getErrorType()
+                                        + " | message=" + transactionsResponse.getMessage());
+                                if (callback!=null) {
+                                    callback.onRestoreTransactionsFail(results);
+                                }
+                            }
+                        }
+                    });
+                }
+                catch (Exception e){
+                    Log.e("MoneyAppApp", "pdvRestoreAccountTransactions() - exception - " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        new Thread (runPdvRestoreAccountTransactions).start();
+        Log.d(TAG, "Calling runPdvRestoreAccountTransactions() - END");
+    }
 
 
     public void updateProviderHashMap(){

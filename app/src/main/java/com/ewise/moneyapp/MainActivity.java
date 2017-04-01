@@ -44,6 +44,8 @@ import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
 import com.ewise.android.pdv.api.model.consent.ConsentAppVO;
 import com.ewise.android.pdv.api.model.consent.ConsentServiceResponse;
+import com.ewise.android.pdv.api.model.consent.ConsentSvcVO;
+import com.ewise.android.pdv.api.model.consent.ConsentUpdateRequest;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.moneyapp.Utils.PdvApiName;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
@@ -63,6 +65,69 @@ import kotlin.jvm.Synchronized;
 public class MainActivity extends AppCompatActivity
         implements AccountsFragment.OnFragmentInteractionListener, PdvConnectivityCallback
 {
+
+    public interface FragmentUpdateListener {
+        enum LoginStatus{
+            LOGIN_STATUS_UNKNOWN,
+            LOGIN_STATUS_FAILED,
+            LOGIN_STATUS_SUCCESS,
+            LOGIN_STATUS_RETRY;
+        }
+        public void onLoginFailed();
+        public void onLoginSuccess();
+        public void onLoginRetry();
+    }
+
+    //todo: add a listener for each fragment that needs to be updated by the MainActivity
+    FragmentUpdateListener providerFragmentUpdateListener=null;
+    FragmentUpdateListener networthFragmentUpdateListener=null;
+    FragmentUpdateListener accountsFragmentUpdateListener=null;
+    FragmentUpdateListener budgetsFragmentUpdateListener=null;
+
+    public void setProviderFragmentListener(FragmentUpdateListener listener){
+        providerFragmentUpdateListener = listener;
+    }
+
+    public void setNetworthFragmentListener(FragmentUpdateListener listener){
+        networthFragmentUpdateListener = listener;
+    }
+
+
+    public void setAccountsFragmentListener(FragmentUpdateListener listener){
+        accountsFragmentUpdateListener = listener;
+    }
+
+    public void setBudgetsFragmentListener(FragmentUpdateListener listener){
+        budgetsFragmentUpdateListener = listener;
+    }
+
+    private void notifyLoginStatusToAttachedFragments(FragmentUpdateListener.LoginStatus loginStatus){
+        activityLoginStatus = loginStatus;
+        if(loginStatus.equals(FragmentUpdateListener.LoginStatus.LOGIN_STATUS_SUCCESS)){
+            //notify all fragments of login success
+            if (providerFragmentUpdateListener!=null) { providerFragmentUpdateListener.onLoginSuccess(); }
+            if (accountsFragmentUpdateListener!=null) { accountsFragmentUpdateListener.onLoginSuccess(); }
+            if (networthFragmentUpdateListener!=null) { networthFragmentUpdateListener.onLoginSuccess(); }
+            if (budgetsFragmentUpdateListener!=null) { budgetsFragmentUpdateListener.onLoginSuccess(); }
+        }
+        else if (loginStatus.equals(FragmentUpdateListener.LoginStatus.LOGIN_STATUS_FAILED))
+        {
+            //notify all fragments of login failure
+            if (providerFragmentUpdateListener!=null) { providerFragmentUpdateListener.onLoginFailed(); }
+            if (accountsFragmentUpdateListener!=null) { accountsFragmentUpdateListener.onLoginFailed(); }
+            if (networthFragmentUpdateListener!=null) { networthFragmentUpdateListener.onLoginFailed(); }
+            if (budgetsFragmentUpdateListener!=null) { budgetsFragmentUpdateListener.onLoginFailed(); }
+        }
+        else if (loginStatus.equals(FragmentUpdateListener.LoginStatus.LOGIN_STATUS_RETRY))
+        {
+            //notify all fragments of login in progress
+            if (providerFragmentUpdateListener!=null) { providerFragmentUpdateListener.onLoginRetry(); }
+            if (accountsFragmentUpdateListener!=null) { accountsFragmentUpdateListener.onLoginRetry(); }
+            if (networthFragmentUpdateListener!=null) { networthFragmentUpdateListener.onLoginRetry(); }
+            if (budgetsFragmentUpdateListener!=null) { budgetsFragmentUpdateListener.onLoginRetry(); }
+        }
+    }
+
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -93,7 +158,19 @@ public class MainActivity extends AppCompatActivity
     public boolean isPdvConnected = false;
 
     ImageView imagePdvConnected;
-    boolean loginInProgress;
+    boolean checkConnectivity;
+
+    int loginRetryCount=0;
+    FragmentUpdateListener.LoginStatus activityLoginStatus = FragmentUpdateListener.LoginStatus.LOGIN_STATUS_UNKNOWN;
+
+    public void resetLoginRetryCount() {
+        this.loginRetryCount = 0;
+        this.notifyLoginStatusToAttachedFragments(FragmentUpdateListener.LoginStatus.LOGIN_STATUS_RETRY);
+    }
+
+    public int getLoginRetryCount() {
+        return loginRetryCount;
+    }
 
     private ServiceConnection pdvAcaServiceConnection = new ServiceConnection() {
         @Override
@@ -120,9 +197,12 @@ public class MainActivity extends AppCompatActivity
         public void run() {
             MoneyAppApp app = (MoneyAppApp) getApplication();
 
-            checkPdvConnectivity();
+            if (app.pdvLoginStatus.isLoggedOffFromPdv() && (loginRetryCount < MoneyAppApp.MAX_AUTO_LOGIN_RETRY_COUNT)){
+                loginToPDV();
+                loginRetryCount++;
+            }
 
-            if (app.pdvLoginStatus.isLoggedOnToPdv() && isPdvConnected) {
+            if (app.pdvLoginStatus.isLoggedOnToPdv()) {
                 if (!app.pdvApiRequestQueue.isRequestInProgress()) {
                     Log.d("PdvApiRequestRunnable", "no requests in progress");
                     PdvApiRequestParams requestParams = app.pdvApiRequestQueue.getNextRequestToExecute();
@@ -259,6 +339,7 @@ public class MainActivity extends AppCompatActivity
             public void run() {
                 if (status){
                     findViewById(R.id.linearLayoutFetchingData).setVisibility(View.VISIBLE);
+                    findViewById(R.id.progressBarRunning).setVisibility(View.VISIBLE);
                     ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_refresh_material_white);
                     if (message!=null){
                         ((TextView)findViewById(R.id.progressBarText)).setText(message);
@@ -273,6 +354,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
 
     public void checkPdvConnectivity()
     {
@@ -296,6 +378,7 @@ public class MainActivity extends AppCompatActivity
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setOffscreenPageLimit(0);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -452,15 +535,19 @@ public class MainActivity extends AppCompatActivity
 
     private void loginToPDV()
     {
+        Log.d("MainActivity", "loginToPDV() - START");
+
 
         Runnable login = new Runnable(){
             @Override
             public void run(){
+                Log.d("MainActivity", "loginToPDV() : Runnable login - START");
+
                 //String username = myApp.getIMEI();//todo: get imei number by allowing READ_PHONE_STATE permission
                 //todo: remove hardcoded username (i.e. for production we need to allow a login user name on first time login and Persistent PIN for access)
                 //      login first time should prevent an existing login from being re-used without proper authorisation - i.e. an authentication mechanism is needed - maybe a login TOKEN
                 setDataFetchingStatus(true, getString(R.string.pdv_api_login_to_pdv));
-                String username = "silmiandroid5demo";
+                String username = MoneyAppApp.DEFAULT_USERNAME;
                 final MoneyAppApp myApp = (MoneyAppApp)getApplication();
                 final PdvApi pdvApi = myApp.getPdvApi();
                 myApp.pdvLoginStatus.notifyLogonInProgress();
@@ -506,6 +593,9 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
+
+                Log.d("MainActivity", "loginToPDV() : Runnable login - END");
+
             }
         };
 
@@ -513,6 +603,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void notifyPdvLoginSuccess(){
+        Log.d("MainActivity", "notifyPdvLoginSuccess() - START");
         //todo: whatever required when login is successful including UI updates
         String msg = getString(R.string.pdvapi_login_success_message);
         msg = msg + " - setUser(): " + pdvApiResults.setUserResponse.getStatus() + " : " + pdvApiResults.setUserResponse.getMessage() + " - initialise(): " + pdvApiResults.initialiseStatus;
@@ -523,48 +614,102 @@ public class MainActivity extends AppCompatActivity
         //check and set consent to avoid error
         //todo: remove this later when error is fixed! new version integrated
         final MoneyAppApp myApp = (MoneyAppApp)getApplication();
-        final PdvApi pdvApi = myApp.getPdvApi();
 
-        pdvApi.getConsent(new PdvApiCallback<ConsentServiceResponse>() {
+
+        //todo: remove this after xwalk integration - we just need to remove default consent because of the data sharing bug
+        myApp.pdvApi.getConsent(new PdvApiCallback<ConsentServiceResponse>() {
             @Override
             public void result(Response<ConsentServiceResponse> response) {
                 ConsentServiceResponse r = response.getData();
                 List<ConsentAppVO> consentAppVOs = r.getConsents();
                 String sAppConsentVOs = PdvApiResults.toJsonString(consentAppVOs);
-                Log.d("GETCONSENT", "consentAppVOs=" + sAppConsentVOs);
+                Log.d("GETCONSENT", "GET consentAppVOs=" + sAppConsentVOs);
+
+                if (consentAppVOs!=null){
+                    //set all conset to false;
+                    boolean mustUpdateConsent = false;
+                    for (ConsentAppVO cavo : consentAppVOs){
+                        if (cavo.getGrantConsent().booleanValue()){
+                            cavo.setGrantConsent(Boolean.FALSE);
+                            List<ConsentSvcVO> csvoList = cavo.getServices();
+                            for (ConsentSvcVO csvo: csvoList){
+                                if (csvo.getGrantConsent().booleanValue()){
+                                    csvo.setGrantConsent(Boolean.FALSE);
+                                }
+                            }
+                            mustUpdateConsent = true;
+                        }
+                    }
+                    if (mustUpdateConsent){
+                        ConsentUpdateRequest cuRequest = new ConsentUpdateRequest();
+                        cuRequest.setUserId(consentAppVOs.get(0).getUserId());
+                        cuRequest.setAppVOs(consentAppVOs);
+                        String sCuRequest = PdvApiResults.toJsonString(consentAppVOs);
+                        Log.d("SETCONSENT", "SET ConsentUpdateRequest=" + sCuRequest);
+                        myApp.pdvApi.setConsent(cuRequest, new PdvApiCallback<ConsentServiceResponse>() {
+                            @Override
+                            public void result(Response<ConsentServiceResponse> response) {
+                                Log.d("MainActivity", "notifyPdvLoginSuccess() - setConsent status=" + response.getStatus());
+
+                                ConsentServiceResponse r2 = response.getData();
+                                List<ConsentAppVO> consentAppVOs2 = r2.getConsents();
+                                String sAppConsentVOs2 = PdvApiResults.toJsonString(consentAppVOs2);
+                                Log.d("SETCONSENT", "SET consentAppVOs=" + sAppConsentVOs2);
+                            }
+                        });
+                    }
+                }
+
+
             }
         });
 
-
         //if login is successful get the user profile
         setDataFetchingStatus(true, getString(R.string.pdv_api_fetch_user_profile));
-        ((MoneyAppApp)getApplication()).pdvGetUserProfile(this);
+        myApp.pdvGetUserProfile(this);
+
+        Log.d("MainActivity", "notifyPdvLoginSuccess() - END");
+
     }
 
     public void notifyPdvLoginFail(){
+
+        Log.d("MainActivity", "notifyPdvLoginFail() - START");
+
         //todo: whatever required when login is successful including UI updates
         String msg = getString(R.string.pdvapi_login_failed_message);
         msg = msg + " - setUser(): " + pdvApiResults.setUserResponse.getStatus() + " : " + pdvApiResults.setUserResponse.getMessage() + " - initialise(): " + pdvApiResults.initialiseStatus;
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
         ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_disconnected_material_white);
+
+
+        MoneyAppApp app = (MoneyAppApp)getApplication();
+        app.pdvLoginStatus.notifyLoggedOffFromPdv();
+        notifyLoginStatusToAttachedFragments(FragmentUpdateListener.LoginStatus.LOGIN_STATUS_FAILED);
+
+        setDataFetchingStatus(false, null);
+
+        Log.d("MainActivity", "notifyPdvLoginFail() - END");
+
     }
 
+
+    //START - PdvConnectivityCallbacks interface implementations
     @Override
     public void onPdvConnected() {
+        Log.d("MainActivity", "onPdvConnected() - START");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.d("MainActivity", "onPdvConnected() : Run() - START");
                 isPdvConnected = true;
-                if (((MoneyAppApp)getApplication()).pdvLoginStatus.isLoggedOffFromPdv()){
-                    loginToPDV();
-                }
-                else
-                {
-                    ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_connected_material_white);
 
-                }
+                ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_connected_material_white);
+
             }
         });
+        Log.d("MainActivity", "onPdvConnected() - END");
+
     }
 
     @Override
@@ -575,8 +720,6 @@ public class MainActivity extends AppCompatActivity
                 isPdvConnected = false;
                 ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_disconnected_material_white);
 
-                //todo: what to do if PDV is disconnected
-                //((MoneyAppApp)getApplication()).pdvLoginStatus.notifyLoggedOffFromPdv();
                 Toast.makeText(MainActivity.this, getString(R.string.pdvapi_not_connected), Toast.LENGTH_LONG);
             }
         });
@@ -584,6 +727,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onGetInstitutionsFail(PdvApiResults results){
+        Log.d("MainActivity", "onGetInstitutionsFail() - START");
+
+        //do not call app.pdvGetInstitutions() more than once in MainActivity
         final String msg = getString(R.string.pdvapi_on_getinstitution_fail_message);
         String.format(msg, results.userProfile.getMessage());
 
@@ -594,11 +740,17 @@ public class MainActivity extends AppCompatActivity
             }
         });
         ((MoneyAppApp)getApplication()).pdvLoginStatus.notifyLoggedOffFromPdv();
+        notifyLoginStatusToAttachedFragments(FragmentUpdateListener.LoginStatus.LOGIN_STATUS_FAILED);
+
+        Log.d("MainActivity", "onGetInstitutionsFail() - END");
 
     }
 
     @Override
     public void onGetInstitutionsSuccess(PdvApiResults results){
+
+        Log.d("MainActivity", "onGetInstitutionsSuccess() - START");
+
         setDataFetchingStatus(false, null);
         ((MoneyAppApp)getApplication()).checkConnectivity(this, MoneyAppApp.DEFAULT_SWAN_HOST, this);
 
@@ -606,8 +758,12 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent("pdv-on-get-user-profile-success");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         ((MoneyAppApp)getApplication()).pdvLoginStatus.notifyLoggedOnToPdv();
+        notifyLoginStatusToAttachedFragments(FragmentUpdateListener.LoginStatus.LOGIN_STATUS_SUCCESS);
+
+        Log.d("MainActivity", "onGetInstitutionsSuccess() - END");
 
     }
+
 
     @Override
     public void onGetPromptsSuccess(PdvApiResults results){
@@ -622,10 +778,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onGetUserProfileSuccess(PdvApiResults results){
 
-
+        Log.d("MainActivity", "onGetUserProfileSuccess() - START");
         //load institution data for later use
         setDataFetchingStatus(true, getString(R.string.pdv_api_fetch_institutions));
         ((MoneyAppApp)getApplication()).pdvGetInstitutions(this);
+        Log.d("MainActivity", "onGetUserProfileSuccess() - END");
+
     }
 
     @Override
@@ -652,6 +810,34 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
+    @Override
+    public void onRestoreTransactionsAllComplete(PdvApiResults results){}
+
+    @Override
+    public void onRestoreTransactionsFail(PdvApiResults results){}
+
+    @Override
+    public void onGetCredentialSuccess(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetCredentialFail(PdvApiResults results) {
+
+    }
+
+    @Override
+    public void onSetCredentialSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onSetCredentialFail(PdvApiResults results)
+    {
+
+    }
+    //END - PdvConnectivityCallbacks interface implementations
 
     public void displayLongToastMessage(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_LONG);

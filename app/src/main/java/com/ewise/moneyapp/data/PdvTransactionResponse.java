@@ -29,9 +29,9 @@ public class PdvTransactionResponse {
      */
 
     public String status;
-    public Object message;
-    public Object errorType;
-    public Object instId;
+    public String message;
+    public String errorType;
+    public String instId;
     public Object verify;
     public Object responses;
     /**
@@ -284,7 +284,7 @@ public class PdvTransactionResponse {
          * class: PdvTransactionResponse.AccountTransactionObject.TransactionsObject
          */
         public static class TransactionsObject {
-            public int id;
+            public long id;
             public String date;
             public String description;
             public double amount;

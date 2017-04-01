@@ -22,7 +22,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ewise.moneyapp.APIDataMappers.PdvTransactionResponseDataMapper;
+import com.ewise.moneyapp.Utils.PdvApiResults;
+import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.adapters.TransactionGroupByFilterAdapter;
 import com.ewise.moneyapp.charts.CashflowLineChart;
 import com.ewise.moneyapp.data.PdvAccountResponse;
@@ -33,17 +37,20 @@ import com.ewise.moneyapp.data.TransactionCardListDataObject;
 import com.ewise.moneyapp.data.TransactionGroupByFilterDataObject;
 import com.ewise.moneyapp.loaders.PdvAccountTransactionResponseLoader;
 import com.github.mikephil.charting.charts.LineChart;
+import com.raizlabs.android.dbflow.sql.language.Condition;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 @EActivity(R.layout.activity_account_details)
-public class AccountDetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<PdvTransactionResponse>, GestureDetector.OnGestureListener {
+public class AccountDetailsActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, PdvConnectivityCallback {
 
     @ViewById(R.id.accountdetails_filter_transactions_img)
     ImageView accountdetails_filter_transactions_img;
@@ -77,6 +84,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
     Spinner accountdetails_transactions_groupby_spinner;
 
     PdvAccountResponse.AccountsObject _account = null;
+    PdvTransactionResponse _transactions = null;
 
     @ViewById(R.id.accountdetails_transactioncard_recycler_view)
     RecyclerView accountdetails_transactioncard_recycler_view;
@@ -117,14 +125,13 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
         //setContentView(R.layout.activity_account_details);
 
 
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        mDetector = new GestureDetectorCompat(this,this);
+        mDetector = new GestureDetectorCompat(this, this);
 
 
         Intent intent = getIntent();
@@ -138,7 +145,6 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
         accountdetails_lastupdated.setText(_account.updatedAt);
 
 
-
         transactionGroupByFilterAdapter = new TransactionGroupByFilterAdapter(this,
                 R.layout.transactions_groupby_spinner_item, getGroupTransactionsByFilter());
         accountdetails_transactions_groupby_spinner.setAdapter(transactionGroupByFilterAdapter);
@@ -148,13 +154,13 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
         accountdetails_transactioncard_recycler_view.setLayoutManager(new LinearLayoutManager(AccountDetailsActivity.this));
         transactionCardsViewAdapter = new TransactionCardsViewAdapter(AccountDetailsActivity.this);
         accountdetails_transactioncard_recycler_view.setAdapter(transactionCardsViewAdapter);
-        getSupportLoaderManager().initLoader(R.id.PdvTransactionResponse_Loader_id,null,this);
+        //getSupportLoaderManager().initLoader(R.id.PdvTransactionResponse_Loader_id,null,this);
 
         accountdetails_transactions_groupby_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 groupTransactionsBy = eGroupTransactionsBy.values()[position];
-                getSupportLoaderManager().restartLoader(R.id.PdvTransactionResponse_Loader_id, null, AccountDetailsActivity.this);
+                updatePageData();
             }
 
             @Override
@@ -165,7 +171,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
         });
 
 
-        accountdetails_open_transactions_img.setOnClickListener(new View.OnClickListener(){
+        accountdetails_open_transactions_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //toggle display of transactions by date
@@ -177,7 +183,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
         accountdetails_cashflowchart.setTag("unselected");
 
 
-        accountdetails_cashflowchart.setOnClickListener(new View.OnClickListener(){
+        accountdetails_cashflowchart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //toggle display of transactions by date
@@ -186,33 +192,52 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
         });
 
 
+        //restore transactions with a smaller date range for now
+        MoneyAppApp app = (MoneyAppApp) getApplication();
+
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(getString(R.string.api_transaction_date_format), Locale.getDefault());
+        String endDate = dateFormat.format(cal.getTime());
+        cal.add(Calendar.MONTH, -3); //go back 3 months for now
+        String startDate = dateFormat.format(cal.getTime());
+        app.pdvRestoreAccountTransactions(_account.instId, _account.accountHash, startDate, endDate, this);
+
     }
 
 
-    public void initialiseLineChart () {
+    public void initialiseLineChart() {
 
         //1. setup the chart settings
         accountdetails_cashflowchart_linechart = (LineChart) findViewById(R.id.accountdetails_cashflowchart_linechart);
 
-        cashflowLineChart = new CashflowLineChart(this, accountdetails_cashflowchart_linechart, transactionCardsViewAdapter.getItemList(), groupTransactionsBy, 12);
 
-        cashflowLineChart.animateChart(500, 500);
+        if (transactionCardsViewAdapter.getItemList() != null) {
+            Log.d("AccountDetailsActvity", "initialiseLineChart() - initialising cashflow chart - with X-Axis values=" + Integer.toString(transactionCardsViewAdapter.getItemList().size() + 1));
+            List<TransactionCardDataObject> sortedTransactionCardList = new ArrayList<>(transactionCardsViewAdapter.getItemList());
+            if (sortedTransactionCardList.size() > 0) {
+                sortedTransactionCardList = TransactionCardListDataObject.sortTransactionList(TransactionCardListDataObject.TransactionSortOrder.DATE_ASCENDING, sortedTransactionCardList);
+                cashflowLineChart = new CashflowLineChart(this, accountdetails_cashflowchart_linechart, sortedTransactionCardList, groupTransactionsBy, transactionCardsViewAdapter.getItemList().size() + 1);
+                //cashflowLineChart.animateChart(500, 500); //todo: animate chart is broken after upgrade of chart library to 3.0.2
+                cashflowLineChart.reDraw();
+            }
+        }
+
 
     }
 
 
-
     /**
      * Gets a string array of 15 months, 1 months prior to current month and 3 months after current month
+     *
      * @return
      */
-    public ArrayList<TransactionGroupByFilterDataObject> getGroupTransactionsByFilter(){
+    public ArrayList<TransactionGroupByFilterDataObject> getGroupTransactionsByFilter() {
 
         ArrayList<TransactionGroupByFilterDataObject> viewObjectList = new ArrayList();
 
         for (int i = 0; i < 3; i++) {
             //TODO: find more suitable icons for filter
-            int imageResId = (i == 0 ? R.drawable.ic_action_calendar_day : (i==1 ? R.drawable.ic_action_calendar_day : R.drawable.ic_action_calendar_day));
+            int imageResId = (i == 0 ? R.drawable.ic_action_calendar_day : (i == 1 ? R.drawable.ic_action_calendar_day : R.drawable.ic_action_calendar_day));
             viewObjectList.add(new TransactionGroupByFilterDataObject(imageResId, eGroupTransactionsBy.values()[i].toString()));
         }
 
@@ -222,25 +247,28 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
 
     /**
      * Gets a string array of 15 months, 1 months prior to current month and 3 months after current month
+     *
      * @return
      */
-    public String[] getTransactionSelectFilter(){
+    public String[] getTransactionSelectFilter() {
 
-        int numFilters = (groupTransactionsBy == eGroupTransactionsBy.DAY ? 2 : transactionCardsViewAdapter.getItemList().size()+2);
-        String[] filterStrings = new String [numFilters];
+        int numFilters = (groupTransactionsBy == eGroupTransactionsBy.DAY ? 2 : transactionCardsViewAdapter.getItemList().size() + 2);
+        String[] filterStrings = new String[numFilters];
 
         filterStrings[0] = getString(R.string.transaction_filter_all);
         filterStrings[1] = getString(R.string.transaction_filter_forecast);
 
         int pos = 2;
 
-        if (groupTransactionsBy == eGroupTransactionsBy.DAY) { return filterStrings; }
+        if (groupTransactionsBy == eGroupTransactionsBy.DAY) {
+            return filterStrings;
+        }
 
         List<TransactionCardDataObject> list = transactionCardsViewAdapter.getItemList();
 
         for (TransactionCardDataObject transactionCard : list) {
 
-            switch (groupTransactionsBy){
+            switch (groupTransactionsBy) {
                 case MONTH:
                     filterStrings[pos] = transactionCard.transactionMonth.toUpperCase(Locale.getDefault());
                     break;
@@ -258,22 +286,21 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
 
     /**
      * Gets a string array of 15 months, 1 months prior to current month and 3 months after current month
+     *
      * @return
      */
-    public String[] getMonthsForFilter(){
+    public String[] getMonthsForFilter() {
 
-        String[] monthsForFilter = new String [15];
+        String[] monthsForFilter = new String[15];
         //get current date / month (for selected month in cashflow)
         Calendar cal = Calendar.getInstance();
         int pos = 0;
         cal.add(Calendar.MONTH, -11); //deduct 11 months
         for (int i = 0; i <= 14; i++) {
             String monthToAdd;
-            if (i<=11) {
+            if (i <= 11) {
                 monthToAdd = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()) + String.format(Locale.getDefault(), "-%d", cal.get(Calendar.YEAR));
-            }
-            else
-            {
+            } else {
                 monthToAdd = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()) + String.format(Locale.getDefault(), "-%d!", cal.get(Calendar.YEAR));
             }
             Log.d("**TRACE-calendar**", String.format("adding month: %s", monthToAdd));
@@ -293,11 +320,11 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
 
     }
 
-    public void onClose(View view)
-    {
+    public void onClose(View view) {
         this.finish();
     }
 
+    /*
     @Override
     public Loader<PdvTransactionResponse> onCreateLoader(int id, Bundle args) {
         return new PdvAccountTransactionResponseLoader(AccountDetailsActivity.this, _account);
@@ -312,12 +339,9 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
         TransactionCardListDataObject transactionList = new TransactionCardListDataObject(getApplicationContext(), data, _account, groupTransactionsBy);
         transactionCardsViewAdapter.swapData(transactionList.get_transactionCardList());
         accountdetails_open_transactions_img.setImageResource(transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE ? R.drawable.ic_action_folder_open : R.drawable.ic_action_folder_closed);
-
-
         //accountdetails_transaction_select_spinner.setVisibility(View.VISIBLE);
         ArrayAdapter<String> monthArrayAdapter = new ArrayAdapter <String>(this, R.layout.month_select_spinner_item, getTransactionSelectFilter());
         accountdetails_transaction_select_spinner.setAdapter(monthArrayAdapter);
-
         //create the linechart
         initialiseLineChart();
 
@@ -330,26 +354,24 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
         transactionCardsViewAdapter.resetData();
     }
 
+*/
 
-    public void toggleTransactionDisplay(){
+    public void toggleTransactionDisplay() {
 
         try {
 
             accountdetails_open_transactions_img.setBackgroundResource(R.drawable.ewise_background_rectangle_selected);
 
-            if (transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE)
-            {
-                transactionCardsViewAdapter.set_showTransactions (View.GONE);
+            if (transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE) {
+                transactionCardsViewAdapter.set_showTransactions(View.GONE);
                 accountdetails_open_transactions_img.setImageResource(R.drawable.ic_action_folder_closed);
-            }
-            else
-            {
-                transactionCardsViewAdapter.set_showTransactions (View.VISIBLE);
+            } else {
+                transactionCardsViewAdapter.set_showTransactions(View.VISIBLE);
                 accountdetails_open_transactions_img.setImageResource(R.drawable.ic_action_folder_open);
             }
 
             //unselect the cashflow chart
-            if (accountdetails_cashflowchart.getTag().equals("selected")){
+            if (accountdetails_cashflowchart.getTag().equals("selected")) {
                 accountdetails_cashflowchart.setBackgroundResource(R.drawable.ewise_background_rectangle_unselected);
                 accountdetails_cashflowchart.setTag("unselected");
                 findViewById(R.id.accountdetails_cashflowchart_layout).setVisibility(View.GONE);
@@ -359,28 +381,26 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
             }
 
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             String sMethod = this.toString();
             sMethod = sMethod + Thread.currentThread().getStackTrace()[2].getMethodName() + "() ";
-            generalExceptionHandler(e.getClass().getName(),e.getMessage(),sMethod,"");
+            generalExceptionHandler(e.getClass().getName(), e.getMessage(), sMethod, "");
         }
     }
 
-    public void toggleCashflowDisplay(){
+    public void toggleCashflowDisplay() {
 
         try {
             //TODO: hide transactions and display cashflow chart
             //transactionCardsViewAdapter.set_showTransactions(transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE ? View.GONE : View.VISIBLE);
             int background = R.drawable.ewise_background_circle_secondary;
 
-            if (accountdetails_cashflowchart.getTag().equals("unselected")){
+            if (accountdetails_cashflowchart.getTag().equals("unselected")) {
                 accountdetails_cashflowchart.setBackgroundResource(R.drawable.ewise_background_rectangle_selected);
                 accountdetails_open_transactions_img.setBackgroundResource(R.drawable.ewise_background_rectangle_unselected);
                 accountdetails_cashflowchart.setTag("selected");
                 findViewById(R.id.accountdetails_cashflowchart_layout).setVisibility(View.VISIBLE);
-                cashflowLineChart.animateChart(500,500);
+                //cashflowLineChart.animateChart(500,500);
                 this.accountdetails_transactioncard_recycler_view.setVisibility(View.GONE);
             } else {
                 //accountdetails_cashflowchart.setBackgroundResource(R.drawable.ewise_background_rectangle_unselected);
@@ -391,12 +411,10 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
             }
             accountdetails_cashflowchart.setImageResource(R.drawable.moneyapp_cashflow_chart);
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             String sMethod = this.toString();
             sMethod = sMethod + Thread.currentThread().getStackTrace()[2].getMethodName() + "() ";
-            generalExceptionHandler(e.getClass().getName(),e.getMessage(),sMethod,"");
+            generalExceptionHandler(e.getClass().getName(), e.getMessage(), sMethod, "");
         }
     }
 
@@ -447,7 +465,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
         Log.d("***TRACE-Gesture***", "onShowPress: " + event.toString());
     }
 
-    private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){
+    private void generalExceptionHandler(String eType, String eMessage, String eMethod, String eObjectString) {
         String sFormat = getApplicationContext().getString(R.string.exception_format_string);
         Log.e("GeneralException", String.format(sFormat, eType, eMethod, eMessage, eObjectString));
     }
@@ -529,7 +547,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
 
     @Override
     public boolean onDown(MotionEvent event) {
-        Log.d("***TRACE-Gesture***","onDown: " + event.toString());
+        Log.d("***TRACE-Gesture***", "onDown: " + event.toString());
         View view = findViewById(R.id.accountdetails_cardview);
         view.setVisibility(View.VISIBLE);
 
@@ -554,29 +572,128 @@ public class AccountDetailsActivity extends AppCompatActivity implements LoaderM
     }
 
 
-    /**
-     * LoaderManager callback routine for PdvTransactionResponse data
-     */
-    private LoaderManager.LoaderCallbacks<PdvTransactionResponse> loaderCallbacks = new LoaderManager.LoaderCallbacks<PdvTransactionResponse>(){
+    private void updatePageData() {
 
-        @Override
-        public Loader<PdvTransactionResponse> onCreateLoader(int id, Bundle args) {
-            return new PdvAccountTransactionResponseLoader(AccountDetailsActivity.this, _account);
+        Log.d("AccountDetailsActivity", "updatePageData() - START");
+        if (_transactions != null) {
+
+            Log.d("AccountDetailsActivity", "updatePageData() - about to get TransactionCardList");
+            TransactionCardListDataObject transactionList =
+                    new TransactionCardListDataObject(getApplicationContext(), _transactions, _account, groupTransactionsBy);
+
+            if (transactionList != null) {
+                Log.d("AccountDetailsActivity", "updatePageData() - transactionList=" + transactionList.toString());
+            }
+
+            transactionCardsViewAdapter.swapData(transactionList.get_transactionCardList(TransactionCardListDataObject.TransactionSortOrder.DATE_DESCENDING));
+
+            accountdetails_open_transactions_img.setImageResource(transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE ? R.drawable.ic_action_folder_open : R.drawable.ic_action_folder_closed);
+            //accountdetails_transaction_select_spinner.setVisibility(View.VISIBLE);
+            ArrayAdapter<String> monthArrayAdapter = new ArrayAdapter<String>(this, R.layout.month_select_spinner_item, getTransactionSelectFilter());
+            accountdetails_transaction_select_spinner.setAdapter(monthArrayAdapter);
+            //create the linechart
+            initialiseLineChart();
         }
 
+        Log.d("AccountDetailsActivity", "updatePageData() - END");
 
-        @Override
-        public void onLoadFinished(Loader<PdvTransactionResponse> loader, PdvTransactionResponse data) {
+    }
 
-            TransactionCardListDataObject transactionList = new TransactionCardListDataObject(getApplicationContext(), data, _account, groupTransactionsBy);
-            transactionCardsViewAdapter.swapData(transactionList.get_transactionCardList());
+
+    @Override
+    public void onPdvConnected() {
+    }
+
+    @Override
+    public void onPdvDisconnected() {
+    }
+
+    @Override
+    public void onGetInstitutionsFail(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetInstitutionsSuccess(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetPromptsSuccess(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetPromptsFail(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetUserProfileSuccess(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetUserProfileFail(PdvApiResults results) {
+    }
+
+    @Override
+    public void onRestoreAccountsComplete(String instId) {
+    }
+
+    @Override
+    public void onRestoreAccountsAllComplete() {
+    }
+
+    @Override
+    public void onRestoreTransactionsAllComplete(final PdvApiResults results) {
+
+        if (results.callBackCompleted && results.transactions != null) {
+            Log.d("AccountDetailsActivity", "onRestoreTransactionsAllComplete() - results=" + PdvApiResults.toJsonString(results));
+            this._transactions = PdvTransactionResponseDataMapper.getMappedObject(results.transactions, AccountDetailsActivity.this);
         }
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updatePageData();
+            }
+        });
+    }
 
-        @Override
-        public void onLoaderReset(Loader<PdvTransactionResponse> loader) {
-            transactionCardsViewAdapter.resetData();
-        }
+    @Override
+    public void onRestoreTransactionsFail(final PdvApiResults results) {
 
-    };
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String msg = "";
+                if (results.transactions != null) {
+                    msg = String.format(getString(R.string.pdvapi_on_restore_transactions_fail_message), results.transactions.getMessage());
+                } else {
+                    msg = getString(R.string.pdvapi_on_restore_transactions_fail_message);
+                }
+
+                Toast.makeText(AccountDetailsActivity.this, msg, Toast.LENGTH_SHORT);
+
+            }
+        });
+    }
+
+    @Override
+    public void onGetCredentialSuccess(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetCredentialFail(PdvApiResults results) {
+
+    }
+
+
+    @Override
+    public void onSetCredentialSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onSetCredentialFail(PdvApiResults results)
+    {
+
+    }
 
 }

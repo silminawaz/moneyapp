@@ -37,6 +37,9 @@
     <string name="provider_menu_delete_title">Delete provider</string>
     <string name="provider_menu_stop_title">Stop sync</string>
 
+    <!-- Account page -->
+    <string name="account_page_loading_msg">Loading, please wait&#8230;</string>
+
     <!-- Account card (tile) labels -->
     <string name="label_account_fragment_CASH">Current and Savings</string>
     <string name="label_account_fragment_CREDIT">Credit Cards</string>
@@ -75,9 +78,12 @@
     <string name="pdv_account_category_EFFECTS">EFFECTS</string>
     <string name="pdv_account_category_ASSETS">ASSETS</string>
     <string name="pdv_account_category_LIABILITIES">LIABILITIES</string>
+    <string name="pdv_account_category_UNKNOWN">UNKNOWN</string>
+
 
 
     <string name="api_transaction_date_format">yyyy-MM-dd</string>
+    <string name="api_transaction_date_format_2">yyyyMMdd</string>
 
     <string name="transaction_groupby_day_format">yyyy-MM-dd</string>
     <string name="transaction_groupby_month_format">MMMM - yyyy</string>
@@ -124,6 +130,7 @@
     <string name="pdvapi_get_prompts_message">Retrieving prompts for institution&#8230;</string>
     <string name="pdvapi_on_getuserprofile_fail_message">Error: Failed to retrieve user profile due to error in PDV API call %1$s</string>
     <string name="pdvapi_on_getinstitution_fail_message">Error: Failed to retrieve institutions due to error in PDV API call %1$s</string>
+    <string name="pdvapi_on_restore_transactions_fail_message">Error: Failed to retrieve transactions due to error %1$s </string>
     <string name="pdvapi_sync_status_message_not_applicable">NA</string>
     <string name="pdvapi_sync_status_message_ready">Ready to sync</string>
     <string name="pdvapi_sync_status_message_not_started">Sync pending&#8230;</string>
@@ -137,6 +144,7 @@
 
     <string name="ok_button_text">OK</string>
     <string name="cancel_button_text">Cancel</string>
+    <string name="retry_button_text">Retry</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -158,13 +166,22 @@
         "Please enter valid credentials for user identification and password fields"
     </string>
 
-       <string name="add_provider_text">
-           "Add your credentials to access online accounts from %1$s. "
-           "We ensure that we safeguard the confidentiality of your provider credentials by "
-           "encrypting these credentials and safely storing them in your device's Personal Data Vault (PDV). "
-           "The credentials in your PDV cannot be accessed by any third-parties including ourselves, "
-           "they can only be used by this app to access your online %2$s account directly from this device."
+    <string name="add_provider_text">
+        "Add your credentials to access online accounts from %1$s. "
+        "We ensure that we safeguard the confidentiality of your provider credentials by "
+        "encrypting these credentials and safely storing them in your device's Personal Data Vault (PDV). "
+        "The credentials in your PDV cannot be accessed by any third-parties including ourselves, "
+        "they can only be used by this app to access your online %2$s account directly from this device."
     </string>
+
+    <string name="edit_provider_save_button_text">Save credentials</string>
+    <string name="edit_provider_delete_button_text">Delete provider</string>
+    <string name="edit_provider_cancel_button_text">Cancel</string>
+    <string name="edit_provider_text">
+        "WARNING: You should only edit provider credentials if you cannot sync your provider accounts anymore becuase your password or other security details have changed\n"
+    </string>
+    <string name="edit_provider_account_header_text">Accounts found for this provider:</string>
+
 
     <string name="dialog_otp_text">Enter one-time pin</string>
     <string name="dialog_captcha_text">Enter captcha text</string>

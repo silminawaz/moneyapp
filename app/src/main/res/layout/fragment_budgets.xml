@@ -7,6 +7,32 @@
     android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
+        android:id="@+id/loginErrorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|center"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/loginErrorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login failed"
+            android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+            android:textColor="@color/coloreWiseHighlight"/>
+
+        <Button
+            android:id="@+id/loginRetryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="@string/retry_button_text"
+            android:textColorLink="@color/coloreWiseAccent"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/budgetsWelcomeLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

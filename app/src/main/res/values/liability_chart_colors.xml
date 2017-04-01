@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorEwiseLiabilityChart1">#ff5722</color>
+    <color name="colorEwiseLiabilityChart2">#eb6b36</color>
+    <color name="colorEwiseLiabilityChart3">#d77f4a</color>
+    <color name="colorEwiseLiabilityChart4">#c3935e</color>
+    <color name="colorEwiseLiabilityChart5">#afa772</color>
+    <color name="colorEwiseLiabilityChart6">#afbb86</color>
+    <color name="colorEwiseLiabilityChart7">#ffcf9a</color>
+    <color name="colorEwiseLiabilityChart8">#ffe3ae</color>
+    <color name="colorEwiseLiabilityChart9">#fff7c2</color>
+
+    <array name="coloreWiseLiabilityChartList">
+        <item>@color/colorEwiseLiabilityChart1</item>
+        <item>@color/colorEwiseLiabilityChart2</item>
+        <item>@color/colorEwiseLiabilityChart3</item>
+        <item>@color/colorEwiseLiabilityChart4</item>
+        <item>@color/colorEwiseLiabilityChart5</item>
+        <item>@color/colorEwiseLiabilityChart6</item>
+        <item>@color/colorEwiseLiabilityChart7</item>
+        <item>@color/colorEwiseLiabilityChart8</item>
+        <item>@color/colorEwiseLiabilityChart9</item>
+    </array>
+
+</resources>

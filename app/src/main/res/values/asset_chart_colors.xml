@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorEwiseAssetChart1">#00c389</color>
+    <color name="colorEwiseAssetChart2">#50afa7</color>
+    <color name="colorEwiseAssetChart3">#509bcf</color>
+    <color name="colorEwiseAssetChart4">#789b6b</color>
+    <color name="colorEwiseAssetChart5">#78c36b</color>
+    <color name="colorEwiseAssetChart6">#c8f589</color>
+    <color name="colorEwiseAssetChart7">#c8ffb1</color>
+    <color name="colorEwiseAssetChart8">#c8ffcf</color>
+    <color name="colorEwiseAssetChart9">#c8fff7</color>
+    
+    <array name="coloreWiseAssetChartList">
+        <item>@color/colorEwiseAssetChart1</item>
+        <item>@color/colorEwiseAssetChart2</item>
+        <item>@color/colorEwiseAssetChart3</item>
+        <item>@color/colorEwiseAssetChart4</item>
+        <item>@color/colorEwiseAssetChart5</item>
+        <item>@color/colorEwiseAssetChart6</item>
+        <item>@color/colorEwiseAssetChart7</item>
+        <item>@color/colorEwiseAssetChart8</item>
+        <item>@color/colorEwiseAssetChart9</item>
+    </array>
+</resources>

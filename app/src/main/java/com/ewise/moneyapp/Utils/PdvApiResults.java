@@ -82,6 +82,9 @@ public class PdvApiResults {
     //response for updateTransactions(), restoreTransactions() APIs
     public TransactionsResponse     transactions = null;
 
+    //response for getCredential()
+    public Response<GetPromptsData> credential = null;
+
     //response for Stop() API
     public Response<String>         stopResponse = null;
 
@@ -131,7 +134,7 @@ public class PdvApiResults {
         {
             String sMethod = "PdvApiResults.toJsonString():";
             sMethod = Thread.currentThread().getStackTrace()[2].getMethodName() + "() ";
-            String sFormat =  Resources.getSystem().getString(R.string.exception_format_string);
+            String sFormat =  "***EXCEPTION*** encountered in ***Type*** %1$s ***Method*** %2$s ***Error*** %3$s ***Object*** %4$s";
             String eObjectString = (dataObject == null ? "" : dataObject.toString());
             Log.e("GeneralException", String.format(sFormat, e.getClass().getName(), sMethod, e.getMessage(), eObjectString));
 

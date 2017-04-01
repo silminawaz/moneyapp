@@ -20,6 +20,8 @@ public enum PdvApiName {
     GET_USER_PROFILE ("get_user_profile"),
     GET_PROMPTS ("get_prompts"),
     GET_INSTITUTIONS ("get_institutions"),
+    GET_CREDENTIAL ("get_credential"),
+    SET_CREDENTIAL("set_credential"),
     STOP ("stop");
 
     private final String stringValue;

@@ -13,19 +13,22 @@ import com.ewise.moneyapp.data.TransactionCardDataObject.eGroupTransactionsBy;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.formatter.AxisValueFormatter.*;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter.*;
+import com.github.mikephil.charting.utils.EntryXComparator;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,26 +39,37 @@ import java.util.Locale;
 public class CashflowLineChart {
 
     private Context context;
-    private List<TransactionCardDataObject> transactioncardList;
+    private List<TransactionCardDataObject> dataObject;
     private eGroupTransactionsBy groupTransactionsBy;
     int xAxisMaxDisplayValues;
     LineChart chart;
 
-    public CashflowLineChart (Context context, LineChart chart, List<TransactionCardDataObject> transactionCardList, eGroupTransactionsBy groupTransactionsBy, int xAxisMaxDisplayValues){
+    public CashflowLineChart (Context context, LineChart chart, List<TransactionCardDataObject> dataObject, eGroupTransactionsBy groupTransactionsBy, int xAxisMaxDisplayValues){
+
+        Log.d("CashflowLineChart", "Constructor - START");
 
         this.context = context;
         this.chart = chart;
-        this.transactioncardList = transactionCardList;
+        this.dataObject = dataObject;
         this.groupTransactionsBy = groupTransactionsBy;
         this.xAxisMaxDisplayValues = xAxisMaxDisplayValues;
 
-        generateChart();
+        try {
+
+            generateChart();
+        }
+        catch (Exception e){
+            generalExceptionHandler(e.getClass().getName(), e.getMessage(), this.toString() + Thread.currentThread().getStackTrace()[2].getMethodName() + "() ", this.toString());
+        }
+
+        Log.d("CashflowLineChart", "Constructor - END");
+
     }
 
     /**
      * call to get the generated cashflow line chart
      * @return
-     * LineChart representing the data from the TransactionCardList data fed into the CashflowLineChart constructor
+     * LineChart representing the data from the dataObject data fed into the CashflowLineChart constructor
      */
     public LineChart getChart()
     {
@@ -63,14 +77,23 @@ public class CashflowLineChart {
     }
 
     public void reDraw(){
-        chart.invalidate();
+        if (dataObject!=null){
+            if (dataObject.size()>0){
+                chart.invalidate();
+            }
+        }
     }
 
     /**
      * Call to animate the chart
      */
     public void animateChart (int XDurationMS, int YDurationMS){
+        Log.d("CashflowLineChart", "animateChart() - START");
+
         chart.animateXY(XDurationMS,YDurationMS, Easing.EasingOption.EaseInElastic, Easing.EasingOption.EaseInCubic);
+
+        Log.d("CashflowLineChart", "animateChart() - END");
+
     }
 
 
@@ -79,13 +102,14 @@ public class CashflowLineChart {
      */
     private void generateChart(){
 
+        Log.d("CashflowLineChart", "generateChart() - START");
+
+
         setChartAttributes();
 
         //create the dataset list to be added to the chart data
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(getLeftYAxisDataSet());
-        //dataSets.add(getLeftYAxisDataSet());
-        //dataSets.add(getRightYAxisDataSet());
 
         //create the chartdata using the two data sets
         LineData lineData = new LineData(dataSets);
@@ -94,39 +118,51 @@ public class CashflowLineChart {
         chart.setData(lineData);
 
         configure_Legend();
-        //configure_xAxis();
         configure_left_yAxis();
-        //configure_right_yAxis();
+
+        Log.d("CashflowLineChart", "generateChart() - END");
     }
 
 
 
     private void setChartAttributes(){
 
+        Log.d("CashflowLineChart", "setChartAttributes() - START");
+
+
         //1. setup the chart attributes
-        chart.setDescription(context.getString(R.string.accountdetails_cashflow_linechart_description));
-        chart.setDescriptionTextSize(Float.valueOf(context.getString(R.string.ewise_chart_description_text_size)).floatValue());
+        Description desc = new Description();
+        desc.setText(context.getString(R.string.accountdetails_cashflow_linechart_description));
+        desc.setTextSize(Float.valueOf(context.getString(R.string.ewise_chart_description_text_size)).floatValue());
+        chart.setDescription(desc);
+
         chart.setNoDataText(context.getString(R.string.accountdetails_cashflow_linechart_nodatatext));
         chart.setTouchEnabled(true);
         chart.setDragEnabled(true);
         chart.setScaleEnabled(true);
         chart.setDrawGridBackground(false);
         chart.setPinchZoom(true);
-        //chart.setMaxVisibleValueCount(12);
+        chart.setMaxVisibleValueCount(12);
         chart.setHighlightPerDragEnabled(true);
+
+        Log.d("CashflowLineChart", "setChartAttributes() - END");
+
     }
 
 
     private LineDataSet getLeftYAxisDataSet(){
+
+        Log.d("CashflowLineChart", "getLeftYAxisDataSet() - START");
+
         //create the data entries for the chart - there will be two lines (dual y axis)
         //1st Y axis - cashflow
         List<Entry> entries = new ArrayList<>();
-        //Log.d("**TRACE-Format**", String.format("cardlistsize = %d", transactioncardList.size()));
-        String[] x_axis_text = new String[transactioncardList.size()];
+        //Log.d("**TRACE-Format**", String.format("cardlistsize = %d", dataObject.size()));
+        String[] x_axis_text = new String[dataObject.size()];
 
-        //get values from transactionCardList
+        //get values from dataObject
         int x = 0;
-        for (TransactionCardDataObject transaction: transactioncardList) {
+        for (TransactionCardDataObject transaction: dataObject) {
             BigDecimal cashflowAmount = transaction.totalCashIn.add(transaction.totalCashOut);
             entries.add(new Entry(x, cashflowAmount.floatValue()));
             String x_axis_text_value = transaction.transactionMonth; //default is monthly
@@ -143,58 +179,34 @@ public class CashflowLineChart {
 
             }
             x_axis_text[x] = x_axis_text_value;
-            //Log.d("**TRACE-Format**", String.format("x_axis_text[%d] = %s", x, x_axis_text_value));
+            //Log.d("**TRACE-Format** Cash", "getLeftYAxisDataSet() : " + String.format("x_axis_text[%d] = %s", x, x_axis_text_value));
             x++;
         }
 
+
         configure_xAxis(x_axis_text);
 
-        /*
-        entries.add(new Entry(0, 10945.50f));
-        entries.add(new Entry(1, 34444.5f));
-        entries.add(new Entry(2, 33333.50f));
-        entries.add(new Entry(3, 41111f));
-        entries.add(new Entry(4, 55555f));
-        entries.add(new Entry(5, 101101f));
-        */
 
-        //create the datasets using the data entries
-        //1. cashflow data set
         LineDataSet dataSet = new LineDataSet(entries, context.getString(R.string.accountdetails_cashflow_linechart_cashflow_label));
         dataSet.setLineWidth(Float.valueOf(context.getString(R.string.ewise_chart_line_width)).floatValue());
         dataSet.setColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartCashflowLine));
         dataSet.setValueTextColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartCashflowLine));
         dataSet.setValueTextSize(Float.valueOf(context.getString(R.string.ewise_chart_text_size)).floatValue());
         dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-        dataSet.setDrawValues(false);
+        dataSet.setDrawValues(true);
         dataSet.setDrawVerticalHighlightIndicator(true);
+
+        Log.d("CashflowLineChart", "getLeftYAxisDataSet() - END");
+
 
         return dataSet;
     }
 
-    private LineDataSet getRightYAxisDataSet(){
-        //2nd y axis - account balance
-        List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(0, 1105555));
-        entries.add(new Entry(1, 423445));
-        entries.add(new Entry(2, -333445));
-        entries.add(new Entry(3, -444445));
-        entries.add(new Entry(4, 666995));
-        entries.add(new Entry(5, 999995));
-
-        LineDataSet dataSet = new LineDataSet(entries, context.getString(R.string.accountdetails_cashflow_linechart_balance_label));
-        dataSet.setLineWidth(Float.valueOf(context.getString(R.string.ewise_chart_line_width)).floatValue());
-        dataSet.setColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartBalanceLine));
-        dataSet.setValueTextColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartBalanceLine));
-        dataSet.setValueTextSize(Float.valueOf(context.getString(R.string.ewise_chart_text_size)).floatValue());
-        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        dataSet.setDrawValues(false);
-        dataSet.setDrawVerticalHighlightIndicator(true);
-
-        return dataSet;
-    }
 
     private void configure_xAxis(String[] x_axis_text){
+
+        Log.d("CashflowLineChart", "configure_xAxis() - START");
+
 
         XAxis x = chart.getXAxis();
         x.setTextColor(ContextCompat.getColor(context, R.color.coloreWiseMainTextBlack));
@@ -206,40 +218,19 @@ public class CashflowLineChart {
         x.setAxisLineColor(ContextCompat.getColor(context, R.color.coloreWiseMainTextBlack));
         x.setGranularity(1f);
 
-        /*
-        //we have to draw the relevant data string in the x-axis representing each float value in x-axis
-        final String[] x_axis_text = new String[] { "Jan-16",
-                                                    "Feb-16",
-                                                    "Mar-16",
-                                                    "Apr-16",
-                                                    "May-16",
-                                                    "Jun-16"};
-        */
 
-//        final String[] x_axis_text_inner = x_axis_text;
+        IAxisValueFormatter formatter = new CashflowXAxisValueFormatter(x_axis_text);
 
-        AxisValueFormatter formatter = new CashflowXAxisValueFormatter(x_axis_text);
-
-
-/*
-        AxisValueFormatter formatter = new AxisValueFormatter() {
-
-
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return x_axis_text_inner[(int) value];
-            }
-
-            // we don't draw numbers, so no decimal digits needed
-            @Override
-            public int getDecimalDigits() {  return 0; }
-        };
-*/
         x.setValueFormatter(formatter);
+
+        Log.d("CashflowLineChart", "configure_xAxis() - END");
+
     }
 
 
     private void configure_left_yAxis(){
+        Log.d("CashflowLineChart", "configure_left_yAxis() - START");
+
         //configure the left Y axis (cashflow)
         YAxis y_Left = chart.getAxisLeft();
         y_Left.setTextColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartCashflowLine));
@@ -249,28 +240,24 @@ public class CashflowLineChart {
         y_Left.setGridColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartCashflowLine));
         y_Left.setGridLineWidth(Float.valueOf(context.getString(R.string.ewise_chart_gridline_width)));
         y_Left.setAxisLineColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartCashflowLine));
-    }
+        Log.d("CashflowLineChart", "configure_left_yAxis() - END");
 
 
-    private void configure_right_yAxis(){
-        //configure the right Y axis (balance)
-        YAxis y_Right = chart.getAxisRight();
-        y_Right.setEnabled(true);//change later
-        y_Right.setTextColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartBalanceLine));
-        y_Right.setTextSize(Float.valueOf(context.getString(R.string.ewise_chart_axis_text_size)));
-        //y_Right.setAxisMaxValue(1100f);//temp set y axis max - can reset later with real data
-        y_Right.setDrawGridLines(true);
-        y_Right.setGridColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartBalanceLine));
-        y_Right.setGridLineWidth(Float.valueOf(context.getString(R.string.ewise_chart_gridline_width)));
-        y_Right.setAxisLineColor(ContextCompat.getColor(context, R.color.coloreWiseLineChartBalanceLine));
     }
+
 
     //configure the chart legend
     private void configure_Legend() {
+        Log.d("CashflowLineChart", "configure_Legend() - START");
+
         Legend legend = chart.getLegend();
         legend.setForm(Legend.LegendForm.SQUARE);
-        legend.setPosition(Legend.LegendPosition.ABOVE_CHART_RIGHT);
+        //legend.setPosition(Legend.LegendPosition.ABOVE_CHART_RIGHT);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
         legend.setTextColor(ContextCompat.getColor(context, R.color.coloreWiseSecondaryTextBlack));
+        Log.d("CashflowLineChart", "configure_Legend() - END");
+
     }
 
 
@@ -281,7 +268,8 @@ public class CashflowLineChart {
     }
 
 
-    public class CashflowXAxisValueFormatter implements AxisValueFormatter {
+    public class CashflowXAxisValueFormatter implements IAxisValueFormatter {
+
 
         private String[] mValues;
 
@@ -292,17 +280,18 @@ public class CashflowLineChart {
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
             // "value" represents the position of the label on the axis (x or y)
-            //Log.d("**TRACE-Format**", String.format("value: %d", (int) value));
             if (((int) value < mValues.length) && ((int) value >=0)) {
+                Log.d("CashflowXAxisValueFor..", String.format("getFormattedValue() : value: %d | stringValue= %s", (int) value, mValues[(int) value]));
                 return mValues[(int) value];
             }
 
             return "";
-
         }
 
         /** this is only needed if numbers are returned, else return 0 */
-        @Override
+
+        //todo: **mpandroidchart 3.0.2 broke this override** to be fixed/ replaced if needed
+        //@Override
         public int getDecimalDigits() { return 0; }
     }
 }

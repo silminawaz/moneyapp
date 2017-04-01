@@ -235,6 +235,32 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
 
     }
 
+    @Override
+    public void onRestoreTransactionsAllComplete(PdvApiResults results){}
+
+    @Override
+    public void onRestoreTransactionsFail(PdvApiResults results){}
+
+    @Override
+    public void onGetCredentialSuccess(PdvApiResults results) {
+    }
+
+    @Override
+    public void onGetCredentialFail(PdvApiResults results) {
+
+    }
+
+    @Override
+    public void onSetCredentialSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onSetCredentialFail(PdvApiResults results)
+    {
+
+    }
     //End: PdvConnectivityCallback Interface implementations
 
 

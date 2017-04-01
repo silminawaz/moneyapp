@@ -87,7 +87,11 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+    </android.support.v4.view.ViewPager>
+
 
     <LinearLayout
     android:layout_width="1dp"
@@ -137,6 +141,7 @@
             app:fabSize="mini"
             app:backgroundTint="@color/coloreWisePrimary"/>
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/fabLayout2"
