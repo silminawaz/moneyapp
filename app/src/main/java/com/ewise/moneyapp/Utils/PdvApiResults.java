@@ -20,6 +20,7 @@ import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.android.pdv.api.model.response.GetPromptsResponse;
 import com.ewise.android.pdv.api.model.response.GetUserProfileResponse;
+import com.ewise.android.pdv.api.model.response.RemoveInstitutionResponse;
 import com.ewise.android.pdv.api.model.response.TransactionsResponse;
 import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.data.PdvAccountResponse;
@@ -87,6 +88,9 @@ public class PdvApiResults {
 
     //response for setCredential()
     public Response<String>         setCredentialResponse = null;
+
+    //response for removeInstitutions
+    public RemoveInstitutionResponse removeInstitutionResponse = null;
 
     //response for Stop() API
     public Response<String>         stopResponse = null;

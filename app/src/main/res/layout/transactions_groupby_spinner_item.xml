@@ -29,7 +29,6 @@
             android:maxLines="1"
             android:background="@drawable/ewise_background_circle_primary"
             android:textAlignment="center"
-            android:singleLine="false"
             android:layout_marginLeft="@dimen/ewise_horizontal_margin"
             android:visibility="gone">
 
@@ -45,8 +44,7 @@
             android:textColor="@color/coloreWiseSecondaryTextBlack"
             android:text="DAYS"
             android:maxLines="1"
-            android:layout_marginRight="@dimen/ewise_horizontal_margin"
-            android:singleLine="false">
+            android:layout_marginRight="@dimen/ewise_horizontal_margin">
 
         </TextView>
     </TableRow>

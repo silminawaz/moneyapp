@@ -106,7 +106,7 @@ public class AccountsObjectItemView extends RecyclerViewItemLayoutView<AccountsO
         }
         else
         {
-            Toast.makeText(this.getContext(), R.string.pdvapi_request_inprogress, Toast.LENGTH_SHORT);
+            Toast.makeText(this.getContext(), R.string.pdvapi_request_inprogress, Toast.LENGTH_SHORT).show();
         }
 
     }

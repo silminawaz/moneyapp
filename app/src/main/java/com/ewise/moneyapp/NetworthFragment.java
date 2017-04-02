@@ -469,7 +469,20 @@ public class NetworthFragment extends Fragment implements PdvConnectivityCallbac
     {
 
     }
-    //End: PdvApiConnectivityCallback interface implementation overrides
+
+    @Override
+    public void onRemoveInstitutionSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onRemoveInstitutionFail(PdvApiResults results)
+    {
+
+    }
+
+    //End: PdvConnectivityCallback implementation
 
     @Override
     public void onLoginFailed(){

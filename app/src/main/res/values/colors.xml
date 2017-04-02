@@ -31,6 +31,9 @@
     <color name="coloreWiseNetworthAssets">#00c389</color>
     <color name="coloreWiseNetworthLiabilities">#ff1744</color>
 
+    <color name="coloreWiseTransparentBackground">#8c00c389</color>
+
+
 
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorTabBar">#9cca6c</color>

@@ -720,7 +720,7 @@ public class MainActivity extends AppCompatActivity
                 isPdvConnected = false;
                 ((ImageView)findViewById(R.id.imagePDVConnected)).setImageResource(R.drawable.ewise_pdv_disconnected_material_white);
 
-                Toast.makeText(MainActivity.this, getString(R.string.pdvapi_not_connected), Toast.LENGTH_LONG);
+                Toast.makeText(MainActivity.this, getString(R.string.pdvapi_not_connected), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -837,14 +837,30 @@ public class MainActivity extends AppCompatActivity
     {
 
     }
-    //END - PdvConnectivityCallbacks interface implementations
 
+    @Override
+    public void onRemoveInstitutionSuccess(PdvApiResults results)
+    {
+        //todo: recall userprofile
+        MoneyAppApp app = (MoneyAppApp)getApplication();
+        app.pdvGetUserProfile(this);
+
+
+    }
+
+    @Override
+    public void onRemoveInstitutionFail(PdvApiResults results)
+    {
+
+    }
+
+    //End: PdvConnectivityCallback implementation
     public void displayLongToastMessage(String msg){
-        Toast.makeText(this, msg, Toast.LENGTH_LONG);
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
     public void displayShortToastMessage(String msg){
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     //execute this method when there is anything in the request queue

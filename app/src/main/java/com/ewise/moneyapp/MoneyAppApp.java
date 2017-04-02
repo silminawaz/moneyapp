@@ -39,6 +39,7 @@ import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.android.pdv.api.model.response.GetPromptsResponse;
 import com.ewise.android.pdv.api.model.response.GetUserProfileData;
 import com.ewise.android.pdv.api.model.response.GetUserProfileResponse;
+import com.ewise.android.pdv.api.model.response.RemoveInstitutionResponse;
 import com.ewise.android.pdv.api.model.response.TransactionsResponse;
 import com.ewise.android.pdv.api.util.ConnectivityReceiver;
 import com.ewise.moneyapp.APIDataMappers.PdvAccountDataMapper;
@@ -664,6 +665,44 @@ public class MoneyAppApp extends Application {
     }
 
 
+    public void pdvRemoveInstitution (final String instId, final PdvConnectivityCallback callback) {
+        Log.d(TAG, "Calling pdvRemoveInstitution()");
+
+        Runnable runPdvRemoveInstitution = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<String> instList = new ArrayList<>();
+                    instList.add(instId);
+                    pdvApi.removeInstitutions(instList, new PdvApiCallback.PdvApiRemoveInsitutionsCallback() {
+                        @Override
+                        public void result(RemoveInstitutionResponse response) {
+                            PdvApiResults results = new PdvApiResults();
+                            results.pdvApiName = PdvApiName.REMOVE_INSTITUTION;
+                            results.callBackCompleted = true;
+                            results.removeInstitutionResponse = response;
+                            if (results.removeInstitutionResponse.getStatus().equals(StatusCode.STATUS_SUCCESS)) {
+                                //todo: restore the accounts again
+                                //todo: restore the user profile again
+                                lastRestoredDateTime=null;
+                                callback.onRemoveInstitutionSuccess(results);
+                            } else {
+                                callback.onRemoveInstitutionFail(results);
+                            }
+                        }
+                    });
+                }
+                catch (Exception e){
+                    Log.e("MoneyAppApp", "pdvRemoveInstitution() - exception " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        new Thread (runPdvRemoveInstitution).start();
+    }
+
+
     public void updateProviderHashMap(){
         instCodeToGroupMap.clear();
         for (Group group : providerData.getGroups()){
@@ -700,6 +739,7 @@ public class MoneyAppApp extends Application {
 
         return null;
     }
+
 
     public String getProviderGroupId(String instId){
 

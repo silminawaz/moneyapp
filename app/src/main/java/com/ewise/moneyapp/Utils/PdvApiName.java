@@ -22,6 +22,7 @@ public enum PdvApiName {
     GET_INSTITUTIONS ("get_institutions"),
     GET_CREDENTIAL ("get_credential"),
     SET_CREDENTIAL("set_credential"),
+    REMOVE_INSTITUTION ("remove_institution"),
     STOP ("stop");
 
     private final String stringValue;

@@ -161,19 +161,36 @@ public class NetworthDataObject {
 
     public BigDecimal getTotalAssetsAmount() {
         Log.d ("NetworthDataObject", "getTotalAssetsAmount() =" + totalAssetsAmount);
-        return totalAssetsAmount;
+        if (totalAssetsAmount!=null) {
+            return totalAssetsAmount;
+        }
+        else
+        {
+            return new BigDecimal(0);
+        }
     }
 
     public BigDecimal getTotalLiabilitiesAmount() {
         Log.d ("NetworthDataObject", "getTotalLiabilitiesAmount() =" + totalLiabilitiesAmount);
 
-        return totalLiabilitiesAmount;
+        if(totalLiabilitiesAmount!=null) {
+            return totalLiabilitiesAmount;
+        }
+        else
+        {
+            return new BigDecimal(0);
+        }
     }
 
     public BigDecimal getTotalUnknownAmount() {
         Log.d ("NetworthDataObject", "getTotalUnknownAmount() =" + totalUnknownAmount);
-
-        return totalUnknownAmount;
+        if(totalUnknownAmount!=null) {
+            return totalUnknownAmount;
+        }
+        else
+        {
+            return new BigDecimal(0);
+        }
     }
 
     public Currency getCurrency() {

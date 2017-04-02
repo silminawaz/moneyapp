@@ -29,6 +29,8 @@ public interface PdvConnectivityCallback {
     public void onGetCredentialFail(PdvApiResults results);
     public void onSetCredentialSuccess(PdvApiResults results);
     public void onSetCredentialFail(PdvApiResults results);
+    public void onRemoveInstitutionSuccess(PdvApiResults results);
+    public void onRemoveInstitutionFail(PdvApiResults results);
 
 
 
@@ -131,6 +133,19 @@ public interface PdvConnectivityCallback {
     {
 
     }
+
+    @Override
+    public void onRemoveInstitutionSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onRemoveInstitutionFail(PdvApiResults results)
+    {
+
+    }
+
     //End: PdvConnectivityCallback implementation
 
 

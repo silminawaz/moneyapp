@@ -340,6 +340,19 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
     }
 
+    @Override
+    public void onRemoveInstitutionSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onRemoveInstitutionFail(PdvApiResults results)
+    {
+
+    }
+
+    //End: PdvConnectivityCallback implementation
 
     private void generalExceptionHandler (String eType, String eMessage, String eMethod, String eObjectString){
         String sFormat = getString(R.string.exception_format_string);

@@ -1,5 +1,6 @@
 package com.ewise.moneyapp;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -323,6 +324,7 @@ import java.util.List;
 
         } else if (itemString.equals(getString(R.string.provider_menu_delete_title))) {
             //delete the provider - alert user for a confirmation first
+            showRemoveProviderDialog(provider);
 
             //todo: refresh the providers, networth and accounts etc to ensure you get a correct portfolio
 
@@ -355,6 +357,44 @@ import java.util.List;
         // Create and show the dialog.
         DialogFragment newFragment = EditProviderDialogFragment.newInstance(providerEntry);
         newFragment.show(ft, "edit_institution_prompts_dialog");
+    }
+
+
+    private void showRemoveProviderDialog(final UserProviderEntry providerEntry){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+
+        // Add the buttons
+        builder.setPositiveButton(R.string.ok_button_text, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                Toast.makeText(getActivity(), getString(R.string.delete_provider_toast_message) + " " + providerEntry.getDesc(), Toast.LENGTH_SHORT).show();
+                MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+                app.pdvRemoveInstitution(providerEntry.getIid(), (MainActivity)getActivity());
+
+            }
+        });
+        builder.setNegativeButton(R.string.cancel_button_text, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                // do nothing - just close this dialog and go back to previous activity
+                dialog.cancel();
+            }
+        });
+
+
+        MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+
+        builder.setMessage(R.string.delete_provider_alert_message)
+                .setTitle(getString(R.string.delete_provider_alert_title)+" "+providerEntry.getDesc())
+                .setIcon(getResources().getIdentifier(app.getProviderGroupId(providerEntry.getIid()), "drawable", getActivity().getPackageName()));
+
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
+
     }
 
     @Override

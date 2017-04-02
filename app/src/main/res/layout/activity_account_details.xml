@@ -133,7 +133,7 @@
             android:layout_below="@+id/accountdetails_accountbalance"
             android:textColor="@color/coloreWisePrimary"
             android:layout_alignParentEnd="true"
-            android:contextClickable="false" />\
+            android:contextClickable="false" />
 
         <TextView
             android:id="@+id/accountdetails_balance_label"

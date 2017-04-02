@@ -668,7 +668,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
                     msg = getString(R.string.pdvapi_on_restore_transactions_fail_message);
                 }
 
-                Toast.makeText(AccountDetailsActivity.this, msg, Toast.LENGTH_SHORT);
+                Toast.makeText(AccountDetailsActivity.this, msg, Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -695,5 +695,19 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
     {
 
     }
+
+    @Override
+    public void onRemoveInstitutionSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onRemoveInstitutionFail(PdvApiResults results)
+    {
+
+    }
+
+    //End: PdvConnectivityCallback implementation
 
 }

@@ -276,7 +276,20 @@ public class AccountsFragment extends Fragment  implements PdvConnectivityCallba
     {
 
     }
-    //End: PdvApiConnectivityCallback interface implementation overrides
+
+    @Override
+    public void onRemoveInstitutionSuccess(PdvApiResults results)
+    {
+
+    }
+
+    @Override
+    public void onRemoveInstitutionFail(PdvApiResults results)
+    {
+
+    }
+
+    //End: PdvConnectivityCallback implementation
 
 
     public void updatePageData()

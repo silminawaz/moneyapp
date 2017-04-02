@@ -8,7 +8,6 @@
     android:gravity="start"
     android:textColor="@color/coloreWiseSecondaryTextBlack"
     android:text="January"
-    android:maxLines="1"
-    android:autoText="false">
+    android:maxLines="1">
 
 </TextView>

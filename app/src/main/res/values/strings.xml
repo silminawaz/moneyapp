@@ -174,21 +174,37 @@
         "they can only be used by this app to access your online %2$s account directly from this device."
     </string>
 
-    <string name="edit_provider_save_button_text">Save credentials</string>
+    <string name="edit_provider_save_button_text">Save</string>
+    <string name="edit_provider_save_button_success_text">Save successful</string>
+    <string name="edit_provider_save_button_fail_text">Save failed</string>
+
     <string name="edit_provider_delete_button_text">Delete provider</string>
     <string name="edit_provider_cancel_button_text">Cancel</string>
     <string name="edit_provider_text">
-        "\n"
-        "NOTE:\n\n"
-        "1. You should only edit provider credentials if "
-        "(a) credentials are not found in this device, or "
+        "1. You should only edit provider credentials if\n"
+        "(a) credentials are not found in this device, or\n"
         "(b) your password or other security credentials have changed.\n\n"
         "2. The credentials will not be validated at the time of saving credentials.  They will be validated  the next time you sync your provider.\n\n"
         "3. If your userid has changed, please remove and add the provider again."
     </string>
-    <string name="edit_provider_account_header_text">Provider accounts:</string>
+    <string name="edit_provider_account_header_text">Provider accounts</string>
+    <string name="edit_provider_account_show_text">Show provider accounts</string>
+    <string name="edit_provider_account_hide_text">Hide provider accounts</string>
+    <string name="edit_provider_help_hide_text">Hide help text</string>
+    <string name="edit_provider_help_show_text">Show help text</string>
     <string name="edit_provider_account_not_found_text">No accounts available</string>
+    <string name="edit_provider_account_balance_text">Balance: </string>
 
+    <string name="edit_provider_try_again_text">There are pending requests in progress, please try again later...</string>
+
+    <string name="delete_provider_toast_message">Removing provider</string>
+    <string name="delete_provider_alert_title">Confirm removing provider</string>
+    <string name="delete_provider_alert_message">
+        "WARNING: This action cannot be undone!\n\n"
+        "Press OK to continue to remove provider. Press CANCEL to ABORT \n\n"
+        "All accounts belonging to this provider will be removed and no longer available "
+        "after removing the provider. However you may add the provider again later."
+    </string>
 
     <string name="dialog_otp_text">Enter one-time pin</string>
     <string name="dialog_captcha_text">Enter captcha text</string>
