@@ -17,9 +17,12 @@
     <string name="menu_name_networth">Networth</string>
     <string name="menu_name_providers">Providers</string>
     <string name="menu_name_transfer">Transfer funds</string>
+    <string name="menu_name_bills">Bills</string>
+    <string name="menu_name_sendissue">Report an issue</string>
     <string name="menu_name_permissions">Permissions</string>
     <string name="menu_name_settings">Settings</string>
     <string name="menu_name_help">Help &amp; feedback</string>
+    <string name="menu_name_logout">Logout</string>
 
     <string name="var_base_currency">SGD</string>
 

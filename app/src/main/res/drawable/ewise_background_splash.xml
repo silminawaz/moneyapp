@@ -7,7 +7,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ewise_aegis_mm_logo_white_back"/>
+            android:src="@drawable/ewise_aegis_logo_white_back"/>
     </item>
 
 

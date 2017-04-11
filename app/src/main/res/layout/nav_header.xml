@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/headerView"
@@ -12,22 +13,45 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/ewise_vertical_margin_large">
+
+                <ImageView
+                    android:id="@+id/navHeaderProfileIcon"
+                    android:layout_width="@dimen/ewise_touch_icon_size_xl"
+                    android:layout_height="@dimen/ewise_touch_icon_size_xl"
+                    android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                    android:src="@drawable/ewise_default_userprofile_icon_white"
+                    android:layout_gravity="center_horizontal" />
+
         <ImageView
-            android:id="@+id/navHeaderProfileIcon"
-            android:layout_width="@dimen/ewise_touch_icon_size_xl"
-            android:layout_height="@dimen/ewise_touch_icon_size_xl"
-            android:layout_marginTop="@dimen/ewise_touch_icon_size_xl"
-            android:src="@drawable/ewise_marque_white"
-            android:layout_gravity="center_horizontal"/>
+            android:id="@+id/navHeaderSettingsIcon"
+            android:layout_width="@dimen/ewise_touch_icon_sie_medium"
+            android:layout_height="@dimen/ewise_touch_icon_sie_medium"
+            android:src="@drawable/menu_settings_icon"
+            android:layout_gravity="end"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:background="@color/coloreWisePrimary"
+            android:layout_alignTop="@+id/navHeaderProfileIcon"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentStart="false" />
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/navHeaderProfileNameTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/ewise_vertical_margin"
+            android:layout_marginTop="@dimen/ewise_vertical_margin_large"
             android:text="Android Studio"
             android:textColor="@color/coloreWiseMainTextWhite"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="start"
+            android:textSize="@dimen/ewise_heading_text_size" />
 
         <TextView
             android:id="@+id/navHeaderProfileEmailTxt"
@@ -35,6 +59,7 @@
             android:layout_height="wrap_content"
             android:text="android.studio@android.com"
             android:textColor="@color/coloreWiseMainTextWhite"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="start"
+            android:textSize="@dimen/ewise_secondary_text_size" />
 
 </LinearLayout>

@@ -27,6 +27,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:fitsSystemWindows="true"
             android:background="@color/coloreWisePrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
@@ -146,7 +147,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            app:srcCompat="@drawable/ic_account_balance"
+            android:src="@drawable/menu_providers_icon"
             app:fabSize="mini"
             app:backgroundTint="@color/coloreWiseClearGreen"/>
     </LinearLayout>
@@ -177,7 +178,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            app:srcCompat="@drawable/menu_transfer_icon_image"
+            android:src="@drawable/menu_transfer_icon"
             app:fabSize="mini"
             app:backgroundTint="@color/coloreWiseClearGreen"/>
     </LinearLayout>
@@ -208,7 +209,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            app:srcCompat="@drawable/ic_security"
+            android:src="@drawable/menu_providers_icon"
             app:fabSize="mini"
             app:backgroundTint="@color/coloreWiseClearGreen"/>
     </LinearLayout>

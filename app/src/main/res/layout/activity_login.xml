@@ -408,7 +408,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="20dp"
             android:adjustViewBounds="true"
-            android:src="@drawable/ewise_marque_white"
+            android:src="@drawable/ewise_default_userprofile_icon_white"
             android:layout_width="150dp" />
 
     </RelativeLayout>

@@ -22,6 +22,12 @@
             android:title="@string/menu_name_spending" />
 
         <item
+            android:id="@+id/menuBills"
+            android:icon="@drawable/menu_bills_icon"
+            android:title="@string/menu_name_bills" />
+
+
+        <item
             android:id="@+id/menuTransfer"
             android:icon="@drawable/menu_transfer_icon"
             android:title="@string/menu_name_transfer" />
@@ -43,15 +49,15 @@
 
 
         <item
-            android:id="@+id/menuSettings"
-            android:icon="@drawable/menu_settings_icon"
-            android:title="@string/menu_name_settings" />
-        
-
-        <item
             android:id="@+id/menuLogout"
             android:icon="@drawable/menu_logout_icon"
             android:title="@string/menu_name_logout" />
+
+        <item
+            android:id="@+id/menuHelp"
+            android:icon="@drawable/menu_help_icon"
+            android:title="@string/menu_name_help" />
+
 
     </group>
 
