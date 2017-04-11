@@ -244,7 +244,7 @@ public class PdvAcaBoundService extends Service {
                             } else if (accountsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = verify");
                                 results.accounts = accountsResponse;
-                                results.callBackPrompts = true;
+                                results.setCallBackPrompts(true);
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_VERIFY, requestParams, results);
                             }
@@ -331,7 +331,7 @@ public class PdvAcaBoundService extends Service {
                             } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = verify");
                                 results.transactions = transactionsResponse;
-                                results.callBackPrompts = true;
+                                results.setCallBackPrompts(true);
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_VERIFY, requestParams, results);
                             }
@@ -418,7 +418,7 @@ public class PdvAcaBoundService extends Service {
                             } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = verify");
                                 results.transactions = transactionsResponse;
-                                results.callBackPrompts = true;
+                                results.setCallBackPrompts(true);
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_VERIFY, requestParams, results);
                             }

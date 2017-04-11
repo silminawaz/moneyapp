@@ -125,6 +125,10 @@ public class PdvApiRequestQueue {
         return null;
     }
 
+    public synchronized boolean setVerify(String instId){
+        return getRequestForInstitution(instId).results.setOTPDone();
+    }
+
 
     public synchronized PdvApiRequestParams getNextRequestToExecute(){
         PdvApiRequestParams returnValue = null;

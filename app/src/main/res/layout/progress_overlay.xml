@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/progress_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:alpha="1.0"
+    android:animateLayoutChanges="true"
+    android:background="@color/coloreWiseWhite"
+    android:clickable="true"
+    android:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ewise_aegis_logo_white_back"
+            android:layout_marginTop="@dimen/ewise_vertical_margin_large"/>
+
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Login to PDV..."
+            android:textColor="@color/coloreWisePrimary"
+            android:textAlignment="center"
+            android:textSize="@dimen/ewise_header_text_size"
+            android:paddingTop="@dimen/activity_vertical_margin"/>
+
+        <LinearLayout
+            android:id="@+id/loginErrorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|center"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/loginErrorText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login to PDV failed"
+                android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                android:textColor="@color/coloreWisePrimary"/>
+
+            <Button
+                android:id="@+id/loginRetryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:text="@string/retry_button_text"
+                android:textColorLink="@color/coloreWiseMainTextBlack"
+                android:textStyle="italic" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/loginToAppErrorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|center"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/loginToAppErrorText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login to app failed"
+                android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                android:textColor="@color/coloreWisePrimary"/>
+
+            <Button
+                android:id="@+id/loginToAppRetryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:text="@string/retry_button_text"
+                android:textColorLink="@color/coloreWiseMainTextBlack"
+                android:textStyle="italic" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

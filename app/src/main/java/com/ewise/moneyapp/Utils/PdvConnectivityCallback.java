@@ -23,6 +23,8 @@ public interface PdvConnectivityCallback {
     public void onGetUserProfileFail(PdvApiResults results);
     public void onRestoreAccountsComplete(String instId);
     public void onRestoreAccountsAllComplete();
+    public void onRestoreAccountsNone();
+    public void onRestoreAccountsFail();
     public void onRestoreTransactionsAllComplete(PdvApiResults results);
     public void onRestoreTransactionsFail(PdvApiResults results);
     public void onGetCredentialSuccess(PdvApiResults results);
@@ -94,6 +96,18 @@ public interface PdvConnectivityCallback {
 
     @Override
     public void onRestoreAccountsAllComplete()
+    {
+
+    }
+
+    @Override
+    public void onRestoreAccountsNone()
+    {
+
+    }
+
+    @Override
+    public void onRestoreAccountsFail()
     {
 
     }

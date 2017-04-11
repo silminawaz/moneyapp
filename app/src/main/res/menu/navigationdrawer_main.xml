@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <group android:checkableBehavior="single" android:id="@+id/menuMain">
+        <item
+            android:id="@+id/menuProviders"
+            android:icon="@drawable/menu_providers_icon"
+            android:title="@string/menu_name_providers"
+            />
+        <item
+            android:id="@+id/menuNetworth"
+            android:icon="@drawable/menu_networth_icon"
+            android:title="@string/menu_name_networth" />
+        <item
+            android:id="@+id/menuAccounts"
+            android:icon="@drawable/menu_accounts_icon"
+            android:title="@string/menu_name_accounts" />
+        <item
+            android:id="@+id/menuBudgets"
+            android:icon="@drawable/menu_spending_icon"
+            android:title="@string/menu_name_spending" />
+
+        <item
+            android:id="@+id/menuTransfer"
+            android:icon="@drawable/menu_transfer_icon"
+            android:title="@string/menu_name_transfer" />
+
+    </group>
+
+    <group android:checkableBehavior="single" android:id="@+id/menuSub">
+
+        <item
+            android:id="@+id/menuPermissions"
+            android:icon="@drawable/menu_permissions_icon"
+            android:title="@string/menu_name_permissions" />
+
+
+        <item
+            android:id="@+id/menuSendIssue"
+            android:icon="@drawable/menu_sendissue_icon"
+            android:title="@string/menu_name_sendissue" />
+
+
+        <item
+            android:id="@+id/menuSettings"
+            android:icon="@drawable/menu_settings_icon"
+            android:title="@string/menu_name_settings" />
+        
+
+        <item
+            android:id="@+id/menuLogout"
+            android:icon="@drawable/menu_logout_icon"
+            android:title="@string/menu_name_logout" />
+
+    </group>
+
+
+</menu>

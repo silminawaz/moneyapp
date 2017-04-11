@@ -226,6 +226,18 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
     }
 
     @Override
+    public void onRestoreAccountsNone()
+    {
+
+    }
+
+    @Override
+    public void onRestoreAccountsFail()
+    {
+
+    }
+
+    @Override
     public void onRestoreTransactionsAllComplete(PdvApiResults results){}
 
     @Override

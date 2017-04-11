@@ -2,18 +2,28 @@ package com.ewise.moneyapp;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.security.KeyPairGeneratorSpec;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
@@ -61,12 +71,28 @@ import com.rogansoft.remotelogger.RemoteLogger;
 
 import org.xwalk.core.XWalkView;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.security.auth.x500.X500Principal;
 
 import dagger.ObjectGraph;
 
@@ -77,15 +103,22 @@ import static java.util.Arrays.asList;
  */
 public class MoneyAppApp extends Application {
     private static final String TAG = MoneyAppApp.class.getName();
-    public static final String DEFAULT_USERNAME = "silmiandroid5demo3";
+    public static final String DEFAULT_USERNAME = "silmiandroid5demo4";
     public static final String DEFAULT_MM_HOST = "https://qa-50-wmm.ewise.com/api/";
     public static final String DEFAULT_SWAN_HOST = "https://qaswan.ewise.com/";
     public static final String EWISEDEMO = "com.ewise.android.pdv.EwiseSharedPref";
     public static final String INSTCODE_DRAWABLE_PREFIX = "INSTCODE_";
 
-    static final int ACCOUNT_DETAILS_ACTIVITY = 1;
-    static final int ADD_PROVIDER_LIST_REQUEST = 2;
-    static final int ADD_PROVIDER_PROMPTS_REQUEST = 3;
+
+    //todo: implement inactivity timeout for the app login
+    public static final int APP_INACTIVITY_TIMEOUT = 180000; //30 minutes default timeout for the app for login
+
+    static final int LOGIN_REQUEST = 1;
+    static final int ACCOUNT_DETAILS_ACTIVITY = 2;
+    static final int ADD_PROVIDER_LIST_REQUEST = 3;
+    static final int ADD_PROVIDER_PROMPTS_REQUEST = 4;
+
+    static final int MAINACTIVITY_FINISHING_NOTIFICATION_REQUEST_CODE = 999;
 
     static final int MAX_AUTO_LOGIN_RETRY_COUNT = 3;
 
@@ -106,9 +139,38 @@ public class MoneyAppApp extends Application {
 
     private PdvApiCallbackCounter restoreAccountsCallBackCounter = null;
     private Date lastRestoredDateTime = null;
+    private boolean pdvLoginFailed = false;
+    private boolean appLoggedIn= false;
 
     private PdvAcaBoundService pdvAcaBoundService;
     private boolean pdvAcaServiceIsBound = false;
+
+
+
+    public boolean isPdvLoginFailed(){
+        return pdvLoginFailed;
+    }
+
+    public void setPdvLoginFailed (){
+        pdvLoginFailed=true;
+    }
+
+    public void retryPdvLogin(){
+        pdvLoginFailed=false;
+    }
+
+    public boolean isAppLoggedIn(){
+        return appLoggedIn;
+    }
+
+    public void setAppLoggedIn(){
+        appLoggedIn=true;
+    }
+
+    public void setAppLoggedOff (){
+        appLoggedIn=false;
+    }
+
 
 
     public PdvAcaBoundService getPdvAcaBoundService(){
@@ -214,22 +276,68 @@ public class MoneyAppApp extends Application {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle bundle) {
+                Log.d("MoneyAppApp", "onActivityCreated() - Activity = " + activity.getClass().getName());
                 activity.setRequestedOrientation(
                         ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
 
             @Override
             public void onActivityStarted(Activity activity) {
+                Log.d("MoneyAppApp", "onActivityStarted() - Activity = " + activity.getClass().getName());
 
             }
 
             @Override
             public void onActivityResumed(Activity activity) {
-
+                Log.d("MoneyAppApp", "onActivityResumed() - Activity = " + activity.getClass().getName());
+                if (activity.getClass().getName().equals(MainActivity.class.toString())){
+                    MainActivity mainActivity = (MainActivity) activity;
+                    mainActivity.homeWatcher.startWatch();
+                    if (mainActivity.logOutDialog !=null){
+                        if (mainActivity.logOutDialog.isShowing()){
+                            mainActivity.logOutDialog.hide();
+                            mainActivity.logOutDialog.cancel();
+                        }
+                    }
+                }
             }
 
             @Override
             public void onActivityPaused(Activity activity) {
+                Log.d(TAG, "onActivityPaused() - Activity = " + activity.getClass().getName());
+
+                if (activity.getClass().getName().equals(MainActivity.class.toString())){
+                    MainActivity mainActivity = (MainActivity) activity;
+                    if (mainActivity.isFinishing()) {
+                        mainActivity.homeWatcher.stopWatch();
+                        if (mainActivity.logOutDialog != null) {
+                            if (mainActivity.logOutDialog.isShowing()) {
+                                mainActivity.logOutDialog.hide();
+                                mainActivity.logOutDialog.cancel();
+                            }
+                        }
+
+                        Log.d(TAG, "onActivityPaused() - MainActivity is FINISHING");
+
+
+                        if (pdvApiRequestQueue.isRequestInProgress() || pdvApiRequestQueue.isRequestPending()) {
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                                    .setContentTitle(activity.getString(R.string.mainactivity_finishing_notification_message))
+                                    .setSmallIcon(R.drawable.ewise_marque_black)
+                                    .setOngoing(true);
+                            //Intent intent = new Intent(activity, null);
+                            //PendingIntent pIntent = PendingIntent.getActivity(context, MAINACTIVITY_FINISHING_NOTIFICATION_REQUEST_CODE, intent, 0);
+                            //builder.setContentIntent(pIntent);
+                            NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                            Notification notif = builder.build();
+                            notif.flags |= Notification.PRIORITY_HIGH;
+                            Log.d(TAG, "onActivityPaused() - MainActivity is FINISHING - sending notification");
+                            mNotificationManager.notify(MAINACTIVITY_FINISHING_NOTIFICATION_REQUEST_CODE, notif);
+
+                        }
+                    }
+                }
+
                 //todo: if mainactivity is paused, then the BoundService calls cannot be handled by main activity
                 //      so we need to handle the bradcast receivers here in application class and use whatever
 
@@ -237,16 +345,19 @@ public class MoneyAppApp extends Application {
 
             @Override
             public void onActivityStopped(Activity activity) {
+                Log.d("MoneyAppApp", "onActivityStopped() - Activity = " + activity.getClass().getName());
 
             }
 
             @Override
             public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
+                Log.d("MoneyAppApp", "onActivitySaveInstanceState() - Activity = " + activity.getClass().getName());
 
             }
 
             @Override
             public void onActivityDestroyed(Activity activity) {
+                Log.d("MoneyAppApp", "onActivityDestroyed() - Activity = " + activity.getClass().getName());
 
                 //todo: handle destruction of main activity the PdvApi uses the WebView from MainActivity
                 //      so if its destroyed ad recreated, the callback references will leak and also refer to the
@@ -279,6 +390,8 @@ public class MoneyAppApp extends Application {
 
     }
 
+
+
     public PdvApi getPdvApi() {
         return pdvApi;
     }
@@ -302,10 +415,15 @@ public class MoneyAppApp extends Application {
 
     public String getIMEI(){
         Context context = getApplicationContext();
-        TelephonyManager mngr = (TelephonyManager) context.getSystemService(context.TELEPHONY_SERVICE);
+        TelephonyManager mngr = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
         String imei = mngr.getDeviceId();
         return imei;
 
+    }
+
+    public boolean isPdvConnected(Context context){
+        Log.d(TAG, "Testing if connected to PDV server...");
+        return ConnectivityReceiver.isConnected(context, MoneyAppApp.DEFAULT_SWAN_HOST);
     }
 
     public void checkConnectivity(final Context context, final String swanHost, final PdvConnectivityCallback callback) {
@@ -540,13 +658,28 @@ public class MoneyAppApp extends Application {
             }
         }
 
-        if (userProfileData.getUserprofile() == null) return;
+        if (userProfileData.getUserprofile() == null) {
+            callback.onRestoreAccountsNone();
+            return;
+        }
 
-        for (UserProviderEntry p : userProfileData.getUserprofile()){
-            if (p.isFoundInDevice()) {
-                pdvRestoreAccounts(p.getIid(), callback);
+        boolean noInstitutionsOnDevice=true;
+        if (userProfileData.getUserprofile().size()>0) {
+            for (UserProviderEntry p : userProfileData.getUserprofile()) {
+                if (p.isFoundInDevice()) {
+                    pdvRestoreAccounts(p.getIid(), callback);
+                    noInstitutionsOnDevice=false;
+                }
+                else {
+                    //callback.onRestoreAccountsNone();
+                }
             }
         }
+        else {
+            callback.onRestoreAccountsNone();
+        }
+
+        if (noInstitutionsOnDevice) callback.onRestoreAccountsNone();
 
         Log.d(TAG, "Calling pdvRestoreAllProviderAccounts() - END");
     }
@@ -596,6 +729,12 @@ public class MoneyAppApp extends Application {
                                         + " InstId=" + accountsResponse.getInstId()
                                         + " | errorType=" + accountsResponse.getErrorType()
                                         + " | message=" + accountsResponse.getMessage());
+                                restoreAccountsCallBackCounter.decrement();
+                                if (restoreAccountsCallBackCounter.getValue() == 0) {
+                                    pdvApiRequestQueue.resetAccountsMustBeRestored();
+                                    callback.onRestoreAccountsFail();
+                                    setLastRestoredDateTime();
+                                }
                             }
                         }
                     });
@@ -798,6 +937,11 @@ public class MoneyAppApp extends Application {
                     break;
                 case PDV_API_STATUS_INPROGRESS:
                     syncStatus = getResources().getString(R.string.pdvapi_sync_status_message_in_progress);
+                    if (pdvApiRequestQueue.getRequestForInstitution(instId).results!=null) {
+                        if (pdvApiRequestQueue.getRequestForInstitution(instId).results.isMustShowOTP()) {
+                            syncStatus = getResources().getString(R.string.pdvapi_sync_status_message_in_progress_setverify);
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -806,6 +950,9 @@ public class MoneyAppApp extends Application {
 
         return syncStatus;
     }
+
+
+
 
     /* *** add a new provider **
         Use this method to add a new provider
@@ -880,6 +1027,8 @@ public class MoneyAppApp extends Application {
                 }
             }
         }
+
+        Log.d("MoneyAppApp", "isProviderFoundInDevice() - returning FALSE");
         return false;
 
     }
@@ -899,9 +1048,17 @@ public class MoneyAppApp extends Application {
         return accountsObjectList;
     }
 
+
+    public void setVerifyOTP(String instID, String OTP)
+    {
+        pdvApi.setVerify(instID, OTP);
+        pdvApiRequestQueue.setVerify (instID);
+    }
+
+
     //todo: remove unused code
     public static WebView WebView (Activity activity) {
-        WindowManager windowManager = (WindowManager) activity.getSystemService(activity.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) activity.getSystemService(WINDOW_SERVICE);
         final WindowManager.LayoutParams params =
                 new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,
                         WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_APPLICATION_PANEL,

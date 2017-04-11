@@ -48,11 +48,36 @@ public class PdvApiResults {
     public boolean  callBackData = false;
     public boolean  callBackCompleted = false;
     public boolean  callBackAllComplete = false;
-    public boolean  callBackPrompts = false;
+    private boolean  callBackPrompts = false;
+    private boolean  mustShowOTP=false;
     public boolean  callBackError = false;
     public boolean  requestStopped = false;
     public boolean  timeout = false;
     private String requestUUID;
+
+
+    public boolean setCallBackPrompts(boolean value){
+        callBackPrompts=value;
+        mustShowOTP=value;
+
+        return callBackPrompts;
+    }
+
+    public boolean isCallBackPrompts() {
+        return callBackPrompts;
+    }
+
+    public boolean setOTPDone (){
+        if(callBackPrompts) {
+            mustShowOTP = false;
+        }
+
+        return mustShowOTP;
+    }
+
+    public boolean isMustShowOTP() {
+        return mustShowOTP;
+    }
 
     public String getRequestUUID() {
         return requestUUID;

@@ -2,10 +2,11 @@
 <resources>
     <color name="colorPrimary">#8ec448</color>
 
-    <color name="coloreWisePrimary">#00c389</color>
+    <color name="coloreWisePrimary">#005f61</color>
     <color name="coloreWisePrimaryDark">#005f61</color>
     <color name="coloreWisePrimaryOld">#8ec448</color>
     <color name="coloreWisePrimaryDarkOld">#689f38</color>
+    <color name="coloreWiseWhite">#ffffff</color>
     <color name="coloreWiseAccent">#4c000000</color>
     <color name="coloreWiseSecondary">#8ec448</color>
     <color name="coloreWiseSplashBackground">#ffffff</color>
@@ -15,7 +16,7 @@
     <color name="coloreWiseMainTextWhite">#ffffff</color>
     <color name="coloreWiseSecondaryTextWhite">#b3ffffff</color>
     <color name="coloreWiseCardViewBackground">#0d000000</color>
-    <color name="coloreWiseLineChartCashflowLine">#43a047</color>
+    <color name="coloreWiseLineChartCashflowLine">#005f61</color>
     <color name="coloreWiseLineChartBalanceLine">#2979ff</color>
     <color name="coloreWiseDivider">#4c000000</color>
     <color name="coloreWiseDisabled">#bdbdbd</color>
@@ -34,6 +35,10 @@
     <color name="coloreWiseTransparentBackground">#8c00c389</color>
 
 
+    <color name="coloreWiseButtonEnabled">#005f61</color>
+    <color name="coloreWiseButtonDisabled">#bdbdbd</color>
+    <color name="coloreWiseButtonPressedEnabled">#00c389</color>
+    <color name="coloreWiseButtonFocusedEnabled">#009999</color>
 
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorTabBar">#9cca6c</color>

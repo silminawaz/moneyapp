@@ -138,6 +138,10 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
         String accountObjJson = intent.getStringExtra("com.wise.moneyapp.data.PdvAccountResponse.AccountsObject");
         _account = PdvAccountResponse.AccountsObject.objectFromData(accountObjJson);
 
+        //restore transactions with a smaller date range for now
+        MoneyAppApp app = (MoneyAppApp) getApplication();
+
+        accountdetails_accounticon.setImageResource(app.getInstitutionIconResourceId(_account.instId));
         accountdetails_accountname.setText(_account.accountName);
         accountdetails_accountnumber.setText(_account.accountNumber);
         accountdetails_accountbalance.setText(_account.balance);
@@ -192,8 +196,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
         });
 
 
-        //restore transactions with a smaller date range for now
-        MoneyAppApp app = (MoneyAppApp) getApplication();
+
 
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat(getString(R.string.api_transaction_date_format), Locale.getDefault());
@@ -638,6 +641,18 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
 
     @Override
     public void onRestoreAccountsAllComplete() {
+    }
+
+    @Override
+    public void onRestoreAccountsNone()
+    {
+
+    }
+
+    @Override
+    public void onRestoreAccountsFail()
+    {
+
     }
 
     @Override

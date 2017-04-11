@@ -37,7 +37,7 @@ import java.util.Locale;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class NetworthFragment extends Fragment implements PdvConnectivityCallback, MainActivity.FragmentUpdateListener {
+public class NetworthFragment extends Fragment implements MainActivity.FragmentUpdateListener {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -46,10 +46,6 @@ public class NetworthFragment extends Fragment implements PdvConnectivityCallbac
 
     LinearLayout welcomeLayout;
     LinearLayout netWorthLayout;
-
-    LinearLayout loginErrorLayout;
-    TextView loginErrorText;
-    Button loginRetryButton;
 
     //networth summary card field
     HorizontalBarChart networthSummaryBarChart;
@@ -78,9 +74,6 @@ public class NetworthFragment extends Fragment implements PdvConnectivityCallbac
     NetworthAssetLiabilityPieChart assetsPieChart=null;
     NetworthAssetLiabilityPieChart liabilitiesPieChart=null;
 
-
-    LoginStatus loginStatus;
-
     public NetworthFragment() {
     }
 
@@ -107,12 +100,6 @@ public class NetworthFragment extends Fragment implements PdvConnectivityCallbac
         welcomeLayout = (LinearLayout) rootView.findViewById(R.id.networthWelcomeLayout);
         netWorthLayout = (LinearLayout) rootView.findViewById(R.id.netWorthLayout);
 
-
-        loginErrorLayout = (LinearLayout) rootView.findViewById(R.id.loginErrorLayout);
-        loginErrorText = (TextView) rootView.findViewById(R.id.loginErrorText);
-        loginRetryButton = (Button) rootView.findViewById(R.id.loginRetryButton);
-
-
         //networth summary card field
         networthSummaryBarChart = (HorizontalBarChart) rootView.findViewById(R.id.networthSummaryBarChart);
         netWorthTotalAmount = (TextView) rootView.findViewById(R.id.netWorthTotalAmount);
@@ -136,11 +123,6 @@ public class NetworthFragment extends Fragment implements PdvConnectivityCallbac
         netWorthLiabilitiesHeaderAmount = (TextView) rootView.findViewById(R.id.netWorthLiabilitiesHeaderAmount);
         netWorthLiabilitiesHeaderCurrency = (TextView) rootView.findViewById(R.id.netWorthLiabilitiesHeaderCurrency) ;
 
-        //set the fragment listener
-        ((MainActivity)getActivity()).setNetworthFragmentListener(this);
-
-        loginStatus = LoginStatus.LOGIN_STATUS_UNKNOWN;
-
         return rootView;
     }
 
@@ -150,31 +132,17 @@ public class NetworthFragment extends Fragment implements PdvConnectivityCallbac
 
         MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
 
-        if (((MainActivity)getActivity()).activityLoginStatus.equals(LoginStatus.LOGIN_STATUS_FAILED)){
-            loginErrorLayout.setVisibility(View.VISIBLE);
-        }
-
-
-
-        loginRetryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).resetLoginRetryCount();
-            }
-        });
-
-        welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
-        netWorthLayout.setVisibility(app.isProviderFoundInDevice() ? View.VISIBLE : View.GONE);
+        //set the fragment listener
+        ((MainActivity)getActivity()).setNetworthFragmentListener(this);
 
 
         if (app.isProviderFoundInDevice() && app.pdvLoginStatus.isLoggedOnToPdv()) {
             if (app.mustRestoreAccounts()) {
-                app.pdvRestoreAllProviderAccounts(this);
+                app.pdvRestoreAllProviderAccounts((MainActivity)getActivity());
             } else {
                 updatePageData();
             }
         }
-
 
         //get the card list and
         String baseCurrency = getString(R.string.var_base_currency);
@@ -189,10 +157,6 @@ public class NetworthFragment extends Fragment implements PdvConnectivityCallbac
 
         super.onResume();
         MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
-        if (((MainActivity)getActivity()).activityLoginStatus.equals(LoginStatus.LOGIN_STATUS_FAILED)){
-            loginErrorLayout.setVisibility(View.VISIBLE);
-        }
-
         welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
         netWorthLayout.setVisibility(app.isProviderFoundInDevice() ? View.VISIBLE : View.GONE);
 
@@ -202,64 +166,6 @@ public class NetworthFragment extends Fragment implements PdvConnectivityCallbac
     }
 
 
-    public void updatePageData()
-    {
-
-        MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
-        AccountCardListDataObject accountCardListDO = app.getAccountCardListDO(getContext());
-        if (accountCardListDO!=null){
-            if (accountCardListDO.getAccountCardList()!=null){
-                NetworthDataObject nwdo = new NetworthDataObject( getContext(), accountCardListDO, app.getBaseCurrency());
-                //including building the various networth charts - if possible do this in the networthdataobject
-                Log.d("NetworthFragment", "updatePageData() - totalAssetsAmount=" + nwdo.getTotalAssetsAmount());
-                BigDecimal totalAssetsAmount = nwdo.getTotalAssetsAmount();
-                Log.d("NetworthFragment", "updatePageData() - totalLiabilitiesAmount=" + nwdo.getTotalLiabilitiesAmount());
-                BigDecimal totalLiabilitiesAmount = nwdo.getTotalLiabilitiesAmount();
-                BigDecimal totalNetworthAmount = totalAssetsAmount.subtract(totalLiabilitiesAmount);
-                Log.d("NetworthFragment", "updatePageData() - totalNetworthAmount=" + totalNetworthAmount);
-                String currencyCode = nwdo.getCurrency().getCurrencyCode();
-
-                DecimalFormat df = new DecimalFormat();
-                df.setMaximumFractionDigits(0);
-                df.setMinimumFractionDigits(0);
-                df.setGroupingUsed(true);
-                netWorthTotalAmount.setText(df.format(totalNetworthAmount)); //todo: formatting may be required for big decimal display
-                netWorthTotalCurrency.setText(currencyCode);
-                netWorthAssetsTotalAmount.setText(df.format(totalAssetsAmount));
-                netWorthTotalAmount.setText(nwdo.getTotalAssetsAmount().toPlainString());
-                netWorthAssetsTotalCurrency.setText(currencyCode);
-                netWorthLiabilitiesTotalAmount.setText(df.format(totalLiabilitiesAmount));
-                netWorthLiabilitiesTotalCurrency.setText(currencyCode);
-                netWorthLiabilitiesTotalCurrency.setText(currencyCode);
-                netWorthAssetsTotalCurrency.setText(currencyCode);
-                netWorthSummaryHeaderAmount.setText(df.format(totalNetworthAmount));
-                netWorthSummaryHeaderAmount.setText(df.format(totalNetworthAmount));
-                int iCompareNetworth = Double.compare(totalNetworthAmount.doubleValue(), 0d);
-                if (iCompareNetworth<0){
-                    netWorthSummaryHeaderAmount.setTextColor(ContextCompat.getColor(getContext(), R.color.coloreWiseHighlight));
-                }
-                else{
-                    netWorthSummaryHeaderAmount.setTextColor(ContextCompat.getColor(getContext(), R.color.coloreWisePrimary));
-                }
-
-                netWorthAssetsHeaderAmount.setText(df.format(totalAssetsAmount));
-                netWorthAssetsHeaderAmount.setTextColor(ContextCompat.getColor(getContext(), R.color.coloreWisePrimary));
-
-                netWorthLiabilitiesHeaderAmount.setText(df.format(totalLiabilitiesAmount));
-                netWorthLiabilitiesHeaderAmount.setTextColor(ContextCompat.getColor(getContext(), R.color.coloreWiseHighlight));
-
-                initializeNetworthSummaryChart(nwdo);
-                initializePieCharts(nwdo.getAssetsList());
-                initializePieCharts(nwdo.getLiabilitiesList());
-
-                //createNetworthAssetBreakdown (nwdo);
-                createNetworthAssetLiabilityBreakdown (nwdo, eNetworthType.ASSET);
-                createNetworthAssetLiabilityBreakdown (nwdo, eNetworthType.LIABILITY);
-
-            }
-
-        }
-    }
 
     private void initializeNetworthSummaryChart(NetworthDataObject networthDO){
 
@@ -385,140 +291,93 @@ public class NetworthFragment extends Fragment implements PdvConnectivityCallbac
 
     }
 
-    //Begin: PdvConnectivityCallback Interface implementations
-    @Override
-    public void onPdvConnected(){
 
+    @Override
+    public void refreshFragmentUI(){
+
+        Log.d("AccountsFragment", "refreshFragment()");
+
+        if (isAdded()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //accounts retrieval failed
+                    updatePageData();
+                }
+            });
+        }
     }
 
-    @Override
-    public void onPdvDisconnected(){
 
-    }
+    public void updatePageData()
+    {
 
-    @Override
-    public void onGetPromptsFail(PdvApiResults results){
+        Log.d("NetworthFragment", "updatePageData() - START");
 
-    }
+        MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+        AccountCardListDataObject accountCardListDO = app.getAccountCardListDO(getContext());
+        if (accountCardListDO!=null){
+            if (accountCardListDO.getAccountCardList()!=null){
 
-    @Override
-    public void onGetPromptsSuccess(PdvApiResults results){
+                welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+                netWorthLayout.setVisibility(app.isProviderFoundInDevice() ? View.VISIBLE : View.GONE);
 
-    }
+                Log.d("NetworthFragment", "updatePageData() - accountCardListDO.getAccountCardList()!=null");
 
-    @Override
-    public void onGetInstitutionsFail(PdvApiResults results){
+                NetworthDataObject nwdo = new NetworthDataObject( getContext(), accountCardListDO, app.getBaseCurrency());
+                //including building the various networth charts - if possible do this in the networthdataobject
+                Log.d("NetworthFragment", "updatePageData() - totalAssetsAmount=" + nwdo.getTotalAssetsAmount());
+                BigDecimal totalAssetsAmount = nwdo.getTotalAssetsAmount();
+                Log.d("NetworthFragment", "updatePageData() - totalLiabilitiesAmount=" + nwdo.getTotalLiabilitiesAmount());
+                BigDecimal totalLiabilitiesAmount = nwdo.getTotalLiabilitiesAmount();
+                BigDecimal totalNetworthAmount = totalAssetsAmount.subtract(totalLiabilitiesAmount);
+                Log.d("NetworthFragment", "updatePageData() - totalNetworthAmount=" + totalNetworthAmount);
+                String currencyCode = nwdo.getCurrency().getCurrencyCode();
 
-    }
+                DecimalFormat df = new DecimalFormat();
+                df.setMaximumFractionDigits(0);
+                df.setMinimumFractionDigits(0);
+                df.setGroupingUsed(true);
+                netWorthTotalAmount.setText(df.format(totalNetworthAmount)); //todo: formatting may be required for big decimal display
+                netWorthTotalCurrency.setText(currencyCode);
+                netWorthAssetsTotalAmount.setText(df.format(totalAssetsAmount));
+                netWorthTotalAmount.setText(nwdo.getTotalAssetsAmount().toPlainString());
+                netWorthAssetsTotalCurrency.setText(currencyCode);
+                netWorthLiabilitiesTotalAmount.setText(df.format(totalLiabilitiesAmount));
+                netWorthLiabilitiesTotalCurrency.setText(currencyCode);
+                netWorthLiabilitiesTotalCurrency.setText(currencyCode);
+                netWorthAssetsTotalCurrency.setText(currencyCode);
+                netWorthSummaryHeaderAmount.setText(df.format(totalNetworthAmount));
+                netWorthSummaryHeaderAmount.setText(df.format(totalNetworthAmount));
+                int iCompareNetworth = Double.compare(totalNetworthAmount.doubleValue(), 0d);
+                if (iCompareNetworth<0){
+                    netWorthSummaryHeaderAmount.setTextColor(ContextCompat.getColor(getContext(), R.color.coloreWiseHighlight));
+                }
+                else{
+                    netWorthSummaryHeaderAmount.setTextColor(ContextCompat.getColor(getContext(), R.color.coloreWisePrimary));
+                }
 
-    @Override
-    public void onGetInstitutionsSuccess(PdvApiResults results) {
+                netWorthAssetsHeaderAmount.setText(df.format(totalAssetsAmount));
+                netWorthAssetsHeaderAmount.setTextColor(ContextCompat.getColor(getContext(), R.color.coloreWisePrimary));
 
-    }
+                netWorthLiabilitiesHeaderAmount.setText(df.format(totalLiabilitiesAmount));
+                netWorthLiabilitiesHeaderAmount.setTextColor(ContextCompat.getColor(getContext(), R.color.coloreWiseHighlight));
 
-    @Override
-    public void onGetUserProfileSuccess(PdvApiResults results){
+                initializeNetworthSummaryChart(nwdo);
+                initializePieCharts(nwdo.getAssetsList());
+                initializePieCharts(nwdo.getLiabilitiesList());
 
-    }
+                //createNetworthAssetBreakdown (nwdo);
+                createNetworthAssetLiabilityBreakdown (nwdo, eNetworthType.ASSET);
+                createNetworthAssetLiabilityBreakdown (nwdo, eNetworthType.LIABILITY);
 
-    @Override
-    public void onGetUserProfileFail(PdvApiResults results){
-
-    }
-
-    @Override
-    public void onRestoreAccountsComplete(String instId){
-
-    }
-
-    @Override
-    public void onRestoreAccountsAllComplete(){
-
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updatePageData();
             }
-        });
 
-    }
-
-    @Override
-    public void onRestoreTransactionsAllComplete(PdvApiResults results){}
-
-    @Override
-    public void onRestoreTransactionsFail(PdvApiResults results){}
-
-    @Override
-    public void onGetCredentialSuccess(PdvApiResults results) {
-    }
-
-    @Override
-    public void onGetCredentialFail(PdvApiResults results) {
-
-    }
-
-    @Override
-    public void onSetCredentialSuccess(PdvApiResults results)
-    {
-
-    }
-
-    @Override
-    public void onSetCredentialFail(PdvApiResults results)
-    {
-
-    }
-
-    @Override
-    public void onRemoveInstitutionSuccess(PdvApiResults results)
-    {
-
-    }
-
-    @Override
-    public void onRemoveInstitutionFail(PdvApiResults results)
-    {
-
-    }
-
-    //End: PdvConnectivityCallback implementation
-
-    @Override
-    public void onLoginFailed(){
-
-        //display the login layout
-        if (loginErrorLayout!=null) {
-            loginErrorLayout.setVisibility(View.VISIBLE);
         }
+        Log.d("NetworthFragment", "updatePageData() - END");
 
-        loginStatus = LoginStatus.LOGIN_STATUS_FAILED;
-    }
-
-    @Override
-    public void onLoginSuccess(){
-        //hide the login layout
-        if (loginErrorLayout!=null) {
-            loginErrorLayout.setVisibility(View.GONE);
-        }
-        loginStatus = LoginStatus.LOGIN_STATUS_SUCCESS;
 
     }
 
-    @Override
-    public void onLoginRetry(){
-        //hide the login layout
-        if (loginErrorLayout!=null) {
-            loginErrorLayout.setVisibility(View.GONE);
-        }
-        loginStatus = LoginStatus.LOGIN_STATUS_RETRY;
-
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-
-        savedInstanceState.putString("LoginStatus", loginStatus.toString());
-    }
 
 }

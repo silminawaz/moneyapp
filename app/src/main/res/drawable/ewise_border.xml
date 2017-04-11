@@ -4,7 +4,7 @@
 
     <!-- View background color -->
     <solid
-        android:color="@color/coloreWiseTransparentBackground" >
+        android:color="@color/coloreWiseWhite" >
     </solid>
 
     <!-- View border color and width -->

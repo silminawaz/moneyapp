@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/headerView"
+    android:background="@color/coloreWisePrimary"
+    android:gravity="top"
+    android:layout_gravity="top"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+        <ImageView
+            android:id="@+id/navHeaderProfileIcon"
+            android:layout_width="@dimen/ewise_touch_icon_size_xl"
+            android:layout_height="@dimen/ewise_touch_icon_size_xl"
+            android:layout_marginTop="@dimen/ewise_touch_icon_size_xl"
+            android:src="@drawable/ewise_marque_white"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/navHeaderProfileNameTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ewise_vertical_margin"
+            android:text="Android Studio"
+            android:textColor="@color/coloreWiseMainTextWhite"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/navHeaderProfileEmailTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="android.studio@android.com"
+            android:textColor="@color/coloreWiseMainTextWhite"
+            android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

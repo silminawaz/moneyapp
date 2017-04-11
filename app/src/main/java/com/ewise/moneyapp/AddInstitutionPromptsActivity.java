@@ -313,6 +313,18 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
     }
 
     @Override
+    public void onRestoreAccountsNone()
+    {
+
+    }
+
+    @Override
+    public void onRestoreAccountsFail()
+    {
+
+    }
+
+    @Override
     public void onRestoreTransactionsAllComplete(PdvApiResults results){}
 
     @Override

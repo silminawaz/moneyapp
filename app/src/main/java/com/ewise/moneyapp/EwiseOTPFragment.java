@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 
 import com.ewise.android.pdv.api.PdvApi;
+import com.ewise.moneyapp.Utils.PdvApiRequestQueue;
 
 /**
  * Created by aaron on 11/23/16.
@@ -95,7 +96,9 @@ public class EwiseOTPFragment extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 int i = layout.getChildCount();
-                                pdvApi.setVerify(instId, input.getText().toString());
+                                MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
+                                app.setVerifyOTP(instId, input.getText().toString());
+
                             }
                         }
                 )

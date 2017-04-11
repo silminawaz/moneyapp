@@ -43,7 +43,7 @@ import java.util.Locale;
  */
 
 @EFragment(R.layout.fragment_account_recycler)
-public class AccountsFragment extends Fragment  implements PdvConnectivityCallback {
+public class AccountsFragment extends Fragment  implements MainActivity.FragmentUpdateListener {
 
 
     private OnFragmentInteractionListener mListener;
@@ -101,14 +101,18 @@ public class AccountsFragment extends Fragment  implements PdvConnectivityCallba
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
         welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
 
+        ((MainActivity)getActivity()).setAccountsFragmentListener(this);
+
+
         if (app.isProviderFoundInDevice() && app.pdvLoginStatus.isLoggedOnToPdv()) {
             if (app.mustRestoreAccounts()) {
                 pageLoadingLayout.setVisibility(View.VISIBLE);
-                app.pdvRestoreAllProviderAccounts(this);
+                app.pdvRestoreAllProviderAccounts((MainActivity)getActivity());
             } else {
                 updatePageData();
             }
         }
+
 
         //getLoaderManager().initLoader(R.id.PdvAccountResponse_Loader_id, null, loaderCallbacks);
     }
@@ -124,12 +128,14 @@ public class AccountsFragment extends Fragment  implements PdvConnectivityCallba
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        /*
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        */
     }
 
     @Override
@@ -191,109 +197,36 @@ public class AccountsFragment extends Fragment  implements PdvConnectivityCallba
         }
     };
 
-    //Begin: PdvConnectivityCallback Interface implementations
-    @Override
-    public void onPdvConnected(){
 
+
+
+    @Override
+    public void refreshFragmentUI(){
+
+        Log.d("AccountsFragment", "refreshFragment()");
+
+        if (isAdded()) {
+
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //hide the login layout
+                    MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
+                    if (welcomeLayout == null) {
+                        welcomeLayout = (LinearLayout) getActivity().findViewById(R.id.accountsWelcomeLayout);
+                    }
+                    if (welcomeLayout != null)
+                        welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+                    updatePageData();
+                }
+            });
+        }
     }
-
-    @Override
-    public void onPdvDisconnected(){
-
-    }
-
-    @Override
-    public void onGetPromptsFail(PdvApiResults results){
-
-    }
-
-    @Override
-    public void onGetPromptsSuccess(PdvApiResults results){
-
-    }
-
-    @Override
-    public void onGetInstitutionsFail(PdvApiResults results){
-
-    }
-
-    @Override
-    public void onGetInstitutionsSuccess(PdvApiResults results) {
-
-    }
-
-    @Override
-    public void onGetUserProfileSuccess(PdvApiResults results){
-
-    }
-
-    @Override
-    public void onGetUserProfileFail(PdvApiResults results){
-
-    }
-
-    @Override
-    public void onRestoreAccountsComplete(String instId){
-
-    }
-
-    @Override
-    public void onRestoreAccountsAllComplete(){
-
-
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updatePageData();
-            }
-        });
-
-    }
-
-    @Override
-    public void onRestoreTransactionsAllComplete(PdvApiResults results){}
-
-    @Override
-    public void onRestoreTransactionsFail(PdvApiResults results){}
-
-    @Override
-    public void onGetCredentialSuccess(PdvApiResults results) {
-    }
-
-    @Override
-    public void onGetCredentialFail(PdvApiResults results) {
-
-    }
-
-    @Override
-    public void onSetCredentialSuccess(PdvApiResults results)
-    {
-
-    }
-
-    @Override
-    public void onSetCredentialFail(PdvApiResults results)
-    {
-
-    }
-
-    @Override
-    public void onRemoveInstitutionSuccess(PdvApiResults results)
-    {
-
-    }
-
-    @Override
-    public void onRemoveInstitutionFail(PdvApiResults results)
-    {
-
-    }
-
-    //End: PdvConnectivityCallback implementation
-
 
     public void updatePageData()
     {
+        Log.d("AccountsFragment", "updatePageData()");
 
         pageLoadingLayout = (LinearLayout) getActivity().findViewById(R.id.pageLoadingLayout);
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
@@ -301,12 +234,14 @@ public class AccountsFragment extends Fragment  implements PdvConnectivityCallba
         if (accountCardListDO!=null){
             List<AccountCardDataObject> cardDataList = accountCardListDO.getAccountCardList();
             if (cardDataList!=null){
+                Log.d("AccountsFragment", "updatePageData() - cardDataList!=null; swapping data");
                 cardsViewAdapter.swapData(cardDataList);
                 if (pageLoadingLayout!=null) {
                     pageLoadingLayout.setVisibility(View.GONE);
                 }
             }
         }
+
     }
 
 

@@ -89,6 +89,7 @@ public class AccountsObjectItemView extends RecyclerViewItemLayoutView<AccountsO
         this.accountnumber.setText(dataObject.accountNumber);
         this.accountcurrency.setText(dataObject.currency);
         this.accountbalance.setText(dataObject.balance);  //TODO: format account balance properly
+        this.accounticon.setImageResource(((MoneyAppApp) getContext().getApplicationContext()).getInstitutionIconResourceId(dataObject.instId));
 
     }
 

@@ -2,20 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
-
-    <!-- begin: need this view to make sure the dialog fragment view spans the width of the screen -->
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:layout_gravity="fill_horizontal" />
-    <!-- end: need this view to make sure the dialog fragment view spans the width of the screen -->
+    android:orientation="vertical"
+    android:layout_gravity="fill_horizontal">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/coloreWisePrimary"
         android:gravity="start">
+
+        <!-- begin: need this view to make sure the dialog fragment view spans the width of the screen -->
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_gravity="fill_horizontal"
+            android:visibility="visible"/>
+        <!-- end: need this view to make sure the dialog fragment view spans the width of the screen -->
 
     <TextView
         android:text="@string/provider_menu_edit_title"
@@ -30,7 +32,8 @@
         android:textAlignment="viewStart"
         android:background="@color/coloreWisePrimary"
         android:gravity="start"
-        android:layout_gravity="start"/>
+        android:layout_gravity="start"
+        android:visibility="gone" />
 
     </LinearLayout>
 
@@ -40,7 +43,8 @@
         android:layout_height="wrap_content"
         android:gravity="start"
         android:layout_gravity="center"
-        android:background="@color/coloreWisePrimary">
+        android:background="@color/coloreWisePrimary"
+        android:padding="@dimen/ewise_vertical_margin_large">
 
         <ImageView
             android:id="@+id/imageInstitutionLogo"
@@ -48,9 +52,6 @@
             android:layout_height="@dimen/ewise_touch_icon_size_xl"
             android:src="@drawable/rbanks"
             android:layout_gravity="start"
-            android:layout_marginStart="@dimen/ewise_horizontal_margin_xl"
-            android:layout_marginEnd="@dimen/ewise_horizontal_margin_xl"
-            android:layout_marginBottom="@dimen/ewise_vertical_margin_xl"
             android:visibility="visible"/>
 
         <TextView
@@ -158,11 +159,11 @@
                 android:gravity="top|bottom">
 
                 <ProgressBar
-                    style="@android:style/Widget.Holo.Light.ProgressBar.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/ewise_touch_icon_size"
+                    android:layout_height="@dimen/ewise_touch_icon_size"
                     android:id="@+id/progressBarGetPrompts"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:indeterminateDrawable="@drawable/ewise_progress_bar_drawable_green"/>
 
                 <TextView
                     android:text="@string/pdvapi_get_prompts_message"
@@ -243,7 +244,8 @@
                         android:visibility="visible"
                         android:background="@color/coloreWisePrimary"
                         style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Small"
-                        android:paddingEnd="@dimen/ewise_horizontal_margin" />
+                        android:paddingEnd="@dimen/ewise_horizontal_margin"
+                        android:indeterminateDrawable="@drawable/ewise_progress_bar_drawable_black"/>
 
                     <ImageView
                         android:id="@+id/editProviderSaveDone"

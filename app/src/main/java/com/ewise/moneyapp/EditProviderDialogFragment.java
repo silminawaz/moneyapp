@@ -393,9 +393,12 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
             }
         };
 
-        if (getActivity()!=null) {
-            Log.d("EditProviderDialogFr...", "about to run addPromptsToUI runnable");
-            getActivity().runOnUiThread(addPromptsToUI);
+        if (isAdded()) {
+
+            if (getActivity() != null) {
+                Log.d("EditProviderDialogFr...", "about to run addPromptsToUI runnable");
+                getActivity().runOnUiThread(addPromptsToUI);
+            }
         }
 
         //get credentials now and map the values on callback success
@@ -436,6 +439,19 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     {
 
     }
+
+    @Override
+    public void onRestoreAccountsNone()
+    {
+
+    }
+
+    @Override
+    public void onRestoreAccountsFail()
+    {
+
+    }
+
 
     @Override
     public void onRestoreTransactionsAllComplete(PdvApiResults results)
@@ -486,9 +502,11 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
             }
         };
 
-        if (getActivity()!=null) {
-            Log.d("EditProviderDialogFr...", "about to run addPromptsToUI runnable");
-            getActivity().runOnUiThread(setPromptValues);
+        if (isAdded()) {
+            if (getActivity() != null) {
+                Log.d("EditProviderDialogFr...", "about to run addPromptsToUI runnable");
+                getActivity().runOnUiThread(setPromptValues);
+            }
         }
     }
 
@@ -506,16 +524,17 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     @Override
     public void onSetCredentialSuccess(PdvApiResults results)
     {
-        Log.d("EditProviderDialogFr...", "onSetCredentialSuccess() : results=" + PdvApiResults.toJsonString(results));
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                editProviderSaveProgressBar.setVisibility(View.GONE);
-                saveButton.setEnabled(true);
-                Toast.makeText(getActivity(), getString(R.string.edit_provider_save_button_success_text), Toast.LENGTH_LONG).show();
-            }
-        });
-
+        if (isAdded()) {
+            Log.d("EditProviderDialogFr...", "onSetCredentialSuccess() : results=" + PdvApiResults.toJsonString(results));
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    editProviderSaveProgressBar.setVisibility(View.GONE);
+                    saveButton.setEnabled(true);
+                    Toast.makeText(getActivity(), getString(R.string.edit_provider_save_button_success_text), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
 
     }
 
@@ -523,15 +542,18 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     public void onSetCredentialFail(PdvApiResults results)
     {
         Log.d("EditProviderDialogFr...", "onSetCredentialFail() : results=" + PdvApiResults.toJsonString(results));
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                editProviderSaveProgressBar.setVisibility(View.GONE);
-                saveButton.setEnabled(true);
-                Toast.makeText(getActivity(), getString(R.string.edit_provider_save_button_fail_text), Toast.LENGTH_LONG).show();
 
-            }
-        });
+        if (isAdded()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    editProviderSaveProgressBar.setVisibility(View.GONE);
+                    saveButton.setEnabled(true);
+                    Toast.makeText(getActivity(), getString(R.string.edit_provider_save_button_fail_text), Toast.LENGTH_LONG).show();
+
+                }
+            });
+        }
     }
 
     @Override
