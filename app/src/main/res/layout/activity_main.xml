@@ -26,61 +26,84 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:fitsSystemWindows="true"
+            android:layout_height="wrap_content"
             android:background="@color/coloreWisePrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            android:navigationIcon="@drawable/ic_menu">
+            app:titleTextAppearance="@style/Toolbar.TitleText">
 
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end">
+                android:layout_height="match_parent"
+                android:background="#00ffffff">
 
-                <View
-                    android:layout_width="@dimen/ewise_touch_icon_size"
-                    android:layout_height="@dimen/ewise_touch_icon_size"
-                    android:gravity="end"/>
-
-                <ImageView
-                    android:id="@+id/imagePDVConnected"
-                    android:layout_width="@dimen/ewise_touch_icon_size"
-                    android:layout_height="@dimen/ewise_touch_icon_size"
-                    android:layout_gravity="end"
-                    android:src="@drawable/ewise_pdv_disconnected_material_white"
-                    android:gravity="end"/>
-
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/linearLayoutFetchingData"
-                    android:visibility="gone"
-                    android:gravity="end">
+                    android:id="@+id/toolbarAltTitle"
+                    android:text="@string/app_name"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center_vertical"
+                    android:textStyle="bold"
+                    android:textColor="@color/coloreWiseMainTextWhite"
+                    android:textSize="@dimen/ewise_heading_text_size" />
 
-                <ProgressBar
-                    style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Inverse"
-                    android:layout_width="@dimen/ewise_touch_icon_size_small"
-                    android:layout_height="@dimen/ewise_touch_icon_size_small"
-                    android:id="@+id/progressBarRunning"
-                    android:layout_gravity="center"/>
 
-                    <TextView
-                        android:id="@+id/progressBarText"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:layout_gravity="end|center"
+                    android:layout_alignParentEnd="true"
+                    android:background="#00ffffff">
+
+                    <ImageView
+                        android:id="@+id/imagePDVConnected"
+                        android:layout_width="@dimen/ewise_touch_icon_size"
+                        android:layout_height="@dimen/ewise_touch_icon_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ewise_pdv_disconnected_material_white"
+                        android:gravity="end"
+                        android:layout_alignParentEnd="true"/>
+
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/pdv_api_fetching_data"
+                        android:orientation="vertical"
+                        android:id="@+id/linearLayoutFetchingData"
+                        android:visibility="gone"
+                        android:gravity="end"
+                        android:layout_gravity="end|center"
+                        android:layout_toStartOf="@id/imagePDVConnected"
+                        android:background="#00ffffff">
 
-                        android:textSize="@dimen/ewise_small_text_size" />
+                        <ProgressBar
+                            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Inverse"
+                            android:layout_width="@dimen/ewise_touch_icon_size_small"
+                            android:layout_height="@dimen/ewise_touch_icon_size_small"
+                            android:id="@+id/progressBarRunning"
+                            android:layout_gravity="center"
+                            android:layout_alignParentStart="true"/>
+
+                        <TextView
+                            android:id="@+id/progressBarText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pdv_api_fetching_data"
+                            android:textSize="@dimen/ewise_small_text_size"
+                            android:layout_alignStart="@id/progressBarRunning"
+                            android:layout_alignParentEnd="true"/>
 
 
-                </LinearLayout>
+                    </LinearLayout>
 
-            </LinearLayout>
 
+
+                </RelativeLayout>
+
+            </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>
 
@@ -93,149 +116,151 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
-    </android.support.v4.view.ViewPager>
-
-
-    <LinearLayout
-    android:layout_width="1dp"
-    android:layout_height="1dp">
-
-        <WebView
-            android:id="@+id/ewise_webview"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+        </android.support.v4.view.ViewPager>
+
+
+
+        <LinearLayout
+        android:layout_width="1dp"
+        android:layout_height="1dp">
+
+            <WebView
+                android:id="@+id/ewise_webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/fabBGLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorTransBg"
             android:visibility="gone"/>
 
-    </LinearLayout>
-
-    <View
-        android:id="@+id/fabBGLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorTransBg"
-        android:visibility="gone"/>
-
-    <LinearLayout
-        android:id="@+id/fabLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/standard_23"
-        android:padding="@dimen/standard_12"
-        android:clipToPadding="false"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="@dimen/standard_23"
-        android:layout_gravity="bottom|end"
-        android:visibility="gone">
-
-        <TextView
+        <LinearLayout
+            android:id="@+id/fabLayout1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/fab_menu_add_provider"
-            android:textColor="@color/coloreWiseMainTextBlack"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/menu_providers_icon"
-            app:fabSize="mini"
-            app:backgroundTint="@color/coloreWiseClearGreen"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/fabLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/standard_12"
-        android:clipToPadding="false"
-        android:layout_marginRight="@dimen/standard_23"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="@dimen/standard_23"
-        android:layout_gravity="bottom|end"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fab_menu_do_transfer"
-            android:textColor="@color/coloreWiseMainTextBlack"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/menu_transfer_icon"
-            app:fabSize="mini"
-            app:backgroundTint="@color/coloreWiseClearGreen"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/fabLayout3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/standard_12"
-        android:clipToPadding="false"
-        android:layout_marginRight="@dimen/standard_23"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="@dimen/standard_23"
-        android:layout_gravity="bottom|end"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fab_menu_set_consent"
-            android:textColor="@color/coloreWiseMainTextBlack"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/menu_providers_icon"
-            app:fabSize="mini"
-            app:backgroundTint="@color/coloreWiseClearGreen"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:gravity="center_vertical"
-        android:clipToPadding="false"
-        android:padding="@dimen/standard_12"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_gravity="bottom|end">
-
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
+            android:layout_marginRight="@dimen/standard_23"
+            android:padding="@dimen/standard_12"
+            android:clipToPadding="false"
             android:gravity="center_vertical"
-            app:srcCompat="@drawable/ic_action_add"
-            app:fabSize="normal"
-            app:backgroundTint="@color/coloreWiseClearGreen"/>
-    </LinearLayout>
+            android:layout_marginBottom="@dimen/standard_23"
+            android:layout_gravity="bottom|end"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fab_menu_add_provider"
+                android:textColor="@color/coloreWiseMainTextBlack"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/menu_providers_icon"
+                app:fabSize="mini"
+                app:backgroundTint="@color/coloreWiseClearGreen"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/fabLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/standard_12"
+            android:clipToPadding="false"
+            android:layout_marginRight="@dimen/standard_23"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/standard_23"
+            android:layout_gravity="bottom|end"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fab_menu_do_transfer"
+                android:textColor="@color/coloreWiseMainTextBlack"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/menu_transfer_icon"
+                app:fabSize="mini"
+                app:backgroundTint="@color/coloreWiseClearGreen"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/fabLayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/standard_12"
+            android:clipToPadding="false"
+            android:layout_marginRight="@dimen/standard_23"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/standard_23"
+            android:layout_gravity="bottom|end"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fab_menu_set_consent"
+                android:textColor="@color/coloreWiseMainTextBlack"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/menu_providers_icon"
+                app:fabSize="mini"
+                app:backgroundTint="@color/coloreWiseClearGreen"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:gravity="center_vertical"
+            android:clipToPadding="false"
+            android:padding="@dimen/standard_12"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:layout_gravity="bottom|end">
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:gravity="center_vertical"
+                app:srcCompat="@drawable/ic_action_add"
+                app:fabSize="normal"
+                app:backgroundTint="@color/coloreWiseClearGreen"/>
+        </LinearLayout>
 
     <!-- Progress bar overlay; shown while login is in progress -->
     <include layout="@layout/progress_overlay"/>

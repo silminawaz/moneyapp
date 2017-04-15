@@ -2,59 +2,59 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <group android:checkableBehavior="single" android:id="@+id/menuMain">
+    <group android:checkableBehavior="single" android:id="@+id/navMenuMain">
         <item
-            android:id="@+id/menuProviders"
+            android:id="@+id/navMenuProviders"
             android:icon="@drawable/menu_providers_icon"
             android:title="@string/menu_name_providers"
             />
         <item
-            android:id="@+id/menuNetworth"
+            android:id="@+id/navMenuNetworth"
             android:icon="@drawable/menu_networth_icon"
             android:title="@string/menu_name_networth" />
         <item
-            android:id="@+id/menuAccounts"
+            android:id="@+id/navMenuAccounts"
             android:icon="@drawable/menu_accounts_icon"
             android:title="@string/menu_name_accounts" />
         <item
-            android:id="@+id/menuBudgets"
+            android:id="@+id/navMenuBudgets"
             android:icon="@drawable/menu_spending_icon"
             android:title="@string/menu_name_spending" />
 
         <item
-            android:id="@+id/menuBills"
+            android:id="@+id/navMenuBills"
             android:icon="@drawable/menu_bills_icon"
             android:title="@string/menu_name_bills" />
 
 
         <item
-            android:id="@+id/menuTransfer"
+            android:id="@+id/navMenuTransfer"
             android:icon="@drawable/menu_transfer_icon"
             android:title="@string/menu_name_transfer" />
 
     </group>
 
-    <group android:checkableBehavior="single" android:id="@+id/menuSub">
+    <group android:checkableBehavior="single" android:id="@+id/navMenuSub">
 
         <item
-            android:id="@+id/menuPermissions"
+            android:id="@+id/navMenuPermissions"
             android:icon="@drawable/menu_permissions_icon"
             android:title="@string/menu_name_permissions" />
 
 
         <item
-            android:id="@+id/menuSendIssue"
+            android:id="@+id/navMenuSendIssue"
             android:icon="@drawable/menu_sendissue_icon"
             android:title="@string/menu_name_sendissue" />
 
 
         <item
-            android:id="@+id/menuLogout"
+            android:id="@+id/navMenuLogout"
             android:icon="@drawable/menu_logout_icon"
             android:title="@string/menu_name_logout" />
 
         <item
-            android:id="@+id/menuHelp"
+            android:id="@+id/navMenuHelp"
             android:icon="@drawable/menu_help_icon"
             android:title="@string/menu_name_help" />
 

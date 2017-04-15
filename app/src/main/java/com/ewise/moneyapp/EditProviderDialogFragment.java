@@ -137,7 +137,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
                 // When button is clicked, call up to owning activity.
 
                 Log.d("EditProviderDialogFr...", "cancelButton.setOnClickListener.onClick()");
-                EditProviderDialogFragment.this.dismiss();
+                dismissAllowingStateLoss();
             }
         });
 

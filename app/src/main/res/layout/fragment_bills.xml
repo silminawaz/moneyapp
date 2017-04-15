@@ -54,7 +54,7 @@
         android:id="@+id/budgetsWelcomeLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/ewise_vertical_margin"
+        android:paddingTop="@dimen/ewise_vertical_margin_large"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -62,7 +62,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/welcome_message_budgets_title"
+            android:text="@string/welcome_message_bills_title"
             android:textColor="@color/coloreWiseMainTextBlack"
             android:textSize="@dimen/ewise_welcome_title_size"
             android:textStyle="bold" />
@@ -70,7 +70,7 @@
         <ImageView
             android:layout_width="@dimen/ewise_welcome_screen_image_size"
             android:layout_height="@dimen/ewise_welcome_screen_image_size"
-            android:src="@drawable/welcome_image_budgets"
+            android:src="@drawable/ewise_welcome_image_bills"
             android:paddingTop="@dimen/ewise_welcome_title_size"/>
 
         <TextView
@@ -79,7 +79,7 @@
             android:layout_marginTop="20dp"
             android:paddingLeft="@dimen/ewise_horizontal_margin_large"
             android:paddingRight="@dimen/ewise_horizontal_margin_large"
-            android:text="@string/welcome_message_budgets_message"
+            android:text="@string/welcome_message_bills_message"
             android:textAlignment="center"
             android:textColor="@color/coloreWiseMainTextBlack"
             android:textSize="@dimen/ewise_welcome_desc_size" />
@@ -89,8 +89,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_marginTop="@dimen/ewise_vertical_margin"
-            android:layout_marginBottom="@dimen/app_bar_height"
-            android:gravity="center|bottom">
+            android:gravity="center|bottom"
+            android:layout_marginBottom="@dimen/app_bar_height">
 
 
             <Button

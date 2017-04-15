@@ -52,6 +52,8 @@ import java.util.Locale;
 @EActivity(R.layout.activity_account_details)
 public class AccountDetailsActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, PdvConnectivityCallback {
 
+    public static final String TAG = "AccountDetailsActivity";
+
     @ViewById(R.id.accountdetails_filter_transactions_img)
     ImageView accountdetails_filter_transactions_img;
 
@@ -470,7 +472,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
 
     private void generalExceptionHandler(String eType, String eMessage, String eMethod, String eObjectString) {
         String sFormat = getApplicationContext().getString(R.string.exception_format_string);
-        Log.e("GeneralException", String.format(sFormat, eType, eMethod, eMessage, eObjectString));
+        Log.e(TAG, String.format(sFormat, eType, eMethod, eMessage, eObjectString));
     }
 
     @Override

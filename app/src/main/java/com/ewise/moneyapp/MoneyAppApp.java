@@ -62,6 +62,8 @@ import com.ewise.moneyapp.Utils.PdvApiStatus;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.PdvConnectivityStatus;
 import com.ewise.moneyapp.Utils.PdvLoginStatus;
+import com.ewise.moneyapp.Utils.Settings;
+import com.ewise.moneyapp.Utils.SignOnSystem;
 import com.ewise.moneyapp.data.AccountCardListDataObject;
 import com.ewise.moneyapp.data.DataUpdateType;
 import com.ewise.moneyapp.data.PdvAccountResponse;
@@ -126,7 +128,8 @@ public class MoneyAppApp extends Application {
     public PdvApi pdvApi;
     public WebView pdvWebView;
 //**XWALK**    public XWalkView pdvWebView;
-    public String userName;
+    public SignOnSystem signOnSystem=SignOnSystem.SIGN_ON_SYSTEM_UNKNOWN;
+    public String signonUserId=null;
     public PdvLoginStatus pdvLoginStatus;
     public PdvConnectivityStatus pdvConnectivityStatus;
     public PdvApiRequestQueue   pdvApiRequestQueue = null;
@@ -163,8 +166,13 @@ public class MoneyAppApp extends Application {
         return appLoggedIn;
     }
 
-    public void setAppLoggedIn(){
+    public void setAppLoggedIn(SignOnSystem signOnSystem, String signonUserId){
         appLoggedIn=true;
+        if (signonUserId==null){
+            signonUserId=DEFAULT_USERNAME;
+        }
+        this.signOnSystem=signOnSystem;
+        this.signonUserId=signonUserId;
     }
 
     public void setAppLoggedOff (){

@@ -1,8 +1,10 @@
 <resources>
 
     <!-- Base application theme. -->
+    <!-- <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar"> -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+        <!--<item name="windowActionBar">false</item>-->
         <item name="colorPrimary">@color/coloreWisePrimary</item>
         <item name="colorPrimaryDark">@color/coloreWisePrimaryDark</item>
         <item name="colorAccent">@color/coloreWiseAccent</item>
@@ -30,6 +32,11 @@
         <!-- item name="android:background">?android:attr/listDivider</item> -->
         <item name="android:background">@color/coloreWiseDivider</item>
         <item name="android:layout_margin">5dp</item>
+    </style>
+
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

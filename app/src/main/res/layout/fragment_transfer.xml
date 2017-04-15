@@ -54,7 +54,7 @@
         android:id="@+id/budgetsWelcomeLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/ewise_vertical_margin"
+        android:paddingTop="@dimen/ewise_vertical_margin_large"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -88,9 +88,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_marginTop="@dimen/ewise_vertical_margin"
-            android:layout_marginBottom="@dimen/app_bar_height"
-            android:gravity="center|bottom">
+            android:layout_marginTop="@dimen/ewise_vertical_margin_xl"
+            android:gravity="center|bottom"
+            android:layout_marginBottom="@dimen/app_bar_height">
 
 
             <Button

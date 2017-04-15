@@ -1,7 +1,6 @@
 package com.ewise.moneyapp;
 
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -10,12 +9,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -23,7 +22,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,48 +34,64 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.animation.Animator;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ewise.android.pdv.api.PdvApi;
-import com.ewise.android.pdv.api.callbacks.CallbackStatus;
 import com.ewise.android.pdv.api.callbacks.PdvApiCallback;
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
+import com.ewise.android.pdv.api.model.UserProviderEntry;
 import com.ewise.android.pdv.api.model.consent.ConsentAppVO;
 import com.ewise.android.pdv.api.model.consent.ConsentServiceResponse;
 import com.ewise.android.pdv.api.model.consent.ConsentSvcVO;
 import com.ewise.android.pdv.api.model.consent.ConsentUpdateRequest;
+import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
+import com.ewise.android.pdv.api.model.response.TransactionsResponse;
 import com.ewise.moneyapp.Utils.HomeWatcher;
 import com.ewise.moneyapp.Utils.OnHomePressedListener;
 import com.ewise.moneyapp.Utils.PdvApiName;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiResults;
-import com.ewise.moneyapp.Utils.PdvApiStatus;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
+import com.ewise.moneyapp.Utils.Settings;
+import com.ewise.moneyapp.Utils.SignonUser;
+import com.ewise.moneyapp.adapters.RemovableFragmentPagerAdapter;
+import com.ewise.moneyapp.adapters.SectionsPagerAdapter;
+import com.ewise.moneyapp.adapters.SettingsMenuPagerAdapter;
+import com.ewise.moneyapp.adapters.BillsMenuPagerAdapter;
+import com.ewise.moneyapp.adapters.HelpMenuPagerAdapter;
+import com.ewise.moneyapp.adapters.PermissionsMenuPagerAdapter;
+import com.ewise.moneyapp.adapters.ReportIssueMenuPagerAdapter;
+import com.ewise.moneyapp.adapters.TransferMenuPagerAdapter;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
-import org.apache.log4j.chainsaw.Main;
-import org.xwalk.core.XWalkView;
-
-import java.util.ArrayList;
 import java.util.List;
-
-import kotlin.jvm.Synchronized;
 
 
 public class MainActivity extends AppCompatActivity
         implements PdvConnectivityCallback, OnHomePressedListener
 {
+    private static final String TAG = "MainActivity";
+
+    private static final int TAB_POSITION_PROVIDERS = 0;
+    private static final int TAB_POSITION_NETWORTH  = 1;
+    private static final int TAB_POSITION_ACCOUNTS  = 2;
+    private static final int TAB_POSITION_SPENDING  = 3;
+    //private static final int TAB_POSITION_OTHER     = 4;
+
 
     enum LogoutReason {
         LOGOUT_REASON_BACKPRESSED,
@@ -80,6 +99,11 @@ public class MainActivity extends AppCompatActivity
         LOGOUT_REASON_HOMELONGPRESSED,
         LOGOUT_REASON_MENUPRESSED
     }
+
+    private DrawerLayout drawer;
+    private NavigationView nvDrawer;
+    private ActionBarDrawerToggle drawerToggle;
+    private int navMenuItemId=0;
 
     public HomeWatcher homeWatcher = null;
     public AlertDialog logOutDialog=null;
@@ -140,7 +164,10 @@ public class MainActivity extends AppCompatActivity
 
 //    private FloatingActionButton fab;
             //, fab1, fab2, fab3;
+    TabLayout               tabLayout;
     FrameLayout             progress_overlay;
+    //FrameLayout             main_activity_content;
+    FrameLayout             menu_fragment_container;
     TextView                progressText;
     LinearLayout            loginErrorLayout;
     TextView                loginErrorText;
@@ -406,11 +433,13 @@ public class MainActivity extends AppCompatActivity
     public void onHomePressed()
     {
         Log.d("MainActivity", "onHomePressed()");
+        /* todo: **SN** too much friction to user on home and long press
         if (MainActivity.this!=null){
             if (!MainActivity.this.isFinishing()) {
                 logoutFromApp(LogoutReason.LOGOUT_REASON_HOMEPRESSED);
             }
         }
+        */
 
     }
 
@@ -418,14 +447,18 @@ public class MainActivity extends AppCompatActivity
     public void onHomeLongPressed()
     {
         Log.d("MainActivity", "onHomeLongPressed()");
+        /* todo: **SN** too much friction to user on home and long press
         if (MainActivity.this!=null){
             if (!MainActivity.this.isFinishing()) {
                 logoutFromApp(LogoutReason.LOGOUT_REASON_HOMELONGPRESSED);
             }
         }
+        */
 
 
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -433,11 +466,31 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        MoneyAppApp myApp = ((MoneyAppApp) getApplication());
+
+
         homeWatcher = new HomeWatcher(this);
         homeWatcher.setOnHomePressedListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.navigation_menu_icon);
         setSupportActionBar(toolbar);
+
+        // Find our drawer view
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+
+
+
+        // Setup drawer view
+        setupDrawerContent(nvDrawer);
+
+        //menu_fragment_container = (FrameLayout) findViewById(R.id.menu_fragment_container);
+        //menu_fragment_container.setVisibility(View.GONE);
+
+        //main_activity_content = (FrameLayout) findViewById(R.id.main_activity_content);
+        //menu_fragment_container.setVisibility(View.VISIBLE);
+
 
         progress_overlay = (FrameLayout) findViewById(R.id.progress_overlay);
         progressText = (TextView) findViewById(R.id.progressText);
@@ -474,12 +527,15 @@ public class MainActivity extends AppCompatActivity
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setOffscreenPageLimit(0);
+        mViewPager.setOffscreenPageLimit(1);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+
+
+
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -487,8 +543,8 @@ public class MainActivity extends AppCompatActivity
         fabLayout2= (LinearLayout) findViewById(R.id.fabLayout2);
         fabLayout3= (LinearLayout) findViewById(R.id.fabLayout3);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab1);
-        FloatingActionButton fab2= (FloatingActionButton) findViewById(R.id.fab2);
+        FloatingActionButton fabAddProvider = (FloatingActionButton) findViewById(R.id.fab1);
+        FloatingActionButton fabDoTransfer= (FloatingActionButton) findViewById(R.id.fab2);
         FloatingActionButton fab3 = (FloatingActionButton) findViewById(R.id.fab3);
         fabBGLayout=findViewById(R.id.fabBGLayout);
 
@@ -513,7 +569,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        fab1.setOnClickListener(new View.OnClickListener() {
+        fabAddProvider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -545,7 +601,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        MoneyAppApp myApp = ((MoneyAppApp) getApplication());
         pdvApiResults = new PdvApiResults();
         PdvApi pdvApi = myApp.getPdvApi();
         myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
@@ -569,7 +624,246 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        //todo: enhance this to use a sepcial fragment instead of content fragment
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Fragment fragment = null;
+        Class fragmentClass=null;
+
+        navMenuItemId=menuItem.getItemId();
+        if (mViewPager==null) return;
+
+        switch(menuItem.getItemId()) {
+            case R.id.navMenuAccounts:
+                if (!mViewPager.getAdapter().getClass().getName().equals(SectionsPagerAdapter.class.getName())){
+                    clearCurrentFragmentTabs();
+                    showMainTabs();
+                }
+                mViewPager.setCurrentItem(TAB_POSITION_ACCOUNTS);
+                break;
+            case R.id.navMenuProviders:
+                Log.d(TAG, "todo - **SN** **navmenu** go to PROVIDERS fragment");
+                if (!mViewPager.getAdapter().getClass().getName().equals(SectionsPagerAdapter.class.getName())){
+                    clearCurrentFragmentTabs();
+                    showMainTabs();
+                }
+                mViewPager.setCurrentItem(TAB_POSITION_PROVIDERS);
+                break;
+            case R.id.navMenuNetworth:
+                Log.d(TAG, "todo - **SN** **navmenu** go to NETWORTH fragment");
+                if (!mViewPager.getAdapter().getClass().getName().equals(SectionsPagerAdapter.class.getName())){
+                    clearCurrentFragmentTabs();
+                    showMainTabs();
+                }
+                mViewPager.setCurrentItem(TAB_POSITION_NETWORTH);
+                break;
+            case R.id.navMenuBudgets:
+                Log.d(TAG, "todo - **SN** **navmenu** go to BUDGET fragment");
+                if (!mViewPager.getAdapter().getClass().getName().equals(SectionsPagerAdapter.class.getName())){
+                    clearCurrentFragmentTabs();
+                    showMainTabs();
+                }
+                mViewPager.setCurrentItem(TAB_POSITION_SPENDING);
+                break;
+            case R.id.navMenuBills:
+                Log.d(TAG, "todo - **SN** **navmenu** go to BILLS fragment");
+                if (!mViewPager.getAdapter().getClass().getName().equals(BillsMenuPagerAdapter.class.getName())){
+                    clearCurrentFragmentTabs();
+                    showNavMenuFragment(new BillsMenuPagerAdapter(getSupportFragmentManager(), this));
+                }
+                break;
+            case R.id.navMenuTransfer:
+                Log.d(TAG, "todo - **SN** **navmenu** go to TRANSFER fragment");
+                if (!mViewPager.getAdapter().getClass().getName().equals(TransferMenuPagerAdapter.class.getName())){
+                    clearCurrentFragmentTabs();
+                    showNavMenuFragment(new TransferMenuPagerAdapter(getSupportFragmentManager(), this));
+                }
+                break;
+            case R.id.navMenuSendIssue:
+                Log.d(TAG, "todo - **SN** **navmenu** go to SEND ISSUE fragment");
+                if (!mViewPager.getAdapter().getClass().getName().equals(ReportIssueMenuPagerAdapter.class.getName())){
+                    clearCurrentFragmentTabs();
+                    showNavMenuFragment(new ReportIssueMenuPagerAdapter(getSupportFragmentManager(), this));
+                }
+                break;
+            case R.id.navMenuPermissions:
+                Log.d(TAG, "todo - **SN** **navmenu** go to PERMISSIONS fragment");
+                if (!mViewPager.getAdapter().getClass().getName().equals(PermissionsMenuPagerAdapter.class.getName())){
+                    clearCurrentFragmentTabs();
+                    showNavMenuFragment(new PermissionsMenuPagerAdapter(getSupportFragmentManager(), this));
+                }
+                break;
+            case R.id.navMenuLogout:
+                logoutFromApp(LogoutReason.LOGOUT_REASON_MENUPRESSED);
+                break;
+            case R.id.navMenuHelp:
+                Log.d(TAG, "todo - **SN** **navmenu** go to HELP fragment");
+                if (!mViewPager.getAdapter().getClass().getName().equals(HelpMenuPagerAdapter.class.getName())){
+                    clearCurrentFragmentTabs();
+                    showNavMenuFragment(new HelpMenuPagerAdapter(getSupportFragmentManager(), this));
+                    //menu_fragment_container.setVisibility(View.VISIBLE);
+                    showMenuFragment(menuItem.getItemId());
+                }
+                break;
+            default:
+                break;
+                //fragmentClass = FirstFragment.class;
+        }
+
+        /*
+        try {
+            if (fragmentClass!=null) {
+                fragment = (Fragment) fragmentClass.newInstance();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        */
+
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+        // Set action bar title
+        //setTitle(menuItem.getTitle());
+        // Close the navigation drawer
+        drawer.closeDrawers();
+    }
+
+
+    private void showMainTabs (){
+        
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        if (mViewPager==null) return;
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(1);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        mViewPager.invalidate();
+    }
+
+
+    private void showNavMenuFragment (FragmentPagerAdapter adapter){
+
+        if (mViewPager==null) return;
+        //remove the tabs and viewpager associated with the tabs
+
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager.setAdapter(adapter);
+        mViewPager.setOffscreenPageLimit(1);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        mViewPager.invalidate();
+
+    }
+
+    private void clearCurrentFragmentTabs(){
+
+        if (mViewPager==null) return;
+
+        PagerAdapter adapter = mViewPager.getAdapter();
+        if (adapter.getClass().equals(RemovableFragmentPagerAdapter.class)){
+            ((RemovableFragmentPagerAdapter)adapter).removeAllItems(mViewPager);
+            adapter=null;//GC the adapter since we are recreating each time
+            mViewPager.setAdapter(null); //viewpager to kill itself
+            mViewPager.notifyAll();
+            mViewPager.invalidate();
+
+        }
+
+        /*
+        tabLayout.removeAllTabs();
+        mViewPager.removeAllViewsInLayout();
+        mViewPager.removeAllViews();
+        mViewPager.clearOnPageChangeListeners();
+        mViewPager.clearDisappearingChildren();
+        mViewPager.notifyAll();
+        RemovableFragmentPagerAdapter adapter = (RemovableFragmentPagerAdapter) mViewPager.getAdapter();
+        adapter=null; //let it garbage collect the adapter
+        mViewPager.setAdapter(null);
+        mViewPager.invalidate();
+        */
+
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        if (fm.getFragments()!=null)
+        {
+            Log.d(TAG, "clearCurrentFragmentTabs() : fm.getFragments()!=null **THIS SHOULD NOT BE THE CASE IF ALL FRAGMENTS WERE REMOVED");
+            //fm.getFragments().remove();
+
+            //Log.d(TAG, "clearCurrentFragmentTabs() : fm.getBackStackEntryCount()=" + fm.getBackStackEntryCount());
+
+        }
+
+    }
+
+
+
+
+    private void showMenuFragment (int menuResourceId){
+
+        Fragment fragment = null;
+        if (menuResourceId==R.id.navMenuBills){
+            // Create fragment and give it an argument specifying the article it should show
+            BillsFragment billsFragment = new BillsFragment();
+            //Bundle args = new Bundle();
+            //args.putInt(BillsFragment., position);
+            //newFragment.setArguments(args);
+
+            fragment = billsFragment;
+
+        }
+
+        if (fragment!=null) {
+
+            //main_activity_content.setVisibility(View.GONE);
+            menu_fragment_container.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.GONE);
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            // Replace whatever is in the fragment_container view with this fragment,
+            transaction.replace(R.id.menu_fragment_container, fragment);
+
+            // and add the transaction to the back stack so the user can navigate back
+            //transaction.addToBackStack(null);
+
+            // Commit the transaction
+            transaction.commit();
+        }
+
+    }
+
+    private void hideMenuFragment (){
+        tabLayout.setVisibility(View.VISIBLE);
+        //main_activity_content.setVisibility(View.VISIBLE);
+        menu_fragment_container.setVisibility(View.GONE);
+
+    }
+
+
+
+
+        @Override
     protected void onResume() {
 
         super.onResume();
@@ -586,8 +880,29 @@ public class MainActivity extends AppCompatActivity
         MoneyAppApp app = (MoneyAppApp)getApplication();
         if (app.isAppLoggedIn() && !app.isPdvLoginFailed()){
             this.progress_overlay.setVisibility(View.GONE);
-        }
 
+            Settings settings = Settings.getInstance(this);
+            if (settings.getSignOnUsers()!=null) {
+                TextView user = (TextView) nvDrawer.getHeaderView(0).findViewById(R.id.navHeaderProfileNameTxt);
+                SignonUser activeUser = settings.getActiveUser(this);
+                if (user != null) {
+                    user.setText(activeUser.name);
+                }
+                TextView email = (TextView) nvDrawer.getHeaderView(0).findViewById(R.id.navHeaderProfileEmailTxt);
+                if (email != null) {
+                    email.setText(activeUser.email);
+                }
+                //populate profiles spinner
+                Spinner profileSpinner = (Spinner) nvDrawer.getHeaderView(0).findViewById(R.id.navHeaderProfileSpinner);
+                String profileArray[] = new String[activeUser.profiles.size()];
+                for (int i=0; i<activeUser.profiles.size(); i++){
+                    profileArray[i] = activeUser.profiles.get(i).name.toLowerCase();
+                }
+                ArrayAdapter<String> profileAdapter = new ArrayAdapter<String>(this, R.layout.profile_spinner_item, profileArray);
+                profileAdapter.setDropDownViewResource(R.layout.profile_spinner_dropdown_item);
+                profileSpinner.setAdapter(profileAdapter);
+            }
+        }
 
     }
 
@@ -1324,6 +1639,10 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
+        else if (id == android.R.id.home){
+            drawer.openDrawer(GravityCompat.START);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -1343,6 +1662,7 @@ public class MainActivity extends AppCompatActivity
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
+    /*
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -1352,26 +1672,26 @@ public class MainActivity extends AppCompatActivity
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            if (position == 2) {
+            if (position == TAB_POSITION_ACCOUNTS) {
                 //return the AccountFragment class
                 //return AccountFragment.newInstance (position + 1);
                 return AccountsFragment_.newInstance();
             }
-            else if (position == 0){
+            else if (position == TAB_POSITION_PROVIDERS){
                 //todo: return the providers fragment
                 return ProvidersFragment.newInstance(position);
 
             }
-            else if (position == 1){
+            else if (position == TAB_POSITION_NETWORTH){
                 return NetworthFragment.newInstance(position);
             }
-            else if (position == 3){
+            else if (position == TAB_POSITION_SPENDING){
                 return BudgetsFragment.newInstance(position);
             }
-            else {
+            else{
                 return PlaceholderFragment.newInstance(position + 1);
             }
+
         }
 
         @Override
@@ -1383,16 +1703,89 @@ public class MainActivity extends AppCompatActivity
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0:
+                case TAB_POSITION_PROVIDERS:
                     return getString(R.string.section_name_providers);
-                case 1:
+                case TAB_POSITION_NETWORTH:
                     return getString(R.string.section_name_networth);
-                case 2:
+                case TAB_POSITION_ACCOUNTS:
                     return getString(R.string.section_name_accounts);
-                case 3:
+                case TAB_POSITION_SPENDING:
                     return getString(R.string.section_name_spending);
             }
             return null;
         }
+
     }
+
+*/
+
+
+    public void showEditProviderDialog(UserProviderEntry providerEntry){
+        //mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("edit_institution_prompts_dialog");
+        if (prev != null) {
+            EditProviderDialogFragment editProviderDialog = (EditProviderDialogFragment)prev;
+            editProviderDialog.dismiss();
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        EditProviderDialogFragment newFragment = EditProviderDialogFragment.newInstance(providerEntry);
+        newFragment.show(ft, "edit_institution_prompts_dialog");
+    }
+
+
+
+
+    public void showOTPDialog(UserProviderEntry providerEntry){
+        Log.d (TAG, "showOTPDialog instId=" + providerEntry.getIid());
+
+
+        MoneyAppApp app = (MoneyAppApp)getApplication();
+
+        EwiseOTPFragment otpFragment = null;
+        TransactionsResponse transactionsResponse = app.pdvApiRequestQueue.getRequestForInstitution(providerEntry.getIid()).results.transactions;
+        AccountsResponse accountsResponse = app.pdvApiRequestQueue.getRequestForInstitution(providerEntry.getIid()).results.accounts;
+
+        if (transactionsResponse!=null) {
+            //Handle OTP/Captcha for updateTransactions
+            otpFragment = EwiseOTPFragment.newInstance(transactionsResponse.getInstId(),
+                    String.format(transactionsResponse.getMessage() + " %s.",
+                            app.getUserProviderEntry(transactionsResponse.getInstId()).getDesc()),
+                    null  //todo: implement base64Image of captcha in v0.5.n
+            );
+
+        }
+        else if (accountsResponse!=null) {
+            //Handle OTP/Captcha for updateAccounts
+            otpFragment = EwiseOTPFragment.newInstance(accountsResponse.getInstId(),
+                    String.format(accountsResponse.getMessage() + " %s.",
+                            app.getUserProviderEntry(accountsResponse.getInstId()).getDesc()),
+                    null  //todo: implement base64Image of captcha in v0.5.n
+            );
+
+        }
+
+        if (otpFragment!=null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment prev = getSupportFragmentManager().findFragmentByTag("OTP_DIALOG");
+            if (prev != null) {
+                EwiseOTPFragment prevFragment = (EwiseOTPFragment) prev;
+                prevFragment.dismissAllowingStateLoss();
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+
+            otpFragment.show(ft, "OTP_DIALOG");
+        }
+
+    }
+
+
 }

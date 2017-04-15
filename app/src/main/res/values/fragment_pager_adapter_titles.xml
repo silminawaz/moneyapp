@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="SectionsPagerAdapter">
+        <item>Providers</item>
+        <item>Networth</item>
+        <item>Accounts</item>
+        <item>Spending</item>
+    </string-array>
+
+    <string-array name="HelpMenuPagerAdapter">
+        <item>Help #&amp; feedback</item>
+    </string-array>
+
+    <string-array name="PermissionsMenuPagerAdapter">
+        <item>Permissions</item>
+    </string-array>
+
+    <string-array name="ReportIssueFragment">
+        <item>Permissions</item>
+    </string-array>
+
+    <string-array name="SettingsMenuPagerAdapter">
+        <item>Help #&amp; feedback</item>
+    </string-array>
+
+    <string-array name="TransferMenuPagerAdapter">
+        <item>Help #&amp; feedback</item>
+    </string-array>
+
+
+</resources>

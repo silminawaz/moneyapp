@@ -7,6 +7,7 @@ import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -37,16 +38,22 @@ public class EncryptedPin {
 
 
     public static final String TAG = "EncryptedPin";
-    public static final String DEFAULT_PIN_KEY_ALIAS = "com.ewise.moneyapp.loginpinkey";
+    public static final String PIN_KEY_ALIAS_PREFIX = "com.ewise.moneyapp.loginpinkey";
     public static final String DEFAULT_PIN_KEY_SUBJECT = "CN=com.ewise.moneyapp, O=Android Authority";
     //public static final int DEFAULT_PIN_KEY_SERIAL_NO = 1;
     public static final int DEFAULT_PIN_KEY_EXPIRY_MONTHS = 9999; //always valid.
 
-    private Context context=null;
+    //private Context context=null;
     private KeyStore keyStore=null;
+    private String DEFAULT_PIN_KEY_ALIAS="";
 
-    public EncryptedPin(Context context){
-        this.context=context;
+    public EncryptedPin(Context context, @Nullable SignOnSystem signOnSystem, @Nullable String signonUserID){
+        //this.context=context;
+        DEFAULT_PIN_KEY_ALIAS=PIN_KEY_ALIAS_PREFIX;
+        if (signonUserID!=null && signOnSystem!=null){
+            //com.ewise.moneyapp.loginpinkey.google.silminawaz
+            DEFAULT_PIN_KEY_ALIAS=PIN_KEY_ALIAS_PREFIX + "." + signOnSystem.toString() + "." + signonUserID;
+        }
         try {
             keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
@@ -107,11 +114,11 @@ public class EncryptedPin {
         }
 
         if (!pinKeyExists()){
-            createNewKeys();
+            createNewKeys(activity);
         }
 
         //encrypt plaintextpin
-        String encryptedPin = encryptPIN(plainTextPin);
+        String encryptedPin = encryptPIN(plainTextPin, activity);
 
         if (encryptedPin!=null) {
             if (encryptedPin.length()>0) {
@@ -132,7 +139,7 @@ public class EncryptedPin {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         String savedPin = sharedPref.getString(DEFAULT_PIN_KEY_ALIAS, null);
         if (savedPin!=null){
-            String decryptedPin = decryptPIN(savedPin);
+            String decryptedPin = decryptPIN(savedPin, activity);
 
             if (plainTextPin.equals(decryptedPin)){
                 return true;
@@ -199,7 +206,7 @@ public class EncryptedPin {
         return false;
     }
 
-    private void createNewKeys() {
+    private void createNewKeys(Context context) {
         try {
 
             if (!keyStore.containsAlias(DEFAULT_PIN_KEY_ALIAS)) {
@@ -237,7 +244,7 @@ public class EncryptedPin {
     }
 
 
-    private String encryptPIN(String plainTextPIN) {
+    private String encryptPIN(String plainTextPIN, Context context) {
         String encryptedPIN = "";
         try {
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry(DEFAULT_PIN_KEY_ALIAS, null);
@@ -271,7 +278,7 @@ public class EncryptedPin {
     }
 
 
-    private String decryptPIN(String encryptedPIN) {
+    private String decryptPIN(String encryptedPIN, Context context) {
         String decryptedPIN="";
         try {
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry(DEFAULT_PIN_KEY_ALIAS, null);

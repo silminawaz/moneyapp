@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -340,12 +341,21 @@ import java.util.List;
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
         if (itemString.equals(getString(R.string.provider_menu_refresh_title))) {
             //sync the provider
-            ((MoneyAppApp)getActivity().getApplication()).syncExistingProvider(provider.getIid());
-            providerAdapter.updateSyncStatus();
+            if (isAdded()) {
+                WebView pdvWebView = (WebView) getActivity().findViewById(R.id.ewise_webview);
+                if (pdvWebView!=null) {
+                    app.pdvWebView = pdvWebView;
+                    app.pdvApi.apiInit(getActivity().getApplicationContext(), app.pdvWebView);
+                    app.syncExistingProvider(provider.getIid());
+                    providerAdapter.updateSyncStatus();
+                }
+            }
 
         } else if (itemString.equals(getString(R.string.provider_menu_edit_title))) {
             //edit the provider - show the edit provider dialogFragment
-            showEditProviderDialog(provider);
+            if (isAdded()) {
+                ((MainActivity)getActivity()).showEditProviderDialog(provider);
+            }
 
 
         } else if (itemString.equals(getString(R.string.provider_menu_delete_title))) {
@@ -364,7 +374,9 @@ import java.util.List;
         }
         else if (itemString.equals(getString(R.string.provider_menu_setverify_title))) {
             //edit the provider - show the edit provider dialogFragment
-            showOTPDialog(provider);
+            if (isAdded()){
+                ((MainActivity)getActivity()).showOTPDialog(provider);
+            }
 
 
         }
@@ -376,7 +388,7 @@ import java.util.List;
 
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
 
-        DialogFragment otpFragment = null;
+        EwiseOTPFragment otpFragment = null;
         TransactionsResponse transactionsResponse = app.pdvApiRequestQueue.getRequestForInstitution(providerEntry.getIid()).results.transactions;
         AccountsResponse accountsResponse = app.pdvApiRequestQueue.getRequestForInstitution(providerEntry.getIid()).results.accounts;
 
@@ -403,6 +415,8 @@ import java.util.List;
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag("OTP_DIALOG");
             if (prev != null) {
+                EwiseOTPFragment prevFragment = (EwiseOTPFragment) prev;
+                prevFragment.dismissAllowingStateLoss();
                 ft.remove(prev);
             }
 
@@ -420,12 +434,14 @@ import java.util.List;
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag("edit_institution_prompts_dialog");
         if (prev != null) {
+            EditProviderDialogFragment editProviderDialog = (EditProviderDialogFragment)prev;
+            editProviderDialog.dismiss();
             ft.remove(prev);
         }
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        DialogFragment newFragment = EditProviderDialogFragment.newInstance(providerEntry);
+        EditProviderDialogFragment newFragment = EditProviderDialogFragment.newInstance(providerEntry);
         newFragment.show(ft, "edit_institution_prompts_dialog");
     }
 

@@ -98,6 +98,8 @@ public class EwiseOTPFragment extends DialogFragment {
                                 int i = layout.getChildCount();
                                 MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
                                 app.setVerifyOTP(instId, input.getText().toString());
+                                dialog.dismiss();
+                                dismissAllowingStateLoss();
 
                             }
                         }
@@ -106,6 +108,7 @@ public class EwiseOTPFragment extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 dialog.dismiss();
+                                dismissAllowingStateLoss();
                             }
                         }
                 )

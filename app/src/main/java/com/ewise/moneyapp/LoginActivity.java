@@ -1,5 +1,6 @@
 package com.ewise.moneyapp;
 
+import android.accounts.Account;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -40,6 +41,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ewise.moneyapp.Utils.Settings;
+import com.ewise.moneyapp.Utils.SignOnSystem;
+import com.ewise.moneyapp.Utils.SignOnUsers;
+import com.ewise.moneyapp.Utils.SignonUser;
+import com.ewise.moneyapp.Utils.SignonProfile;
 import com.ewise.moneyapp.views.PinEntryTextView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -67,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 {
 
     public static final String TAG = "LoginActivity";
+    public static final String DEFAULT_SIGNON_PROFILE = "default";
     private static final int RC_SIGN_IN = 9001;
 
     /**
@@ -78,6 +84,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
+    @Deprecated
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
@@ -109,6 +116,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean mustReEnterPIN;
     Settings settings;
+    private SignonUser activeUser=null;
+    private SignonProfile defaultProfile=null;  //for now we will use a default profile
 
 
     @Override
@@ -118,6 +127,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
+
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -261,8 +271,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
         settings = Settings.getInstance(this);
+        activeUser = new SignonUser();
+        defaultProfile = new SignonProfile();
+        defaultProfile.name=DEFAULT_SIGNON_PROFILE;
+
 
         mustReEnterPIN = settings.getEncryptedPin().mustReEnterPIN(this);
+        mustReEnterPIN = true;
+
 
         //todo: remove after testing
         //mustReEnterPIN=true;
@@ -276,6 +292,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
+    @Override
+    public void onDestroy(){
+        if (mProgressDialog!=null) {
+            mProgressDialog.dismiss();
+        }
+        super.onDestroy();
+    }
 
     @Override
     public void onStart() {
@@ -327,6 +350,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            setGoogleActiveUser(acct);
             mStatusTextView.setText(getString(R.string.login_status_text_signed_in_google, acct.getDisplayName()));
             mLoginName.setText(acct.getGivenName() + " " + acct.getFamilyName());
             mLoginEmail.setText(acct.getEmail());
@@ -351,6 +375,32 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
     // [END handleSignInResult]
+
+    private void setGoogleActiveUser(GoogleSignInAccount acct){
+        activeUser.system=SignOnSystem.SIGN_ON_SYSTEM_GOOGLE;
+        activeUser.profiles.add(defaultProfile);
+        activeUser.id=acct.getId();
+        activeUser.name=acct.getDisplayName();
+        activeUser.firstName=acct.getGivenName();
+        activeUser.middleName="";
+        activeUser.lastName=acct.getFamilyName();
+        activeUser.email=acct.getEmail();
+        activeUser.imageURLPath=acct.getPhotoUrl().getPath();
+    }
+
+    private void clearActiveUser(){
+        activeUser.system=SignOnSystem.SIGN_ON_SYSTEM_UNKNOWN;
+        activeUser.profiles.clear();
+        activeUser.id="";
+        activeUser.name="";
+        activeUser.firstName="";
+        activeUser.middleName="";
+        activeUser.lastName="";
+        activeUser.email="";
+        activeUser.imageURLPath="";
+        activeUser.base64Image="";
+        activeUser.setEncryptedPIN(null);
+    }
 
     // [START signIn]
     private void signIn() {
@@ -411,12 +461,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void updateUI(boolean signedIn) {
+        setMustReEnterPIN(signedIn);
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.login_status_text_signed_out_google);
             mLoginName.setText(R.string.login_status_text_signed_out_google);
+            clearActiveUser();
             mLoginEmail.setText("");
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
@@ -425,6 +477,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
+    private void setMustReEnterPIN(boolean signedIn){
+        if (signedIn)
+        {
+            mustReEnterPIN = settings.getNewUserEncryptedPin(this, activeUser.system, activeUser.id).mustReEnterPIN(this);
+            if (mustReEnterPIN){
+                //only display confirm PIN field if user must re enter the PIN
+                findViewById(R.id.txtPinEntryLabel2).setVisibility(View.VISIBLE);
+                txtPinEntry2.setVisibility(View.VISIBLE);
+            }
+            else{
+                findViewById(R.id.txtPinEntryLabel2).setVisibility(View.GONE);
+                txtPinEntry2.setVisibility(View.GONE);
+            }
+        }
+        else
+        {
+            mustReEnterPIN = true;
+            //only display confirm PIN field if user must re enter the PIN
+            findViewById(R.id.txtPinEntryLabel2).setVisibility(View.VISIBLE);
+            txtPinEntry2.setVisibility(View.VISIBLE);
+
+        }
+    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -438,7 +513,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     public void loginToApp(){
 
-        showProgressDialog(getString(R.string.login_loading_message));
         boolean canLoginToApp = false;
         String loginErrorMessage = null;
 
@@ -446,25 +520,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             //check the input PINS are correct
             if (isReEnterPINValid()){
                 //PIN is valid.. lets try to save it
-                canLoginToApp = settings.getEncryptedPin().savePIN(txtPinEntry.getText().toString(), this);
+                //canLoginToApp = settings.getEncryptedPin().savePIN(txtPinEntry.getText().toString(), this);  //@deprecated
+                canLoginToApp = settings.getNewUserEncryptedPin(this, activeUser.system, activeUser.id).savePIN(txtPinEntry.getText().toString(), this);
             }
         }
         else
         {
             if (isInputPINValid()) {
                 //todo: validate PIN
-                canLoginToApp = settings.getEncryptedPin().validatePIN(txtPinEntry.getText().toString(), this);
+                //canLoginToApp = settings.getEncryptedPin().validatePIN(txtPinEntry.getText().toString(), this);  //@deprecated
+                canLoginToApp = settings.getActiveUserEncryptedPin(this).savePIN(txtPinEntry.getText().toString(), this);
                 if (!canLoginToApp) {
                     loginErrorMessage = getString(R.string.pinentry_invalid_pin);
                 }
             }
         }
 
-        //check if
-        hideProgressDialog();
-
         if (canLoginToApp){
-            ((MoneyAppApp)getApplication()).setAppLoggedIn();
+            settings.addUpdateUser(this, activeUser); //add (if new user) or update the active user to the system
+            ((MoneyAppApp)getApplication()).setAppLoggedIn(activeUser.system, activeUser.id);
             finish();
         }
         else
@@ -512,7 +586,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
-    //BEGIN: UNUSED CODE SAMPLE
+    @Deprecated
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -521,6 +595,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         getLoaderManager().initLoader(0, null, this);
     }
 
+    @Deprecated
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
@@ -546,6 +621,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Callback received when a permissions request has been completed.
      */
+    @Deprecated
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -562,6 +638,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
+    @Deprecated
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
@@ -609,11 +686,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    @Deprecated
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
+    @Deprecated
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
@@ -622,6 +701,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Shows the progress UI and hides the login form.
      */
+    @Deprecated
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -655,6 +735,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    @Deprecated
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
@@ -672,6 +753,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
+    @Deprecated
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();
@@ -690,11 +772,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    @Deprecated
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
     }
 
+    @Deprecated
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
@@ -720,6 +804,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
+    @Deprecated
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
@@ -759,7 +844,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                ((MoneyAppApp)getApplication()).setAppLoggedIn();
+                ((MoneyAppApp)getApplication()).setAppLoggedIn(SignOnSystem.SIGN_ON_SYSTEM_EWISE, null);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
