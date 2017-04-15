@@ -8,6 +8,10 @@
         <item>Spending</item>
     </string-array>
 
+    <string-array name="BillsMenuPagerAdapter">
+        <item>Bills</item>
+    </string-array>
+
     <string-array name="HelpMenuPagerAdapter">
         <item>Help #&amp; feedback</item>
     </string-array>
@@ -16,8 +20,8 @@
         <item>Permissions</item>
     </string-array>
 
-    <string-array name="ReportIssueFragment">
-        <item>Permissions</item>
+    <string-array name="ReportIssueMenuPagerAdapter">
+        <item>Report an issue</item>
     </string-array>
 
     <string-array name="SettingsMenuPagerAdapter">

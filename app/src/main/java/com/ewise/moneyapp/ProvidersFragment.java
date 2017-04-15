@@ -504,11 +504,14 @@ import java.util.List;
 
     public void updatePageData(){
 
-        //reset data fetching if there isn't any more requests
-        MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
-        if (app.userProfileData.getUserprofile()!=null){
-            providerAdapter.swapData(new ArrayList<>(app.userProfileData.getUserprofile()));
-            welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+        if (isAdded()) {
+
+            //reset data fetching if there isn't any more requests
+            MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
+            if (app.userProfileData.getUserprofile() != null) {
+                providerAdapter.swapData(new ArrayList<>(app.userProfileData.getUserprofile()));
+                welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+            }
         }
 
     }
@@ -518,11 +521,14 @@ import java.util.List;
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            //reset data fetching if there isn't any more requests
-            MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
-            if (app.userProfileData.getUserprofile()!=null){
-                providerAdapter.swapData(new ArrayList<>(app.userProfileData.getUserprofile()));
-                welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+            if (isAdded()) {
+
+                //reset data fetching if there isn't any more requests
+                MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
+                if (app.userProfileData.getUserprofile() != null) {
+                    providerAdapter.swapData(new ArrayList<>(app.userProfileData.getUserprofile()));
+                    welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+                }
             }
         }
     };
@@ -531,39 +537,48 @@ import java.util.List;
         @Override
         public void onReceive(Context context, Intent intent) {
             //check if an error or success was received and handle it
-            String stringResults = intent.getStringExtra("stringResults");
-            PdvApiResults results = PdvApiResults.objectFromString(stringResults, PdvApiResults.class);
-            Log.d(TAG, "Received Broadcast message pdv-aca-stop-callback");
+            if (isAdded()) {
 
-            providerAdapter.notifyDataSetChanged();
+                String stringResults = intent.getStringExtra("stringResults");
+                PdvApiResults results = PdvApiResults.objectFromString(stringResults, PdvApiResults.class);
+                Log.d(TAG, "Received Broadcast message pdv-aca-stop-callback");
+
+                providerAdapter.notifyDataSetChanged();
+            }
         }
     };
 
     private BroadcastReceiver pdvApiOnAddingNewProvider = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "Received Broadcast message pdv-api-adding-new-provider");
-            providerAdapter.notifyDataSetChanged();
-            MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
-            welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+            if (isAdded()) {
+
+                Log.d(TAG, "Received Broadcast message pdv-api-adding-new-provider");
+                providerAdapter.notifyDataSetChanged();
+                MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
+                welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+            }
         }
     };
 
     private BroadcastReceiver pdvApiCallbackMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String apiName = intent.getStringExtra("apiName");
-            String callbackStatus = intent.getStringExtra("callbackStatus");
-            String sRequestParams = intent.getStringExtra("requestParams");
-            String sResults = intent.getStringExtra("results");
+            if (isAdded()) {
 
-            Log.d (TAG, "pdvApiCallbackMessageReceiver.onReceive() apiName:" + apiName);
-            Log.d (TAG, "pdvApiCallbackMessageReceiver.onReceive() callbackStatus:" + callbackStatus);
-            Log.d (TAG, "pdvApiCallbackMessageReceiver.onReceive() requestParams:" + sRequestParams);
-            Log.d (TAG, "pdvApiCallbackMessageReceiver.onReceive() results:" + sResults);
+                String apiName = intent.getStringExtra("apiName");
+                String callbackStatus = intent.getStringExtra("callbackStatus");
+                String sRequestParams = intent.getStringExtra("requestParams");
+                String sResults = intent.getStringExtra("results");
 
-            //todo: process the results
-            providerAdapter.notifyDataSetChanged();
+                Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() apiName:" + apiName);
+                Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() callbackStatus:" + callbackStatus);
+                Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() requestParams:" + sRequestParams);
+                Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() results:" + sResults);
+
+                //todo: process the results
+                providerAdapter.notifyDataSetChanged();
+            }
 
         }
     };

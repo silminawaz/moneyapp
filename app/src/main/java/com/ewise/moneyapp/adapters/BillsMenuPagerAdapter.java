@@ -46,4 +46,9 @@ public class BillsMenuPagerAdapter extends RemovableFragmentPagerAdapter {
         return "";
     }
 
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
 }

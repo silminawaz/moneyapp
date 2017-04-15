@@ -4,7 +4,9 @@ import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.ewise.moneyapp.R;
@@ -17,7 +19,9 @@ import java.util.Map;
 /**
  * Created by SilmiNawaz on 15/4/17.
  */
-public class RemovableFragmentPagerAdapter extends FragmentPagerAdapter{
+public class RemovableFragmentPagerAdapter extends FragmentStatePagerAdapter {
+
+    public static final String TAG = "RemovableFragmentPag...";
 
     HashMap<String, Object> instantiatedObjectMap=null;
     List<String> pageTitleList=null;
@@ -54,6 +58,7 @@ public class RemovableFragmentPagerAdapter extends FragmentPagerAdapter{
 
 
         try {
+            Log.d(TAG, "removeAllItems() - START");
             if (instantiatedObjectMap!=null){
                 if (instantiatedObjectMap.size()>0){
                     Iterator it = instantiatedObjectMap.entrySet().iterator();
@@ -68,7 +73,7 @@ public class RemovableFragmentPagerAdapter extends FragmentPagerAdapter{
 
                     //remove all items from the map
                     instantiatedObjectMap.clear();
-                    this.notifyDataSetChanged();
+                    //this.notifyDataSetChanged();
                     return true;
                 }
             }
@@ -83,35 +88,44 @@ public class RemovableFragmentPagerAdapter extends FragmentPagerAdapter{
     @Override public Object instantiateItem (ViewGroup container, int position){
         Object instantiatedObject = super.instantiateItem(container, position);
         this.instantiatedObjectMap.put(Integer.toString(position), instantiatedObject);
+        Log.d(TAG, "instantiateItem() -this class=" + this.getClass().getName() +  " - instantiatedObject=" + instantiatedObject.getClass().getName());
         return instantiatedObject;
     }
 
     @Override public void destroyItem(ViewGroup container, int position, Object object){
+        Log.d(TAG, "destroyItem() - START");
+
         super.destroyItem(container, position, object);
 
         //remoe related childfragments and fragments from fragment manager
         if (position <= getCount()) {
             //remove child fragments
             FragmentManager manager = ((Fragment) object).getChildFragmentManager();
-            //remove all fragments
-            if (manager.getFragments()!=null){
-                List<Fragment> childFragments = manager.getFragments();
-                for (Iterator<Fragment> iterator = childFragments.iterator(); iterator.hasNext(); ) {
-                    Fragment childFragment = iterator.next();
-                    FragmentTransaction trans = childFragment.getFragmentManager().beginTransaction();
-                    trans.remove(childFragment);
-                    trans.commit();
-                }
+            if (manager!=null) {
+                //remove all fragments
+                if (manager.getFragments() != null) {
+                    List<Fragment> childFragments = manager.getFragments();
+                    for (Iterator<Fragment> iterator = childFragments.iterator(); iterator.hasNext(); ) {
+                        Fragment childFragment = iterator.next();
+                        FragmentTransaction trans = childFragment.getFragmentManager().beginTransaction();
+                        Log.d(TAG, "destroyItem() - Removing ChildFragment =" + childFragment.getClass().getName());
+                        trans.remove(childFragment);
+                        trans.commit();
+                    }
 
-                //todo: begin: test code - checking if this removes any backstack references of dialogfragments
-                manager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                //end:
+                    //todo: begin: test code - checking if this removes any backstack references of dialogfragments
+                    //manager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    //end:
+                }
             }
 
             manager = ((Fragment) object).getFragmentManager();
-            FragmentTransaction trans = manager.beginTransaction();
-            trans.remove((Fragment) object);
-            trans.commit();
+            if (manager!=null) {
+                FragmentTransaction trans = manager.beginTransaction();
+                trans.remove((Fragment) object);
+                Log.d(TAG, "destroyItem() - Removing Fragment =" + object.getClass().getName());
+                trans.commit();
+            }
         }
 
         //remove item from local map - comment this until we know if there are remaining undestroyed views.
@@ -134,5 +148,7 @@ public class RemovableFragmentPagerAdapter extends FragmentPagerAdapter{
         }
         return "";
     }
+
+
 
 }

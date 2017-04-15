@@ -6,6 +6,7 @@ package com.ewise.moneyapp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,8 @@ public class BillsFragment extends Fragment {
      * number.
      */
     public static BillsFragment newInstance(int sectionNumber) {
+        Log.d(TAG, "newInstance() - START");
+
         BillsFragment fragment = new BillsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -42,6 +45,7 @@ public class BillsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView() - START");
         View rootView = inflater.inflate(R.layout.fragment_bills, container, false);
         return rootView;
     }

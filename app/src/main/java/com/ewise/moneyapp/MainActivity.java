@@ -60,6 +60,7 @@ import com.ewise.android.pdv.api.model.consent.ConsentUpdateRequest;
 import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.android.pdv.api.model.response.TransactionsResponse;
+import com.ewise.moneyapp.Utils.FragmentPagerAdapterHelper;
 import com.ewise.moneyapp.Utils.HomeWatcher;
 import com.ewise.moneyapp.Utils.OnHomePressedListener;
 import com.ewise.moneyapp.Utils.PdvApiName;
@@ -523,12 +524,13 @@ public class MainActivity extends AppCompatActivity
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        //mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setOffscreenPageLimit(1);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        //mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager = FragmentPagerAdapterHelper.setViewPagerToAdapter(mViewPager, this, getSupportFragmentManager(), SectionsPagerAdapter.class, false);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -637,228 +639,74 @@ public class MainActivity extends AppCompatActivity
 
 
     public void selectDrawerItem(MenuItem menuItem) {
-        //todo: enhance this to use a sepcial fragment instead of content fragment
         // Create a new fragment and specify the fragment to show based on nav item clicked
-        Fragment fragment = null;
-        Class fragmentClass=null;
-
+        
         navMenuItemId=menuItem.getItemId();
-        if (mViewPager==null) return;
+        if (mViewPager==null) {
+            return;
+        }
 
         switch(menuItem.getItemId()) {
             case R.id.navMenuAccounts:
-                if (!mViewPager.getAdapter().getClass().getName().equals(SectionsPagerAdapter.class.getName())){
-                    clearCurrentFragmentTabs();
-                    showMainTabs();
-                }
+                showTabs(SectionsPagerAdapter.class);
                 mViewPager.setCurrentItem(TAB_POSITION_ACCOUNTS);
                 break;
             case R.id.navMenuProviders:
-                Log.d(TAG, "todo - **SN** **navmenu** go to PROVIDERS fragment");
-                if (!mViewPager.getAdapter().getClass().getName().equals(SectionsPagerAdapter.class.getName())){
-                    clearCurrentFragmentTabs();
-                    showMainTabs();
-                }
+                showTabs(SectionsPagerAdapter.class);
                 mViewPager.setCurrentItem(TAB_POSITION_PROVIDERS);
                 break;
             case R.id.navMenuNetworth:
-                Log.d(TAG, "todo - **SN** **navmenu** go to NETWORTH fragment");
-                if (!mViewPager.getAdapter().getClass().getName().equals(SectionsPagerAdapter.class.getName())){
-                    clearCurrentFragmentTabs();
-                    showMainTabs();
-                }
+                showTabs(SectionsPagerAdapter.class);
                 mViewPager.setCurrentItem(TAB_POSITION_NETWORTH);
                 break;
             case R.id.navMenuBudgets:
-                Log.d(TAG, "todo - **SN** **navmenu** go to BUDGET fragment");
-                if (!mViewPager.getAdapter().getClass().getName().equals(SectionsPagerAdapter.class.getName())){
-                    clearCurrentFragmentTabs();
-                    showMainTabs();
-                }
+                showTabs(SectionsPagerAdapter.class);
                 mViewPager.setCurrentItem(TAB_POSITION_SPENDING);
                 break;
             case R.id.navMenuBills:
-                Log.d(TAG, "todo - **SN** **navmenu** go to BILLS fragment");
-                if (!mViewPager.getAdapter().getClass().getName().equals(BillsMenuPagerAdapter.class.getName())){
-                    clearCurrentFragmentTabs();
-                    showNavMenuFragment(new BillsMenuPagerAdapter(getSupportFragmentManager(), this));
-                }
+                showTabs(BillsMenuPagerAdapter.class);
                 break;
             case R.id.navMenuTransfer:
-                Log.d(TAG, "todo - **SN** **navmenu** go to TRANSFER fragment");
-                if (!mViewPager.getAdapter().getClass().getName().equals(TransferMenuPagerAdapter.class.getName())){
-                    clearCurrentFragmentTabs();
-                    showNavMenuFragment(new TransferMenuPagerAdapter(getSupportFragmentManager(), this));
-                }
+                showTabs(TransferMenuPagerAdapter.class);
                 break;
             case R.id.navMenuSendIssue:
-                Log.d(TAG, "todo - **SN** **navmenu** go to SEND ISSUE fragment");
-                if (!mViewPager.getAdapter().getClass().getName().equals(ReportIssueMenuPagerAdapter.class.getName())){
-                    clearCurrentFragmentTabs();
-                    showNavMenuFragment(new ReportIssueMenuPagerAdapter(getSupportFragmentManager(), this));
-                }
+                showTabs(ReportIssueMenuPagerAdapter.class);
                 break;
             case R.id.navMenuPermissions:
-                Log.d(TAG, "todo - **SN** **navmenu** go to PERMISSIONS fragment");
-                if (!mViewPager.getAdapter().getClass().getName().equals(PermissionsMenuPagerAdapter.class.getName())){
-                    clearCurrentFragmentTabs();
-                    showNavMenuFragment(new PermissionsMenuPagerAdapter(getSupportFragmentManager(), this));
-                }
+                showTabs(PermissionsMenuPagerAdapter.class);
                 break;
             case R.id.navMenuLogout:
                 logoutFromApp(LogoutReason.LOGOUT_REASON_MENUPRESSED);
                 break;
             case R.id.navMenuHelp:
-                Log.d(TAG, "todo - **SN** **navmenu** go to HELP fragment");
-                if (!mViewPager.getAdapter().getClass().getName().equals(HelpMenuPagerAdapter.class.getName())){
-                    clearCurrentFragmentTabs();
-                    showNavMenuFragment(new HelpMenuPagerAdapter(getSupportFragmentManager(), this));
-                    //menu_fragment_container.setVisibility(View.VISIBLE);
-                    showMenuFragment(menuItem.getItemId());
-                }
+                showTabs(HelpMenuPagerAdapter.class);
                 break;
             default:
                 break;
-                //fragmentClass = FirstFragment.class;
         }
 
-        /*
-        try {
-            if (fragmentClass!=null) {
-                fragment = (Fragment) fragmentClass.newInstance();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-        */
-
-        // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
-        // Set action bar title
-        //setTitle(menuItem.getTitle());
-        // Close the navigation drawer
         drawer.closeDrawers();
     }
 
 
-    private void showMainTabs (){
-        
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+    private void showTabs (Class pagerAdapterClass){
+        Log.d(TAG, "showTabs() : pagerAdapterClass=" + pagerAdapterClass.getName());
+
+        mViewPager = FragmentPagerAdapterHelper.setViewPagerToAdapter(mViewPager, this,getSupportFragmentManager(), pagerAdapterClass, false);
 
         if (mViewPager==null) return;
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOffscreenPageLimit(1);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        mViewPager.invalidate();
-    }
-
-
-    private void showNavMenuFragment (FragmentPagerAdapter adapter){
-
-        if (mViewPager==null) return;
-        //remove the tabs and viewpager associated with the tabs
-
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager.setAdapter(adapter);
-        mViewPager.setOffscreenPageLimit(1);
-        tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setTabMode(TabLayout.MODE_FIXED);
-        mViewPager.invalidate();
-
-    }
-
-    private void clearCurrentFragmentTabs(){
-
-        if (mViewPager==null) return;
-
-        PagerAdapter adapter = mViewPager.getAdapter();
-        if (adapter.getClass().equals(RemovableFragmentPagerAdapter.class)){
-            ((RemovableFragmentPagerAdapter)adapter).removeAllItems(mViewPager);
-            adapter=null;//GC the adapter since we are recreating each time
-            mViewPager.setAdapter(null); //viewpager to kill itself
+        synchronized (mViewPager){
             mViewPager.notifyAll();
-            mViewPager.invalidate();
-
-        }
-
-        /*
-        tabLayout.removeAllTabs();
-        mViewPager.removeAllViewsInLayout();
-        mViewPager.removeAllViews();
-        mViewPager.clearOnPageChangeListeners();
-        mViewPager.clearDisappearingChildren();
-        mViewPager.notifyAll();
-        RemovableFragmentPagerAdapter adapter = (RemovableFragmentPagerAdapter) mViewPager.getAdapter();
-        adapter=null; //let it garbage collect the adapter
-        mViewPager.setAdapter(null);
-        mViewPager.invalidate();
-        */
-
-        FragmentManager fm = getSupportFragmentManager();
-        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        if (fm.getFragments()!=null)
-        {
-            Log.d(TAG, "clearCurrentFragmentTabs() : fm.getFragments()!=null **THIS SHOULD NOT BE THE CASE IF ALL FRAGMENTS WERE REMOVED");
-            //fm.getFragments().remove();
-
-            //Log.d(TAG, "clearCurrentFragmentTabs() : fm.getBackStackEntryCount()=" + fm.getBackStackEntryCount());
-
+            mViewPager.getAdapter().notifyDataSetChanged();
         }
 
     }
 
-
-
-
-    private void showMenuFragment (int menuResourceId){
-
-        Fragment fragment = null;
-        if (menuResourceId==R.id.navMenuBills){
-            // Create fragment and give it an argument specifying the article it should show
-            BillsFragment billsFragment = new BillsFragment();
-            //Bundle args = new Bundle();
-            //args.putInt(BillsFragment., position);
-            //newFragment.setArguments(args);
-
-            fragment = billsFragment;
-
-        }
-
-        if (fragment!=null) {
-
-            //main_activity_content.setVisibility(View.GONE);
-            menu_fragment_container.setVisibility(View.VISIBLE);
-            tabLayout.setVisibility(View.GONE);
-
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            // Replace whatever is in the fragment_container view with this fragment,
-            transaction.replace(R.id.menu_fragment_container, fragment);
-
-            // and add the transaction to the back stack so the user can navigate back
-            //transaction.addToBackStack(null);
-
-            // Commit the transaction
-            transaction.commit();
-        }
-
-    }
-
-    private void hideMenuFragment (){
-        tabLayout.setVisibility(View.VISIBLE);
-        //main_activity_content.setVisibility(View.VISIBLE);
-        menu_fragment_container.setVisibility(View.GONE);
-
-    }
 
 
 
