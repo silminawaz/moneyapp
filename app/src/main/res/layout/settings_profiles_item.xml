@@ -33,10 +33,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:textSize="@dimen/ewise_heading_text_size"
+            android:textSize="@dimen/ewise_primary_text_size"
             android:clickable="false"
             android:text="Profile name"
-            android:textStyle="bold|italic"
             android:textColor="@color/coloreWiseMainTextBlack"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_gravity="center"
@@ -57,10 +56,6 @@
         android:layout_marginBottom="@dimen/ewise_vertical_margin"
         />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/coloreWiseDivider"/>
 
 
 

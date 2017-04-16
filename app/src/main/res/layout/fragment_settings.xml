@@ -19,35 +19,47 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/ewise_horizontal_margin"
-            android:layout_marginEnd="@dimen/ewise_horizontal_margin">
+            android:layout_marginEnd="@dimen/ewise_horizontal_margin"
+            android:background="@color/coloreWiseCardViewBackground">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:background="@color/coloreWiseCardViewBackground">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_profiles_header"
                     android:textColor="@color/coloreWiseMainTextBlack"
-                    android:textSize="@dimen/ewise_heading_text_size_large"
+                    android:textSize="@dimen/ewise_subheader_text_size"
+                    android:textStyle="bold"
                     android:layout_marginStart="@dimen/ewise_horizontal_margin"
                     android:layout_marginTop="@dimen/ewise_vertical_margin_large"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_profiles_dialog_message"
+                    android:textColor="@color/coloreWiseSecondaryTextBlack"
+                    android:textSize="@dimen/ewise_secondary_text_size"
+                    android:layout_marginStart="@dimen/ewise_horizontal_margin"/>
 
                 <ListView
                     android:id="@+id/settingProfilesList"
                     android:layout_width="match_parent"
-                    android:layout_height="240dp"/>
+                    android:layout_height="wrap_content"
+                   />
 
                 <Button
                     android:id="@+id/settingsProfileAddBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/coloreWiseWhite"
                     android:text="@string/settings_profiles_add_button_text"
                     android:textColor="@color/coloreWiseBlueAegis"
                     android:layout_marginEnd="@dimen/ewise_horizontal_margin"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
                     android:layout_gravity="end"/>
 
             </LinearLayout>

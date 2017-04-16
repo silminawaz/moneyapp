@@ -19,8 +19,8 @@
 
     <ImageView
         android:id="@+id/providerIcon"
-        android:layout_width="@dimen/ewise_touch_icon_size_xl"
-        android:layout_height="@dimen/ewise_touch_icon_size_xl"
+        android:layout_width="@dimen/ewise_touch_icon_size_large"
+        android:layout_height="@dimen/ewise_touch_icon_size_large"
         android:src="@drawable/rbanks"
         android:background="@drawable/ewise_background_select_state_list"
         android:focusable="false"

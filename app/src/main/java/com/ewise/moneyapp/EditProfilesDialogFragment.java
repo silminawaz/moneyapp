@@ -77,10 +77,12 @@ public class EditProfilesDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        String signonProfileString = getArguments().getString("signonProfileString");
-        if (signonProfileString!=null) {
+        String signonProfileString=null;
+        if (getArguments()!=null) {
+            signonProfileString = getArguments().getString("signonProfileString");
             profileEntry = PdvApiResults.objectFromString(signonProfileString, SignonProfile.class);
         }
+
 
         View v = inflater.inflate(R.layout.edit_profiles_dialog, container, false);
 

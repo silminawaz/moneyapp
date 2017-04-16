@@ -174,7 +174,7 @@
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/menu_providers_icon"
                 app:fabSize="mini"
-                app:backgroundTint="@color/coloreWiseClearGreen"/>
+                app:backgroundTint="@color/coloreWiseBlueAegis"/>
         </LinearLayout>
 
 
@@ -205,7 +205,7 @@
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/menu_transfer_icon"
                 app:fabSize="mini"
-                app:backgroundTint="@color/coloreWiseClearGreen"/>
+                app:backgroundTint="@color/coloreWiseBlueAegis"/>
         </LinearLayout>
 
 
@@ -236,7 +236,7 @@
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/menu_providers_icon"
                 app:fabSize="mini"
-                app:backgroundTint="@color/coloreWiseClearGreen"/>
+                app:backgroundTint="@color/coloreWiseBlueAegis"/>
         </LinearLayout>
 
 
@@ -259,7 +259,7 @@
                 android:gravity="center_vertical"
                 app:srcCompat="@drawable/ic_action_add"
                 app:fabSize="normal"
-                app:backgroundTint="@color/coloreWiseClearGreen"/>
+                app:backgroundTint="@color/coloreWiseBlueAegis"/>
         </LinearLayout>
 
     <!-- Progress bar overlay; shown while login is in progress -->

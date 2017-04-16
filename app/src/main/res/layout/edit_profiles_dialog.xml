@@ -87,30 +87,91 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/textGetPromptsMsg"
-                    android:textSize="@dimen/ewise_header_text_size"
+                    android:textSize="@dimen/ewise_secondary_text_size"
                     android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
                     android:gravity="start"
                     android:layout_gravity=""
-                    android:textColor="@color/coloreWiseMainTextBlack" />
+                    android:textColor="@color/coloreWiseSecondaryTextBlack"
+                    android:textColorLink="@color/coloreWisePrimary"
+                    android:textStyle="normal|bold|italic"
+                    android:drawableStart="@drawable/menu_help_icon"
+                    android:drawableTint="@color/coloreWisePrimary"/>
 
 
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/profilesPromptsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginTop="@dimen/ewise_vertical_margin">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/coloreWiseDivider"/>
 
 
                 <!-- add all prompts here  -->
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Choose an image to represent the profile"
+                    />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/ewise_vertical_margin">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/ewise_vertical_margin"
+                        android:paddingBottom="@dimen/ewise_vertical_margin">
+
+                    <ImageView
+                        android:layout_width="@dimen/ewise_touch_icon_size"
+                        android:layout_height="@dimen/ewise_touch_icon_size"
+                        android:src="@drawable/rbanks"
+                        android:id="@+id/imageButton1"
+                        android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/ewise_touch_icon_size"
+                        android:layout_height="@dimen/ewise_touch_icon_size"
+                        android:src="@drawable/rshares"
+                        android:id="@+id/imageButton2"
+                        android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/ewise_touch_icon_size"
+                        android:layout_height="@dimen/ewise_touch_icon_size"
+                        android:src="@drawable/rrewards"
+                        android:id="@+id/imageButton3"
+                        android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/ewise_touch_icon_size"
+                        android:layout_height="@dimen/ewise_touch_icon_size"
+                        android:src="@drawable/rairline"
+                        android:id="@+id/imageButton4"
+                        android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/ewise_touch_icon_size"
+                            android:layout_height="@dimen/ewise_touch_icon_size"
+                            android:src="@drawable/rutilities"
+                            android:id="@+id/imageButton5"
+                            android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+
+
+
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -153,11 +214,6 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/coloreWiseDivider"/>
-
                 <LinearLayout
                     android:id="@+id/profilesButtonLayout"
                     android:layout_width="match_parent"
@@ -176,6 +232,7 @@
                         android:maxLines="1"
                         android:textAlignment="center"
                         android:textStyle="bold"
+                        android:textSize="@dimen/ewise_secondary_text_size"
                         style="@style/Base.Widget.AppCompat.Button.Borderless"
                         android:layout_gravity="center_horizontal" />
 
@@ -194,11 +251,6 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/coloreWiseDivider"/>
-
 
             <View
                 android:layout_width="match_parent"
@@ -213,6 +265,7 @@
                 android:textColor="@color/coloreWiseBlueAegis"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:textSize="@dimen/ewise_secondary_text_size"
                 android:textAlignment="viewEnd"
                 android:textStyle="italic"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
@@ -228,6 +281,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnProfilesCancel"
+                android:textSize="@dimen/ewise_secondary_text_size"
                 android:textColor="@color/coloreWiseBlueAegis"
                 android:ellipsize="end"
                 android:maxLines="1"
@@ -236,10 +290,6 @@
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:gravity="end" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/coloreWiseDivider"/>
 
 
         </LinearLayout>

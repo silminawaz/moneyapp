@@ -374,7 +374,7 @@
 
     settings_profile_name_hint
     <string name="settings_profiles_dialog_message">
-        "PROFILES help you separate your accounts as you see fit. "
+        "Profiles help you separate your accounts as you see fit. "
         "for example you can create different profiles "
         "to separate your PERONAL, BUSINESS and FAMILY accounts "
     </string>
