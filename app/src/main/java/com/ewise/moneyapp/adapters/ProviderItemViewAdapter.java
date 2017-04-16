@@ -59,7 +59,7 @@ public class ProviderItemViewAdapter extends BaseAdapter {
 
         if (convertView==null) {
             // Get view for row item
-            convertView = mInflater.inflate(R.layout.provider_list_item, parent, false);
+            convertView = mInflater.inflate(R.layout.provider_list_item_2, parent, false);
         }
 
         ImageView providerIcon = (ImageView) convertView.findViewById(R.id.providerIcon);

@@ -30,6 +30,7 @@
         android:clickable="false"
         android:text="My account name is ABC"
         android:layout_toRightOf="@+id/accounticon"
+        android:textColor="@color/coloreWiseMainTextBlack"
         android:textStyle="bold|italic"
         android:layout_toLeftOf="@+id/accountcurrency" />
 

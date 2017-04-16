@@ -529,7 +529,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (isInputPINValid()) {
                 //todo: validate PIN
                 //canLoginToApp = settings.getEncryptedPin().validatePIN(txtPinEntry.getText().toString(), this);  //@deprecated
-                canLoginToApp = settings.getActiveUserEncryptedPin(this).savePIN(txtPinEntry.getText().toString(), this);
+                canLoginToApp = settings.getActiveUserEncryptedPin(this).validatePIN(txtPinEntry.getText().toString(), this);
                 if (!canLoginToApp) {
                     loginErrorMessage = getString(R.string.pinentry_invalid_pin);
                 }

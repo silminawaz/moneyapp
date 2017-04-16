@@ -5,10 +5,26 @@ package com.ewise.moneyapp;
  */
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+
+import com.ewise.moneyapp.Utils.Settings;
+import com.ewise.moneyapp.Utils.SignOnUsers;
+import com.ewise.moneyapp.Utils.SignonProfile;
+import com.ewise.moneyapp.Utils.SignonUser;
+import com.ewise.moneyapp.adapters.ProfilesItemViewAdapter;
+import com.ewise.moneyapp.adapters.ProviderItemViewAdapter;
+
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -19,6 +35,12 @@ public class SettingsFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+
+    public ListView settingsProfileList=null;
+    public Button settingsProfileAddBtn;
+
+    private ProfilesItemViewAdapter profilesItemViewAdapter;
+
 
     public SettingsFragment() {
     }
@@ -39,8 +61,48 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        settingsProfileList = (ListView) rootView.findViewById(R.id.settingProfilesList);
+        settingsProfileAddBtn = (Button) rootView.findViewById(R.id.settingsProfileAddBtn);
+
+
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
         return rootView;
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+
+        settingsProfileList.setClickable(true);
+
+        settingsProfileList.setOnItemClickListener(new ListView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> ListView, View view, int i, long l) {
+
+                SignonProfile profile = (SignonProfile)profilesItemViewAdapter.getItem(i);
+                if (isAdded()) {
+                    ((MainActivity)getActivity()).showEditProfilesDialog(profile);
+                }
+            }
+        });
+
+        Settings settings = Settings.getInstance(getActivity());
+        SignonUser activeUser = settings.getActiveUser(getActivity());
+        List<SignonProfile> profileList = activeUser.profiles;
+        profilesItemViewAdapter = new ProfilesItemViewAdapter(getActivity(), profileList);
+        settingsProfileList.setAdapter(profilesItemViewAdapter);
+
+        settingsProfileAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isAdded()) {
+                    ((MainActivity)getActivity()).showEditProfilesDialog(null);
+                }
+            }
+        });
     }
 }

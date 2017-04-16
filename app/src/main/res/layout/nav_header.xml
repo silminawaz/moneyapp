@@ -24,7 +24,7 @@
                     android:layout_width="@dimen/ewise_touch_icon_size_xl"
                     android:layout_height="@dimen/ewise_touch_icon_size_xl"
                     android:layout_marginTop="@dimen/ewise_vertical_margin_large"
-                    android:src="@drawable/ewise_default_userprofile_icon_white"
+                    android:src="@drawable/ewise_default_profiles_icon"
                     android:layout_gravity="center_horizontal" />
 
         <ImageView

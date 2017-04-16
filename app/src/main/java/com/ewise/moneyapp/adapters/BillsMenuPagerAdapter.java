@@ -15,6 +15,8 @@ import java.util.List;
  */
 public class BillsMenuPagerAdapter extends RemovableFragmentPagerAdapter {
 
+    public static final int TAB_POSITION_BILLS = 0;
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -46,9 +48,6 @@ public class BillsMenuPagerAdapter extends RemovableFragmentPagerAdapter {
         return "";
     }
 
-    @Override
-    public int getItemPosition(Object object) {
-        return POSITION_NONE;
-    }
+
 
 }

@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class TransferMenuPagerAdapter extends RemovableFragmentPagerAdapter {
 
+    public static final int TAB_POSITION_TRANSFER = 0;
 
     public TransferMenuPagerAdapter(FragmentManager fm, List<String> pageTitleList) {
         super(fm, pageTitleList);

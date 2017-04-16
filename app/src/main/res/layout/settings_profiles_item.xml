@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/settingsProfileslayout"
+    android:background="@drawable/ewise_background_select_state_list"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="start"
+    android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+    android:layout_marginStart="@dimen/ewise_horizontal_margin_large">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity= "start"
+        android:layout_marginStart="@dimen/ewise_horizontal_margin_large"
+        android:layout_marginTop="@dimen/ewise_vertical_margin_large">
+
+        <ImageView
+            android:id="@+id/settingsProfilesIcon"
+            android:layout_width="@dimen/ewise_touch_icon_size"
+            android:layout_height="@dimen/ewise_touch_icon_size"
+            android:src="@drawable/ewise_default_profiles_icon"
+            android:background="@drawable/ewise_background_select_state_list"
+            android:backgroundTint="@color/coloreWisePrimary"
+            android:focusable="false"
+            />
+
+
+        <TextView
+            android:id="@+id/settingsProfilesName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textSize="@dimen/ewise_heading_text_size"
+            android:clickable="false"
+            android:text="Profile name"
+            android:textStyle="bold|italic"
+            android:textColor="@color/coloreWiseMainTextBlack"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_gravity="center"
+            />
+
+
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/settingsProfilesDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile description is multi line jsjhjhfhjjhd fjhjhdjfhjhhj dfdfkjdjfhjhdfjhj hdfjhjhdf jhhjdfjhjhdfjhdfjhdfhj"
+        android:textSize="@dimen/ewise_primary_text_size"
+        android:layout_marginBottom="@dimen/ewise_vertical_margin"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/coloreWiseDivider"/>
+
+
+
+</LinearLayout>

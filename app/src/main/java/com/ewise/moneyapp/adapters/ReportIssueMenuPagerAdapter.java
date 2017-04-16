@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class ReportIssueMenuPagerAdapter extends RemovableFragmentPagerAdapter {
 
+    public static final int TAB_POSITION_REPORTISSUE = 0;
 
     public ReportIssueMenuPagerAdapter(FragmentManager fm, List<String> pageTitleList) {
         super(fm, pageTitleList);

@@ -109,7 +109,7 @@ public class MoneyAppApp extends Application {
     public static final String DEFAULT_MM_HOST = "https://qa-50-wmm.ewise.com/api/";
     public static final String DEFAULT_SWAN_HOST = "https://qaswan.ewise.com/";
     public static final String EWISEDEMO = "com.ewise.android.pdv.EwiseSharedPref";
-    public static final String INSTCODE_DRAWABLE_PREFIX = "INSTCODE_";
+    public static final String INSTCODE_DRAWABLE_PREFIX = "instcode_";
 
 
     //todo: implement inactivity timeout for the app login
@@ -915,6 +915,19 @@ public class MoneyAppApp extends Application {
         return R.drawable.rbanks;
     }
 
+    public int getInstitutionCodeIconResourceId (String instCode){
+
+        //todo: implement retrieval of all implementaiton icons from server and then map it in memory
+        //** DO NOT RETRIEVE ICONS ONE BY ONE BY INSTID FOR PERFORMANCE REASONS
+        int resId = 0;
+        //for now we just map each institution icon to "INSTCODE_9999" resource id in drawables
+        if (instCode!=null){
+            String instCodeResourceName = MoneyAppApp.INSTCODE_DRAWABLE_PREFIX + instCode;
+            resId = getResources().getIdentifier(instCodeResourceName , "drawable", getPackageName());
+        }
+        return resId;//could be zero
+    }
+
     public int getInstitutionIconResourceId (String instId){
 
         //todo: implement retrieval of all implementaiton icons from server and then map it in memory
@@ -925,6 +938,7 @@ public class MoneyAppApp extends Application {
         if (instCode!=null){
             String instCodeResourceName = MoneyAppApp.INSTCODE_DRAWABLE_PREFIX + instCode;
             resId = getResources().getIdentifier(instCodeResourceName , "drawable", getPackageName());
+            Log.d(TAG, "getInstitutionIconResourceId("+instId+") : instCodeResourceName="+instCodeResourceName + " : resId="+Integer.toString(resId));
             if (resId==0){
                 //get the group resource id
                 resId = getInstitutionGroupIconResourceId(instId);

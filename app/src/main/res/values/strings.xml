@@ -217,6 +217,7 @@
 
     <string name="edit_provider_delete_button_text">Delete provider</string>
     <string name="edit_provider_cancel_button_text">Cancel</string>
+    <string name="edit_provider_close_button_text">Close</string>
     <string name="edit_provider_text">
         "1. You should only edit provider credentials if\n"
         "(a) credentials are not found in this device, or\n"
@@ -360,5 +361,23 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <!-- strings related to Settings menu -->
+    <string name="settings_profiles_header">Profiles</string>
+    <string name="settings_profiles_name_hint">Profile name</string>
+    <string name="settings_profiles_desc_hint">Profile description</string>
+    <string name="settings_profiles_add_button_text">+ Add a new profile</string>
+    <string name="settings_profiles_delete_button_text">Remove this profile</string>
+    <string name="settings_profiles_close_button_text">Close</string>
+    <string name="settings_profiles_save_button_text">Save this profile</string>
+
+
+    settings_profile_name_hint
+    <string name="settings_profiles_dialog_message">
+        "PROFILES help you separate your accounts as you see fit. "
+        "for example you can create different profiles "
+        "to separate your PERONAL, BUSINESS and FAMILY accounts "
+    </string>
+
 
 </resources>

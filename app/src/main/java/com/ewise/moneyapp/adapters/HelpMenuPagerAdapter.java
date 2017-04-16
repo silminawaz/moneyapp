@@ -20,6 +20,8 @@ import java.util.List;
  */
 public class HelpMenuPagerAdapter extends RemovableFragmentPagerAdapter {
 
+    public static final int TAB_POSITION_HELP = 0;
+
 
     public HelpMenuPagerAdapter(FragmentManager fm, List<String> pageTitleList) {
         super(fm, pageTitleList);

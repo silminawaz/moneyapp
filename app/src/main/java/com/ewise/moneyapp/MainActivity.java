@@ -9,10 +9,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -68,6 +70,7 @@ import com.ewise.moneyapp.Utils.PdvApiRequestParams;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.Settings;
+import com.ewise.moneyapp.Utils.SignonProfile;
 import com.ewise.moneyapp.Utils.SignonUser;
 import com.ewise.moneyapp.adapters.RemovableFragmentPagerAdapter;
 import com.ewise.moneyapp.adapters.SectionsPagerAdapter;
@@ -87,10 +90,6 @@ public class MainActivity extends AppCompatActivity
 {
     private static final String TAG = "MainActivity";
 
-    private static final int TAB_POSITION_PROVIDERS = 0;
-    private static final int TAB_POSITION_NETWORTH  = 1;
-    private static final int TAB_POSITION_ACCOUNTS  = 2;
-    private static final int TAB_POSITION_SPENDING  = 3;
     //private static final int TAB_POSITION_OTHER     = 4;
 
 
@@ -631,61 +630,74 @@ public class MainActivity extends AppCompatActivity
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        selectDrawerItem(menuItem);
+                        selectDrawerItem(menuItem.getItemId());
+                        menuItem.setChecked(true);
                         return true;
                     }
                 });
     }
 
 
-    public void selectDrawerItem(MenuItem menuItem) {
+    public void selectDrawerItem(int navMenuItemId) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
-        
-        navMenuItemId=menuItem.getItemId();
+
         if (mViewPager==null) {
             return;
         }
 
-        switch(menuItem.getItemId()) {
+        switch(navMenuItemId) {
+            case R.id.navHeaderSettingsIcon:
+                showTabs(SettingsMenuPagerAdapter.class);
+                mViewPager.setCurrentItem(SettingsMenuPagerAdapter.TAB_POSITION_SETTINGS);
+                break;
             case R.id.navMenuAccounts:
                 showTabs(SectionsPagerAdapter.class);
-                mViewPager.setCurrentItem(TAB_POSITION_ACCOUNTS);
+                mViewPager.setCurrentItem(SectionsPagerAdapter.TAB_POSITION_ACCOUNTS);
+                refreshAttachedFragments();
                 break;
             case R.id.navMenuProviders:
                 showTabs(SectionsPagerAdapter.class);
-                mViewPager.setCurrentItem(TAB_POSITION_PROVIDERS);
+                mViewPager.setCurrentItem(SectionsPagerAdapter.TAB_POSITION_PROVIDERS);
+                refreshAttachedFragments();
                 break;
             case R.id.navMenuNetworth:
                 showTabs(SectionsPagerAdapter.class);
-                mViewPager.setCurrentItem(TAB_POSITION_NETWORTH);
+                mViewPager.setCurrentItem(SectionsPagerAdapter.TAB_POSITION_NETWORTH);
+                refreshAttachedFragments();
                 break;
             case R.id.navMenuBudgets:
                 showTabs(SectionsPagerAdapter.class);
-                mViewPager.setCurrentItem(TAB_POSITION_SPENDING);
+                mViewPager.setCurrentItem(SectionsPagerAdapter.TAB_POSITION_SPENDING);
+                refreshAttachedFragments();
                 break;
             case R.id.navMenuBills:
                 showTabs(BillsMenuPagerAdapter.class);
+                mViewPager.setCurrentItem(BillsMenuPagerAdapter.TAB_POSITION_BILLS);
                 break;
             case R.id.navMenuTransfer:
                 showTabs(TransferMenuPagerAdapter.class);
+                mViewPager.setCurrentItem(TransferMenuPagerAdapter.TAB_POSITION_TRANSFER);
                 break;
             case R.id.navMenuSendIssue:
                 showTabs(ReportIssueMenuPagerAdapter.class);
+                mViewPager.setCurrentItem(ReportIssueMenuPagerAdapter.TAB_POSITION_REPORTISSUE);
                 break;
             case R.id.navMenuPermissions:
                 showTabs(PermissionsMenuPagerAdapter.class);
+                mViewPager.setCurrentItem(PermissionsMenuPagerAdapter.TAB_POSITION_PERMISSIONS);
                 break;
             case R.id.navMenuLogout:
                 logoutFromApp(LogoutReason.LOGOUT_REASON_MENUPRESSED);
                 break;
             case R.id.navMenuHelp:
                 showTabs(HelpMenuPagerAdapter.class);
+                mViewPager.setCurrentItem(HelpMenuPagerAdapter.TAB_POSITION_HELP);
                 break;
             default:
                 break;
         }
 
-        menuItem.setChecked(true);
+
         drawer.closeDrawers();
     }
 
@@ -749,6 +761,15 @@ public class MainActivity extends AppCompatActivity
                 ArrayAdapter<String> profileAdapter = new ArrayAdapter<String>(this, R.layout.profile_spinner_item, profileArray);
                 profileAdapter.setDropDownViewResource(R.layout.profile_spinner_dropdown_item);
                 profileSpinner.setAdapter(profileAdapter);
+
+                ImageView settingsImage= (ImageView) nvDrawer.getHeaderView(0).findViewById(R.id.navHeaderSettingsIcon);
+
+                settingsImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        selectDrawerItem(R.id.navHeaderSettingsIcon);
+                    }
+                });
             }
         }
 
@@ -928,10 +949,11 @@ public class MainActivity extends AppCompatActivity
     public void startAddProviderActivity(){
         MoneyAppApp app = (MoneyAppApp)getApplication();
 
-        if (app.pdvLoginStatus.isLoggedOnToPdv() && !app.pdvApiRequestQueue.isRequestInProgress()){
+        if (app.pdvLoginStatus.isLoggedOnToPdv()
+                && (!app.pdvApiRequestQueue.isRequestInProgress() || (!app.pdvApiRequestQueue.isRequestPending()))){
             startActivityForResult(new Intent(MainActivity.this, AddInstitutionActivity.class), MoneyAppApp.ADD_PROVIDER_LIST_REQUEST);
         }
-        else if (!app.pdvApiRequestQueue.isRequestInProgress())
+        else if (!app.pdvApiRequestQueue.isRequestInProgress() || !app.pdvApiRequestQueue.isRequestPending())
         {
             Toast.makeText(getApplicationContext(), R.string.pdvapi_not_loggedin, Toast.LENGTH_LONG).show();
         }
@@ -1567,6 +1589,42 @@ public class MainActivity extends AppCompatActivity
 
 */
 
+
+    public void addNewSignonProfile (SignonProfile signonProfile){
+
+    }
+
+
+    public void saveSignonProfile (SignonProfile signonProfile){
+
+    }
+
+
+
+    public void deleteSignonProfile (SignonProfile signonProfile){
+
+    }
+
+
+    public void showEditProfilesDialog(SignonProfile signonProfile){
+        //mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("edit_profiles_dialog");
+        if (prev != null) {
+            EditProviderDialogFragment editProviderDialog = (EditProviderDialogFragment)prev;
+            editProviderDialog.dismiss();
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        EditProfilesDialogFragment newFragment = EditProfilesDialogFragment.newInstance(signonProfile);
+        newFragment.show(ft, "edit_institution_prompts_dialog");
+    }
 
     public void showEditProviderDialog(UserProviderEntry providerEntry){
         //mStackLevel++;

@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class PermissionsMenuPagerAdapter extends RemovableFragmentPagerAdapter {
 
+    public static final int TAB_POSITION_PERMISSIONS = 0;
 
     public PermissionsMenuPagerAdapter(FragmentManager fm, List<String> pagetitleList) {
         super(fm, pagetitleList);

@@ -24,10 +24,10 @@ import java.util.List;
  */
 public class SectionsPagerAdapter extends RemovableFragmentPagerAdapter {
 
-    private static final int TAB_POSITION_PROVIDERS = 0;
-    private static final int TAB_POSITION_NETWORTH  = 1;
-    private static final int TAB_POSITION_ACCOUNTS  = 2;
-    private static final int TAB_POSITION_SPENDING  = 3;
+    public static final int TAB_POSITION_PROVIDERS = 0;
+    public static final int TAB_POSITION_NETWORTH  = 1;
+    public static final int TAB_POSITION_ACCOUNTS  = 2;
+    public static final int TAB_POSITION_SPENDING  = 3;
 
     public SectionsPagerAdapter(FragmentManager fm, List<String> pageTitleList) {
         super(fm, pageTitleList);

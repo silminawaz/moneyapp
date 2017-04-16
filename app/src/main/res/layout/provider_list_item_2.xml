@@ -1,0 +1,116 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/providerlayout"
+    android:background="@drawable/ewise_background_select_state_list"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="start"
+    android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+    android:layout_marginStart="@dimen/ewise_horizontal_margin_large">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity= "start"
+        android:layout_marginStart="@dimen/ewise_horizontal_margin_large"
+        android:layout_marginTop="@dimen/ewise_vertical_margin_large">
+
+    <ImageView
+        android:id="@+id/providerIcon"
+        android:layout_width="@dimen/ewise_touch_icon_size_xl"
+        android:layout_height="@dimen/ewise_touch_icon_size_xl"
+        android:src="@drawable/rbanks"
+        android:background="@drawable/ewise_background_select_state_list"
+        android:focusable="false"
+        />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="start|center_vertical"
+            android:layout_marginStart="@dimen/ewise_horizontal_margin_large">
+            <TextView
+                android:id="@+id/providerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="@dimen/ewise_heading_text_size"
+                android:clickable="false"
+                android:text="Institution name"
+                android:textStyle="bold|italic"
+                android:textColor="@color/coloreWiseMainTextBlack"
+                />
+
+            <TextView
+                android:id="@+id/providerUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="user name"
+                android:textSize="@dimen/ewise_primary_text_size"
+                />
+
+
+
+
+            <TextView
+                android:id="@+id/providerMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="message"
+                android:textSize="@dimen/ewise_secondary_text_size"
+                />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:gravity="start"
+        android:layout_marginStart="@dimen/ewise_horizontal_margin_large"
+        android:layout_marginTop="@dimen/ewise_vertical_margin_large">
+        <ProgressBar
+            style="@android:style/Widget.ProgressBar.Inverse"
+            android:layout_width="@dimen/ewise_touch_icon_size_small"
+            android:layout_height="@dimen/ewise_touch_icon_size_small"
+            android:id="@+id/providerSyncProgressBar"
+            android:layout_gravity="start" />
+
+        <TextView
+            android:id="@+id/providerSyncStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="Sync status"
+            android:textSize="@dimen/ewise_secondary_text_size"
+            android:layout_margin="@dimen/ewise_horizontal_margin"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ewise_horizontal_margin_xl">
+
+        <TextView
+            android:id="@+id/lastUpdatedTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ewise_tertiary_text_size"
+            android:text="Last updated "/>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

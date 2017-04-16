@@ -64,7 +64,16 @@ public class AddInstitutionItemView extends RecyclerViewItemLayoutView<GroupedIn
         }
         );
 
-        accountinstitutionicon.setImageResource(getInstitutionIconResourceId (dataObject.getGroupId()));
+        MoneyAppApp app = (MoneyAppApp) getContext().getApplicationContext();
+
+        int iconResId = app.getInstitutionCodeIconResourceId(dataObject.getInstCode());
+        if (iconResId<=0) {
+            accountinstitutionicon.setImageResource(getInstitutionIconResourceId(dataObject.getGroupId()));
+        }
+        else
+        {
+            accountinstitutionicon.setImageResource(iconResId);
+        }
         accountInstitutionName.setText(dataObject.getInstDesc());
     }
 

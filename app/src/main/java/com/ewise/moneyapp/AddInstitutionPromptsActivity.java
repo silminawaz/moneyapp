@@ -56,6 +56,8 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        MoneyAppApp myApp = (MoneyAppApp) getApplication();
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -83,7 +85,10 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
         String instName = groupedInstitution.getInstDesc();
         textInstitutionName.setText(instName);
-        int resID = getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName());
+        int resID = myApp.getInstitutionCodeIconResourceId(groupedInstitution.getInstCode());
+        if (resID==0){
+            resID = getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName());
+        }
         Log.d("AddInstResID", Integer.toString(resID));
         //imageInstitutionLogo.setImageResource(getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName()));
 
@@ -91,7 +96,6 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
         context = this;
 
-        MoneyAppApp myApp = (MoneyAppApp) getApplication();
         PdvApi pdvApi = myApp.getPdvApi();
         myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
 //**XWALK**        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);

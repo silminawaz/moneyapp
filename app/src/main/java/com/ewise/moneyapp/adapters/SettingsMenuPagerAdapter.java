@@ -21,6 +21,8 @@ import java.util.List;
  */
 public class SettingsMenuPagerAdapter extends RemovableFragmentPagerAdapter {
 
+    public static final int TAB_POSITION_SETTINGS = 0;
+
 
     public SettingsMenuPagerAdapter(FragmentManager fm, List<String> pageTitleList) {
         super(fm, pageTitleList);

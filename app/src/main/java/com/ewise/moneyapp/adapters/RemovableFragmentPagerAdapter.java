@@ -149,6 +149,9 @@ public class RemovableFragmentPagerAdapter extends FragmentStatePagerAdapter {
         return "";
     }
 
-
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
 
 }

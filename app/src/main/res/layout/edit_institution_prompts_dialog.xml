@@ -91,9 +91,114 @@
             <View style="@style/eWiseHorizontalDivider"
                 android:visibility="gone"/>
 
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/ewise_primary_text_size"
+                android:visibility="gone"/>
+
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.25dp"
+                android:background="@color/coloreWisePrimaryDark"
+                android:paddingTop="@dimen/ewise_vertical_margin"
+                android:paddingBottom="@dimen/ewise_vertical_margin"
+                android:layout_marginBottom="@dimen/ewise_vertical_margin_xl"
+                android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                android:visibility="gone"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/linearlayoutGetPromptsMsg"
+                android:layout_gravity="center"
+                android:gravity="top|bottom">
+
+                <ProgressBar
+                    android:layout_width="@dimen/ewise_touch_icon_size"
+                    android:layout_height="@dimen/ewise_touch_icon_size"
+                    android:id="@+id/progressBarGetPrompts"
+                    android:layout_gravity="center"
+                    android:indeterminateDrawable="@drawable/ewise_progress_bar_drawable"/>
+
+                <TextView
+                    android:text="@string/pdvapi_get_prompts_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textGetPromptsMsg"
+                    android:textSize="@dimen/ewise_secondary_text_size"
+                    android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
+                    android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                    android:gravity="start"
+                    android:layout_gravity=""
+                    android:textColor="@color/coloreWisePrimary" />
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/editProviderPromptsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- add all prompts here  -->
+
+            </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/ewise_primary_text_size"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/editProviderButtonLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+
+                    <Button
+                        android:text="@string/edit_provider_save_button_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/btnEditProviderSave"
+                        android:background="@color/coloreWiseBlueAegis"
+                        android:textColor="@color/coloreWiseMainTextWhite"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAlignment="center"
+                        android:layout_gravity="center_horizontal" />
+
+                    <ProgressBar
+                        android:id="@+id/editProviderSaveProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:visibility="visible"
+                        android:background="@color/coloreWiseBlueAegis"
+                        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Small"
+                        android:paddingEnd="@dimen/ewise_horizontal_margin"
+                        android:indeterminateDrawable="@drawable/ewise_progress_bar_drawable"/>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -122,146 +227,24 @@
                         android:paddingBottom="@dimen/ewise_horizontal_margin"
                         android:gravity="center_vertical"
                         android:layout_gravity="center_vertical"
+                        android:visibility="gone"
                         />
 
                 </LinearLayout>
 
 
-                    <LinearLayout
-                        android:id="@+id/editProviderAccountsLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                <!-- add all accounts from this provider here as dummy example shown below -->
-
-                    </LinearLayout>
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="0.25dp"
-                android:background="@color/coloreWisePrimaryDark"
-                android:paddingTop="@dimen/ewise_vertical_margin"
-                android:paddingBottom="@dimen/ewise_vertical_margin"
-                android:layout_marginBottom="@dimen/ewise_vertical_margin_xl"
-                android:layout_marginTop="@dimen/ewise_vertical_margin_large"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:id="@+id/linearlayoutGetPromptsMsg"
-                android:layout_gravity="center"
-                android:gravity="top|bottom">
-
-                <ProgressBar
-                    android:layout_width="@dimen/ewise_touch_icon_size"
-                    android:layout_height="@dimen/ewise_touch_icon_size"
-                    android:id="@+id/progressBarGetPrompts"
-                    android:layout_gravity="center"
-                    android:indeterminateDrawable="@drawable/ewise_progress_bar_drawable_green"/>
-
-                <TextView
-                    android:text="@string/pdvapi_get_prompts_message"
+                <LinearLayout
+                    android:id="@+id/editProviderAccountsLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textGetPromptsMsg"
-                    android:textSize="@dimen/ewise_secondary_text_size"
-                    android:layout_marginLeft="@dimen/ewise_horizontal_margin_large"
-                    android:layout_marginTop="@dimen/ewise_vertical_margin_large"
-                    android:textColor="@color/coloreWisePrimary" />
+                    android:orientation="vertical"
+                    android:visibility="visible">
 
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/editProviderPromptsLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- add all prompts here as dummy example shown below -->
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/ewise_primary_text_size"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
-
-                <LinearLayout
-                    android:id="@+id/editProviderButtonLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal">
-
-                    <Button
-                        android:text="@string/edit_provider_cancel_button_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/btnEditProviderCancel"
-                        android:background="@color/coloreWisePrimary"
-                        android:textColor="@color/coloreWiseMainTextWhite"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:textAlignment="center"
-                        android:layout_gravity="center_horizontal"/>
-
-                    <View
-                        android:layout_width="@dimen/ewise_horizontal_margin_large"
-                        android:layout_height="match_parent"/>
-
-                    <View
-                        android:layout_width="@dimen/ewise_horizontal_margin_large"
-                        android:layout_height="match_parent"/>
-
-                    <Button
-                        android:text="@string/edit_provider_save_button_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/btnEditProviderSave"
-                        android:background="@color/coloreWisePrimary"
-                        android:textColor="@color/coloreWiseMainTextWhite"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:textAlignment="center"
-                        android:layout_gravity="center_horizontal" />
-
-                    <ProgressBar
-                        android:id="@+id/editProviderSaveProgressBar"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="visible"
-                        android:background="@color/coloreWisePrimary"
-                        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Small"
-                        android:paddingEnd="@dimen/ewise_horizontal_margin"
-                        android:indeterminateDrawable="@drawable/ewise_progress_bar_drawable_black"/>
-
-                    <ImageView
-                        android:id="@+id/editProviderSaveDone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_done"
-                        android:visibility="gone"/>
+                    <!-- add all accounts from this provider here as dummy example shown below -->
 
                 </LinearLayout>
 
-
             </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="20sp"/>
 
 
             <LinearLayout
@@ -300,16 +283,28 @@
                 android:textColor="@color/coloreWiseSecondaryTextBlack"
                 android:textColorLink="@color/coloreWisePrimary"
                 android:textStyle="normal"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="40sp"/>
+                android:layout_height="40sp"
+                android:visibility="gone"/>
+
+            <Button
+                android:text="@string/edit_provider_close_button_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnEditProviderCancel"
+                android:textColor="@color/coloreWiseBlueAegis"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="viewEnd"
+                android:textStyle="bold|italic"
+                style="@style/Base.Widget.AppCompat.Button.Borderless"
+                android:gravity="end" />
 
 
         </LinearLayout>
-
-
 
 
     </ScrollView>

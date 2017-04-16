@@ -49,7 +49,6 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     Button saveButton;
     Button cancelButton;
     ProgressBar editProviderSaveProgressBar;
-    ImageView editProviderSaveDone;
     TextView editProviderAccountsText;
     ImageView editProviderAccountsInfoIcon;
     TextView editProviderHelpText;
@@ -129,8 +128,6 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
         saveButton.setVisibility(View.VISIBLE);
         editProviderSaveProgressBar = (ProgressBar) v.findViewById(R.id.editProviderSaveProgressBar);
         editProviderSaveProgressBar.setVisibility(View.GONE);
-        editProviderSaveDone = (ImageView) v.findViewById(R.id.editProviderSaveDone);
-        editProviderSaveDone.setVisibility(View.GONE);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -169,7 +166,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
             @Override
             public void onClick(View view) {
                 Log.d("EditProviderDialogFr...", "editProviderHelpText.setOnClickListener.onClick()");
-                toggleDisplayHelp();
+                //toggleDisplayHelp();
             }
         });
 
@@ -177,7 +174,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
             @Override
             public void onClick(View view) {
                 Log.d("EditProviderDialogFr...", "editProviderHelpIcon.setOnClickListener.onClick()");
-                toggleDisplayHelp();
+                //toggleDisplayHelp();
             }
         });
 
@@ -192,7 +189,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
         MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
 
         //populate the accounts for this provider
-        populateAccountsForUserProvider();
+        //populateAccountsForUserProvider();
 
 
         if (!app.pdvApiRequestQueue.isRequestInProgress()) {
@@ -338,7 +335,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
             accountTextView.setText(getString(R.string.edit_provider_account_not_found_text));
         }
         accountTextView.setGravity(Gravity.TOP);
-        accountTextView.setTextColor(ContextCompat.getColor(getActivity(), R.color.coloreWiseMainTextWhite));
+        accountTextView.setTextColor(ContextCompat.getColor(getActivity(), R.color.coloreWiseMainTextBlack));
         float margin = getActivity().getResources().getDimension(R.dimen.ewise_horizontal_margin_large);
         accountTextView.setPadding(Math.round(margin), Math.round(margin), Math.round(margin), Math.round(margin));
         accountTextView.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.ewise_border));
