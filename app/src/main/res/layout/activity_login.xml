@@ -312,6 +312,7 @@
                                         android:id="@+id/txtPinEntry"
                                         android:textColor="@color/coloreWiseMainTextWhite"
                                         android:textStyle="normal|bold"
+                                        style="@style/eWiseEncryptedPinTheme"
                                          />
 
                                     <TextView
@@ -337,6 +338,7 @@
                                         android:id="@+id/txtPinEntry2"
                                         android:textColor="@color/coloreWiseMainTextWhite"
                                         android:textStyle="normal|bold"
+                                        style="@style/eWiseEncryptedPinTheme"
                                         />
 
                                     <Button
@@ -408,7 +410,8 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="20dp"
             android:adjustViewBounds="true"
-            android:src="@drawable/ewise_default_userprofile_icon_white"
+            android:src="@drawable/ewise_default_profiles_icon"
+            android:backgroundTint="@color/coloreWiseBlueAegis"
             android:layout_width="150dp" />
 
     </RelativeLayout>

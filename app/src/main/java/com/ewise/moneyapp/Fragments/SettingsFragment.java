@@ -1,4 +1,4 @@
-package com.ewise.moneyapp;
+package com.ewise.moneyapp.Fragments;
 
 /**
  * Created by SilmiNawaz on 20/8/16.
@@ -6,23 +6,20 @@ package com.ewise.moneyapp;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 
+import com.ewise.moneyapp.MainActivity;
+import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.Utils.Settings;
-import com.ewise.moneyapp.Utils.SignOnUsers;
 import com.ewise.moneyapp.Utils.SignonProfile;
 import com.ewise.moneyapp.Utils.SignonUser;
 import com.ewise.moneyapp.adapters.ProfilesItemViewAdapter;
-import com.ewise.moneyapp.adapters.ProviderItemViewAdapter;
 
 import java.util.List;
 

@@ -9,23 +9,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -36,7 +32,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
@@ -62,8 +57,10 @@ import com.ewise.android.pdv.api.model.consent.ConsentUpdateRequest;
 import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.android.pdv.api.model.response.TransactionsResponse;
+import com.ewise.moneyapp.Fragments.EditProfilesDialogFragment;
+import com.ewise.moneyapp.Fragments.EditProviderDialogFragment;
+import com.ewise.moneyapp.Fragments.EwiseOTPFragment;
 import com.ewise.moneyapp.Utils.FragmentPagerAdapterHelper;
-import com.ewise.moneyapp.Utils.HomeWatcher;
 import com.ewise.moneyapp.Utils.OnHomePressedListener;
 import com.ewise.moneyapp.Utils.PdvApiName;
 import com.ewise.moneyapp.Utils.PdvApiRequestParams;
@@ -72,7 +69,6 @@ import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.Settings;
 import com.ewise.moneyapp.Utils.SignonProfile;
 import com.ewise.moneyapp.Utils.SignonUser;
-import com.ewise.moneyapp.adapters.RemovableFragmentPagerAdapter;
 import com.ewise.moneyapp.adapters.SectionsPagerAdapter;
 import com.ewise.moneyapp.adapters.SettingsMenuPagerAdapter;
 import com.ewise.moneyapp.adapters.BillsMenuPagerAdapter;
@@ -105,7 +101,8 @@ public class MainActivity extends AppCompatActivity
     private ActionBarDrawerToggle drawerToggle;
     private int navMenuItemId=0;
 
-    public HomeWatcher homeWatcher = null;
+    //
+    // public HomeWatcher homeWatcher = null;
     public AlertDialog logOutDialog=null;
 
 
@@ -469,8 +466,8 @@ public class MainActivity extends AppCompatActivity
         MoneyAppApp myApp = ((MoneyAppApp) getApplication());
 
 
-        homeWatcher = new HomeWatcher(this);
-        homeWatcher.setOnHomePressedListener(this);
+        //homeWatcher = new HomeWatcher(this);
+        //homeWatcher.setOnHomePressedListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.navigation_menu_icon);
@@ -728,7 +725,12 @@ public class MainActivity extends AppCompatActivity
 
         super.onResume();
 
-        Intent intent= new Intent(this, PdvAcaBoundService.class);
+            MoneyAppApp app = (MoneyAppApp)getApplication();
+
+            app.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+            app.pdvApi.apiInit(this, app.pdvWebView);
+
+            Intent intent= new Intent(this, PdvAcaBoundService.class);
         bindService(intent, pdvAcaServiceConnection, Context.BIND_AUTO_CREATE);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiCallbackMessageReceiver,
@@ -737,7 +739,6 @@ public class MainActivity extends AppCompatActivity
         LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiServiceErrorMessageReceiver,
                 new IntentFilter("pdv-aca-service-error"));
 
-        MoneyAppApp app = (MoneyAppApp)getApplication();
         if (app.isAppLoggedIn() && !app.isPdvLoginFailed()){
             this.progress_overlay.setVisibility(View.GONE);
 
@@ -779,8 +780,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart(){
         super.onStart();
-        homeWatcher.startWatch();
-        Log.d("MainActivity", "onStop() : homeWatcher.startWatch()");
+        //homeWatcher.startWatch();
+        //Log.d("MainActivity", "onStop() : homeWatcher.startWatch()");
 
     }
 
@@ -901,7 +902,7 @@ public class MainActivity extends AppCompatActivity
                     app.setAppLoggedOff();
                     app.pdvLoginStatus.notifyLoggedOffFromPdv();
                     startLoginActivity();
-                    homeWatcher.stopWatch(); //no need to watch anymore
+                    //homeWatcher.stopWatch(); //no need to watch anymore
                     if (p!=null){
                         if (p.isShowing()) {
                             p.hide();

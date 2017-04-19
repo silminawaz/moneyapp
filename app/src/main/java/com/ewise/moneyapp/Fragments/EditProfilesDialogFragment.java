@@ -1,34 +1,21 @@
-package com.ewise.moneyapp;
+package com.ewise.moneyapp.Fragments;
 
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.ewise.android.pdv.api.model.PromptEntry;
-import com.ewise.android.pdv.api.model.UserProviderEntry;
-import com.ewise.android.pdv.api.model.provider.Institution;
-import com.ewise.android.pdv.api.model.response.GetPromptsData;
+import com.ewise.moneyapp.MainActivity;
+import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.Utils.PdvApiResults;
-import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.Utils.SignonProfile;
-import com.ewise.moneyapp.data.PdvAccountResponse;
-
-import java.util.List;
 
 /**
  * Created by SilmiNawaz on 1/4/17.
@@ -51,7 +38,7 @@ public class EditProfilesDialogFragment extends DialogFragment {
      * Create a new instance of MyDialogFragment, providing "num"
      * as an argument.
      */
-    static EditProfilesDialogFragment newInstance(SignonProfile signonProfile) {
+    public static EditProfilesDialogFragment newInstance(SignonProfile signonProfile) {
         EditProfilesDialogFragment f = new EditProfilesDialogFragment();
 
         // Supply num input as an argument.

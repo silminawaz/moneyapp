@@ -1,4 +1,4 @@
-package com.ewise.moneyapp;
+package com.ewise.moneyapp.Fragments;
 
 
 import android.app.Dialog;
@@ -17,7 +17,8 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 
 import com.ewise.android.pdv.api.PdvApi;
-import com.ewise.moneyapp.Utils.PdvApiRequestQueue;
+import com.ewise.moneyapp.MoneyAppApp;
+import com.ewise.moneyapp.R;
 
 /**
  * Created by aaron on 11/23/16.

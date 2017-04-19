@@ -13,6 +13,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -90,8 +92,21 @@ public class AccountsFragment extends Fragment  implements MainActivity.Fragment
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+
+
+        //fragment specific menu creation
+    }
+
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        getActivity().findViewById(R.id.account_recycler_view).setPadding(0,0,0,getActivity().findViewById(R.id.tabs).getHeight());
 
         //Attach adapter and load the data
         account_recycler_view.setLayoutManager(new LinearLayoutManager(this.getContext()));

@@ -1,6 +1,5 @@
 package com.ewise.moneyapp.Utils;
 
-import android.accounts.Account;
 import android.app.Activity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -8,15 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
-import com.ewise.moneyapp.MainActivity;
-import com.ewise.moneyapp.R;
-import com.ewise.moneyapp.ReportIssueFragment;
-import com.ewise.moneyapp.adapters.HelpMenuPagerAdapter;
-import com.ewise.moneyapp.adapters.PermissionsMenuPagerAdapter;
 import com.ewise.moneyapp.adapters.RemovableFragmentPagerAdapter;
-import com.ewise.moneyapp.adapters.SectionsPagerAdapter;
-import com.ewise.moneyapp.adapters.SettingsMenuPagerAdapter;
-import com.ewise.moneyapp.adapters.TransferMenuPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;

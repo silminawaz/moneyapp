@@ -1,12 +1,10 @@
-package com.ewise.moneyapp;
+package com.ewise.moneyapp.Fragments;
 
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -25,13 +23,13 @@ import com.ewise.android.pdv.api.model.PromptEntry;
 import com.ewise.android.pdv.api.model.UserProviderEntry;
 import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
+import com.ewise.moneyapp.MoneyAppApp;
+import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.data.PdvAccountResponse;
-import com.google.android.gms.ads.MobileAds;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by SilmiNawaz on 1/4/17.
@@ -58,7 +56,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
      * Create a new instance of MyDialogFragment, providing "num"
      * as an argument.
      */
-    static EditProviderDialogFragment newInstance(UserProviderEntry providerEntry) {
+    public static EditProviderDialogFragment newInstance(UserProviderEntry providerEntry) {
         EditProviderDialogFragment f = new EditProviderDialogFragment();
 
         // Supply num input as an argument.

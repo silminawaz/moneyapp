@@ -4,17 +4,15 @@ package com.ewise.moneyapp.adapters;
  * Created by SilmiNawaz on 15/4/17.
  */
 
-import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.ewise.moneyapp.AccountsFragment_;
-import com.ewise.moneyapp.BudgetsFragment;
-import com.ewise.moneyapp.NetworthFragment;
+import com.ewise.moneyapp.Fragments.BudgetsFragment;
+import com.ewise.moneyapp.Fragments.NetworthFragment;
 import com.ewise.moneyapp.PlaceholderFragment;
-import com.ewise.moneyapp.ProvidersFragment;
-import com.ewise.moneyapp.R;
+import com.ewise.moneyapp.Fragments.ProvidersFragment;
 
 import java.util.List;
 

@@ -40,6 +40,14 @@
     <color name="coloreWiseButtonPressedEnabled">#00c389</color>
     <color name="coloreWiseButtonFocusedEnabled">#009999</color>
 
+
+    <color name="coloreWiseMenuIconEnabled">#e3e3e3</color>
+    <color name="coloreWiseMenuIconDisabled">#e3e3e3</color>
+    <color name="coloreWiseMenuIconPressedEnabled">#00c389</color>
+    <color name="coloreWiseMenuIconFocusedEnabled">#e3e3e3</color>
+    <color name="coloreWiseMenuIconActivated">#e3e3e3</color>
+
+
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorTabBar">#9cca6c</color>
     <color name="colorCardToolbar">#e3e3e3</color>

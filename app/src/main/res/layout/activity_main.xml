@@ -29,7 +29,8 @@
             android:layout_height="wrap_content"
             android:background="@color/coloreWisePrimary"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:theme="@style/eWiseActionBarTheme"
+            app:popupTheme="@style/eWiseActionBarTheme"
             app:titleTextAppearance="@style/Toolbar.TitleText">
 
             <RelativeLayout

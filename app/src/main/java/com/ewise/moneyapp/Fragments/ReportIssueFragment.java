@@ -1,4 +1,4 @@
-package com.ewise.moneyapp;
+package com.ewise.moneyapp.Fragments;
 
 /**
  * Created by SilmiNawaz on 20/8/16.
@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.ewise.moneyapp.R;
 
 /**
  * A placeholder fragment containing a simple view.

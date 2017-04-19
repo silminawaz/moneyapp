@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">eWise</string>
     <string name="action_settings">Settings</string>
+    <string name="action_group_category">By category</string>
+    <string name="action_group_provider">By provider</string>
     <string name="section_name_accounts">Accounts</string>
     <string name="section_name_spending">Spending</string>
     <string name="section_name_goals">Goals</string>
@@ -39,6 +41,7 @@
     <string name="welcome_message_accounts_title">Manage your accounts</string>
     <string name="welcome_message_budgets_title">Manage your spending</string>
     <string name="welcome_message_bills_title">Manage your bills</string>
+    <string name="welcome_message_transfer_title">Transfer funds</string>
 
     <string name="welcome_message_providers_message">Add your account providers like banks, share brokers and other financial institutions where you have your credit cards, savings, deposits, loans, investments etc.</string>
     <string name="welcome_message_networth_message">Add your providers to view your financial net worth and breakdown across various categories</string>
@@ -48,6 +51,7 @@
         "and get notified on significant events"
     </string>
     <string name="welcome_message_bills_message">Better manage your bills by adding your utility, telecoms and other online billers and view your monthly outstanding balances and payments</string>
+    <string name="welcome_message_transfer_message">Transfer funds between your accounts with ease by using the eWise Money transfer funds feature.  This feature is available for selected institutions and allows you to transfer funds to your own accounts or predefined beneficiaries at those institutions</string>
 
     <string name="premium_feature_title">PREMIUM</string>
     <string name="premium_feature_annual_rate_message">ANNUAL 99.90 USD</string>
@@ -70,6 +74,7 @@
     <string name="provider_menu_delete_title">Delete provider</string>
     <string name="provider_menu_stop_title">Stop sync</string>
     <string name="provider_menu_setverify_title">Submit OTP</string>
+
 
 
     <!-- Account page -->

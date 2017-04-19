@@ -1,4 +1,4 @@
-package com.ewise.moneyapp;
+package com.ewise.moneyapp.Fragments;
 
 /**
  * Created by SilmiNawaz on 20/8/16.
@@ -11,14 +11,16 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.ewise.moneyapp.Utils.PdvApiResults;
-import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
+import com.ewise.moneyapp.MainActivity;
+import com.ewise.moneyapp.MoneyAppApp;
+import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.charts.NetworthAssetLiabilityPieChart;
 import com.ewise.moneyapp.charts.NetworthHBarChart;
 import com.ewise.moneyapp.data.AccountCardDataObject;
@@ -30,9 +32,7 @@ import com.github.mikephil.charting.charts.PieChart;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -123,12 +123,28 @@ public class NetworthFragment extends Fragment implements MainActivity.FragmentU
         netWorthLiabilitiesHeaderAmount = (TextView) rootView.findViewById(R.id.netWorthLiabilitiesHeaderAmount);
         netWorthLiabilitiesHeaderCurrency = (TextView) rootView.findViewById(R.id.netWorthLiabilitiesHeaderCurrency) ;
 
+        rootView.findViewById(R.id.networthScrollView).setPadding(0,0,0,getActivity().findViewById(R.id.tabs).getHeight());
+
+
         return rootView;
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+
+
+        //fragment specific menu creation
+    }
+
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        getActivity().findViewById(R.id.networthScrollView).setPadding(0,0,0,getActivity().findViewById(R.id.tabs).getHeight());
 
         MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
 

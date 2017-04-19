@@ -49,5 +49,5 @@
     <dimen name="ewise_networth_hbarchart_height">100dp</dimen>
     <dimen name="ewise_nav_header_height">180dp</dimen>
     <dimen name="design_navigation_icon_size" tools:override="true">36dp</dimen>
-
+    <dimen name="ewise_default_fragment_bottom_padding">60dp</dimen>
 </resources>

@@ -1,28 +1,26 @@
-package com.ewise.moneyapp;
+package com.ewise.moneyapp.Fragments;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
 import android.util.Log;
-import android.view.ContextMenu;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -32,17 +30,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.UserProviderEntry;
 import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.android.pdv.api.model.response.TransactionsResponse;
-import com.ewise.moneyapp.Utils.PdvApiName;
+import com.ewise.moneyapp.MainActivity;
+import com.ewise.moneyapp.MoneyAppApp;
+import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.Utils.PdvApiResults;
-import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.adapters.ProviderItemViewAdapter;
 import com.ewise.moneyapp.data.ProviderPopupMenuItemData;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
-import com.google.android.gms.vision.text.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,13 +56,147 @@ import java.util.List;
     private static final String TAG = "ProvidersFragment";
     private static final String ARG_SECTION_NUMBER = "section_number";
 
+    private static final int CONTEXT_MENU_POSITION_SYNC = 0;
+    private static final int CONTEXT_MENU_POSITION_STOPSYNC = 1;
+    private static final int CONTEXT_MENU_POSITION_VERIFY = 2;
+    private static final int CONTEXT_MENU_POSITION_EDIT = 3;
+    private static final int CONTEXT_MENU_POSITION_DELETE = 4;
+
+
     ListView providerList;
     LinearLayout welcomeLayout;
     Button addProviderButton;
 
     private ProviderItemViewAdapter providerAdapter;
 
+   // private List<Integer> selectedItemsList=null;
+    android.view.ActionMode mActionMode=null;
 
+
+    private AbsListView.MultiChoiceModeListener mMultiChoiceModeListener = new AbsListView.MultiChoiceModeListener() {
+        @Override
+        public void onItemCheckedStateChanged(android.view.ActionMode actionMode, int i, long l, boolean b) {
+            // Capture total checked items
+            Log.d(TAG, "onItemCheckedStateChanged() - position="+Integer.toString(i));
+
+            final int checkedCount = providerList.getCheckedItemCount();
+            // Set the CAB title according to total checked items
+            actionMode.setTitle(Integer.toString(checkedCount));
+            // Calls toggleSelection method from ListViewAdapter Class
+            providerAdapter.toggleSelection(i);
+            onSelectionChanged(actionMode, i);
+            //mActionMode=actionMode;
+        }
+
+        @Override
+        public boolean onCreateActionMode(android.view.ActionMode actionMode, Menu menu) {
+            actionMode.getMenuInflater().inflate(R.menu.menu_provider_context, menu);
+            Log.d(TAG, "onCreateActionMode() - START");
+            onSelectionChanged(actionMode, 0);
+            mActionMode=actionMode;
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(android.view.ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(android.view.ActionMode actionMode, MenuItem menuItem) {
+            if (!isAdded())return false;
+            MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+            SparseBooleanArray selectedIds = providerAdapter.getSelectedIds();
+
+            switch (menuItem.getItemId()) {
+                case R.id.menu_context_sync:
+                    //todo: call activity sync all selected items
+                    Toast.makeText(getActivity(), "Sync", Toast.LENGTH_SHORT).show();
+                    actionMode.finish(); // Action picked, so close the CAB
+                    if (isAdded()) {
+                        for (int i=0; i<selectedIds.size(); i++) {
+                            UserProviderEntry provider = (UserProviderEntry) providerAdapter.getItem(selectedIds.keyAt(i));
+                            app.syncExistingProvider(provider.getIid());
+                        }
+                        providerAdapter.updateSyncStatus();
+                    }
+                    return true;
+                case R.id.menu_context_stopsync:
+                    //todo: call activity stop sync of all selected items
+                    Toast.makeText(getActivity(), "Stop sync", Toast.LENGTH_SHORT).show();
+                    actionMode.finish(); // Action picked, so close the CAB
+                    if (isAdded()){
+                        MainActivity activity = (MainActivity) getActivity();
+                        PdvAcaBoundService service = activity.pdvAcaBoundService;
+                        if (activity.pdvAcaServiceIsBound && service!=null){
+                            for (int i=0; i<selectedIds.size(); i++) {
+                                UserProviderEntry provider = (UserProviderEntry) providerAdapter.getItem(selectedIds.keyAt(i));
+                                app.pdvApiRequestQueue.stopSync(provider.getIid(), app.pdvApi, service, getContext());
+                            }
+                            providerAdapter.updateSyncStatus();
+                        }
+                    }
+                    return true;
+
+                case R.id.menu_context_submit_otp:
+                    //todo: submit otp for selected item
+                    Toast.makeText(getActivity(), "Submit OTP", Toast.LENGTH_SHORT).show();
+
+                    actionMode.finish(); // Action picked, so close the CAB
+                    if (isAdded()) {
+                        for (int i=0; i<selectedIds.size(); i++) {
+                            UserProviderEntry provider = (UserProviderEntry) providerAdapter.getItem(selectedIds.keyAt(i));
+                            ((MainActivity) getActivity()).showOTPDialog(provider);
+                        }
+                        providerAdapter.updateSyncStatus();
+                    }
+
+                    return true;
+
+                case R.id.menu_context_edit:
+                    //todo: launch edit dialog for selected item (will be only 1)
+                    Toast.makeText(getActivity(), "Edit", Toast.LENGTH_SHORT).show();
+
+                    actionMode.finish();
+                    if (isAdded()) {
+                        for (int i=0; i<selectedIds.size(); i++) {
+                            UserProviderEntry provider = (UserProviderEntry) providerAdapter.getItem(selectedIds.keyAt(i));
+                            ((MainActivity)getActivity()).showEditProviderDialog(provider);
+                        }
+                        providerAdapter.updateSyncStatus();
+                    }
+                    return true;
+
+                case R.id.menu_context_delete:
+                    //todo: launch delete dialog for selecte item (will be only 1)
+                    Toast.makeText(getActivity(), "Delete", Toast.LENGTH_SHORT).show();
+
+                    actionMode.finish();
+                    if (isAdded()) {
+                        for (int i=0; i<selectedIds.size(); i++) {
+                            UserProviderEntry provider = (UserProviderEntry) providerAdapter.getItem(selectedIds.keyAt(i));
+                            showRemoveProviderDialog(provider);
+                        }
+                        providerAdapter.updateSyncStatus();
+                    }
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(android.view.ActionMode actionMode) {
+            Log.d(TAG, "onCreateActionMode() - START");
+
+            providerAdapter.removeSelection();
+            mActionMode=null;
+
+        }
+    };
+
+    
 
     public ProvidersFragment() {
     }
@@ -87,10 +218,14 @@ import java.util.List;
                              Bundle savedInstanceState) {
 
         Log.d(TAG, "onCreateView() - START");
+        //selectedItemsList=new ArrayList<>();
         View rootView = inflater.inflate(R.layout.fragment_providers, container, false);
         providerList = (ListView) rootView.findViewById(R.id.providerList);
         welcomeLayout = (LinearLayout) rootView.findViewById(R.id.providerWelcomeLayout);
         addProviderButton = (Button) rootView.findViewById(R.id.addProviderButton);
+
+        rootView.findViewById(R.id.providerFragmentTopLayout).setPadding(0,0,0,getActivity().findViewById(R.id.tabs).getHeight());
+
 
         //if there are any legitimate providers , we can hide the welcome layout.
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
@@ -119,6 +254,164 @@ import java.util.List;
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        getActivity().findViewById(R.id.providerFragmentTopLayout).setPadding(0, 0, 0, getActivity().findViewById(R.id.tabs).getHeight());
+
+        MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
+        List<UserProviderEntry> providers = null;
+        if (app.userProfileData.getUserprofile()!=null){
+            providers = new ArrayList<>(app.userProfileData.getUserprofile());
+        }
+        else
+        {
+            providers = new ArrayList<>();
+        }
+        providerAdapter = new ProviderItemViewAdapter(getActivity(), providers);
+        providerList.setAdapter(providerAdapter);
+        providerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+
+        providerList.setMultiChoiceModeListener(mMultiChoiceModeListener);
+
+
+    }
+
+    //NOTE: setUserVisibleHint() is called when the fragment is no longer visible or becomes visible
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        // Make sure that we are currently visible
+        if (this.isVisible()) {
+            // If we are becoming invisible, then...
+            if (!isVisibleToUser) {
+                Log.d("MyFragment", "Not visible anymore.  clearing menu.");
+                if (mActionMode!=null) {
+                    mActionMode.getMenu().clear();
+                    mActionMode.finish();
+                    if (providerAdapter!=null) providerAdapter.removeSelection();
+                }
+                // TODO stop audio playback
+            }
+        }
+    }
+
+
+    public boolean onSelectionChanged(android.view.ActionMode actionMode, int position)
+    {
+        /*
+        NOTE: the sync status are:
+        1. ready to sync
+        2. sync in progress
+        3. Sync in progress (OTP required)
+         */
+
+
+        boolean showSync=true;
+        boolean showStopSync=true;
+        boolean showEdit=true;
+        boolean showVerify=true;
+        boolean showDelete=true;
+
+        MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
+
+        Menu menu = actionMode.getMenu();
+
+        SparseBooleanArray selectedIds = providerAdapter.getSelectedIds();
+
+        if (selectedIds.size()==1){
+            Log.d(TAG, "onSelectionChanged() - selectedIds.size()==1");
+
+            if (!((UserProviderEntry)providerAdapter.getItem(selectedIds.keyAt(0))).isFoundInDevice())
+            {
+                //dont show sync if the provier is not in device - its being added , so its the first time the provider is being added
+                showSync = false;
+
+                //if ready to sync - show edit, delete
+
+                if (!app.getInstituionIdSyncStatus(((UserProviderEntry)providerAdapter.getItem(selectedIds.keyAt(0))).getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_ready))){
+                    if (!app.getInstituionIdSyncStatus(((UserProviderEntry)providerAdapter.getItem(selectedIds.keyAt(0))).getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_in_progress_setverify)))
+                    {
+                        //no otp pending - dont show otp
+                        showVerify=false;
+                    }
+                    else{
+                        //sync in progress - so no edit, delete
+                        showEdit=false;
+                        showDelete=false;
+                    }
+                }
+                else{
+                    //ready to sync
+                    showVerify=false;
+                    showStopSync=false;
+                }
+                //if OTP required - show OTP
+                //if
+            }
+            else{ //found in device
+                if (!app.getInstituionIdSyncStatus(((UserProviderEntry)providerAdapter.getItem(selectedIds.keyAt(0))).getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_ready)))
+                {
+                    //sync in progress - dont show sync,edit or delete
+                    showSync=false;
+                    showEdit=false;
+                    showDelete=false;
+                    if (!app.getInstituionIdSyncStatus(((UserProviderEntry)providerAdapter.getItem(selectedIds.keyAt(0))).getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_in_progress_setverify)))
+                    {
+                        //no otp pending - dont show otp
+                        showVerify=false;
+                    }
+                }
+                else
+                {
+                    //ready
+                    showStopSync=false;
+                    showVerify=false;
+                }
+            }
+        }
+        else if (selectedIds.size()>1) {
+            //we will not show edit, delete and OTP
+            showVerify=false;
+            showEdit=false;
+            showDelete=false;
+
+            //we will only show "sync" and "stop sync"
+
+            for (int i = 0; i < selectedIds.size(); i++) {
+
+                UserProviderEntry provider = (UserProviderEntry) providerAdapter.getItem(selectedIds.keyAt(i));
+                if (!provider.isFoundInDevice()){
+                    //we dont show sync if any of the items are not found in device
+                    showSync=false;
+                }
+                else {
+                    //we also dont show sync if any of the items are already syncing
+                    if (!app.getInstituionIdSyncStatus(provider.getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_ready)))
+                    {
+                        showSync=false;
+                    }
+                    //we dont show stop sync if any of the item is in ready state
+                    else
+                    {
+                        showStopSync=false;
+                    }
+                }
+
+            }
+        }
+
+        menu.getItem(CONTEXT_MENU_POSITION_SYNC).setVisible(showSync);
+        menu.getItem(CONTEXT_MENU_POSITION_STOPSYNC).setVisible(showStopSync);
+        menu.getItem(CONTEXT_MENU_POSITION_VERIFY).setVisible(showVerify);
+        menu.getItem(CONTEXT_MENU_POSITION_EDIT).setVisible(showEdit);
+        menu.getItem(CONTEXT_MENU_POSITION_DELETE).setVisible(showDelete);
+
+        return true;
+    }
+
+    public void onSelectAction()
+    {
 
         final ProviderPopupMenuItemData[] popupMenuItems = {
                 new ProviderPopupMenuItemData(R.drawable.ic_sync, getString(R.string.provider_menu_refresh_title)),
@@ -223,80 +516,65 @@ import java.util.List;
 
 
 
-        providerList.setClickable(true);
-
         providerList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Toast.makeText(getActivity(), "clicked="+Integer.toString(view.getId()), Toast.LENGTH_SHORT).show();
+
                 final UserProviderEntry provider = (UserProviderEntry) providerAdapter.getItem(i);
-                if (provider.isFoundInDevice() &&
-                        ((MoneyAppApp)getActivity().getApplication()).getInstituionIdSyncStatus(provider.getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_ready))) {
+                    if (provider.isFoundInDevice() &&
+                            ((MoneyAppApp) getActivity().getApplication()).getInstituionIdSyncStatus(provider.getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_ready))) {
 
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(provider.getDesc() + " (" + provider.getUid() + ")")
-                            .setAdapter(popupMenuAdapter, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int item) {
-                                    //...
-                                    Toast.makeText(getActivity(), "You Clicked : " + popupMenuItems[item].text, Toast.LENGTH_SHORT).show();
-                                    PopupMenuClicked (provider, popupMenuItems, item);
-                                }
-                            }).show();
-                }
-                else if (!((MoneyAppApp)getActivity().getApplication()).getInstituionIdSyncStatus(provider.getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_ready))) {
-
-                    if (((MoneyAppApp)getActivity().getApplication()).getInstituionIdSyncStatus(provider.getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_in_progress_setverify))){
                         new AlertDialog.Builder(getActivity())
                                 .setTitle(provider.getDesc() + " (" + provider.getUid() + ")")
-                                .setAdapter(popupMenuAdapterStopSyncSetVerify, new DialogInterface.OnClickListener() {
+                                .setAdapter(popupMenuAdapter, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int item) {
                                         //...
-                                        Toast.makeText(getActivity(), "You Clicked : " + popupMenuItemsStopSyncSetVerify[item].text, Toast.LENGTH_SHORT).show();
-                                        PopupMenuClicked (provider, popupMenuItemsStopSyncSetVerify, item);
+                                        Toast.makeText(getActivity(), "You Clicked : " + popupMenuItems[item].text, Toast.LENGTH_SHORT).show();
+                                        PopupMenuClicked(provider, popupMenuItems, item);
+                                    }
+                                }).show();
+                    } else if (!((MoneyAppApp) getActivity().getApplication()).getInstituionIdSyncStatus(provider.getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_ready))) {
+
+                        if (((MoneyAppApp) getActivity().getApplication()).getInstituionIdSyncStatus(provider.getIid()).equals(getResources().getString(R.string.pdvapi_sync_status_message_in_progress_setverify))) {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle(provider.getDesc() + " (" + provider.getUid() + ")")
+                                    .setAdapter(popupMenuAdapterStopSyncSetVerify, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int item) {
+                                            //...
+                                            Toast.makeText(getActivity(), "You Clicked : " + popupMenuItemsStopSyncSetVerify[item].text, Toast.LENGTH_SHORT).show();
+                                            PopupMenuClicked(provider, popupMenuItemsStopSyncSetVerify, item);
+                                        }
+                                    }).show();
+                        } else {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle(provider.getDesc() + " (" + provider.getUid() + ")")
+                                    .setAdapter(popupMenuAdapterStopSync, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int item) {
+                                            //...
+                                            Toast.makeText(getActivity(), "You Clicked : " + popupMenuItemsStopSync[item].text, Toast.LENGTH_SHORT).show();
+                                            PopupMenuClicked(provider, popupMenuItemsStopSync, item);
+                                        }
+                                    }).show();
+                        }
+
+                    } else {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(provider.getDesc() + " (" + provider.getUid() + ")")
+                                .setAdapter(popupMenuAdapterNoSync, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int item) {
+                                        //...
+                                        Toast.makeText(getActivity(), "You Clicked : " + popupMenuItemsNoSync[item].text, Toast.LENGTH_SHORT).show();
+                                        PopupMenuClicked(provider, popupMenuItemsNoSync, item);
                                     }
                                 }).show();
                     }
-                    else
-                    {
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle(provider.getDesc() + " (" + provider.getUid() + ")")
-                                .setAdapter(popupMenuAdapterStopSync, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int item) {
-                                        //...
-                                        Toast.makeText(getActivity(), "You Clicked : " + popupMenuItemsStopSync[item].text, Toast.LENGTH_SHORT).show();
-                                        PopupMenuClicked (provider, popupMenuItemsStopSync, item);
-                                    }
-                                }).show();
-                    }
-
                 }
-                else
-                {
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(provider.getDesc() + " (" + provider.getUid() + ")")
-                            .setAdapter(popupMenuAdapterNoSync, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int item) {
-                                    //...
-                                    Toast.makeText(getActivity(), "You Clicked : " + popupMenuItemsNoSync[item].text, Toast.LENGTH_SHORT).show();
-                                    PopupMenuClicked (provider, popupMenuItemsNoSync, item);
-                                }
-                            }).show();
-                }
-            }
 
         });
 
-        MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
-        List<UserProviderEntry> providers = null;
-        if (app.userProfileData.getUserprofile()!=null){
-            providers = new ArrayList<>(app.userProfileData.getUserprofile());
-        }
-        else
-        {
-            providers = new ArrayList<>();
-        }
-        providerAdapter = new ProviderItemViewAdapter(getContext(), providers);
-        providerList.setAdapter(providerAdapter);
-        welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+
 
         addProviderButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -317,8 +595,22 @@ import java.util.List;
             }
         });
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        Log.d(TAG, "onPause() - START");
+
+        super.onCreateOptionsMenu(menu, inflater);
+
+        if (mActionMode!=null){
+            mActionMode.getMenu().clear();
+        }
+        menu.clear();
 
 
+        //fragment specific menu creation
     }
 
     @Override
@@ -330,6 +622,13 @@ import java.util.List;
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(pdvApiOnStopMessageReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(pdvApiOnGetUserProfileSuccessMessageReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(pdvApiOnAddingNewProvider);
+
+        //clear any selected items
+        //providerAdapter.removeSelection();
+        if (mActionMode!=null){
+            mActionMode.finish();
+        }
+
         Log.d(TAG, "onPause() - END");
 
     }

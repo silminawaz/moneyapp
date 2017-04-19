@@ -5,9 +5,16 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <!--<item name="windowActionBar">false</item>-->
+        <item name="windowActionModeOverlay">true</item>
         <item name="colorPrimary">@color/coloreWisePrimary</item>
         <item name="colorPrimaryDark">@color/coloreWisePrimaryDark</item>
         <item name="colorAccent">@color/coloreWiseAccent</item>
+        <item name="actionModeStyle">@style/AppTheme.ActionMode</item>
+
+    </style>
+
+    <style name="AppTheme.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/coloreWisePrimary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -39,4 +46,22 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="eWiseEncryptedPinTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/coloreWisePrimary</item>
+        <item name="colorPrimaryDark">@color/coloreWisePrimaryDark</item>
+        <item name="colorAccent">@color/coloreWiseAccent</item>
+        <item name="android:textColor">@color/coloreWiseMainTextWhite</item>
+    </style>
+
+
+    <style name="eWiseActionBarTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="android:actionButtonStyle">@style/eWiseActionButtonStyle</item>
+        <item name="actionButtonStyle">@style/eWiseActionButtonStyle</item>
+    </style>
+    <style name="eWiseActionButtonStyle" parent="Widget.AppCompat.ActionButton">
+        <item name="android:minWidth">24dp</item>
+        <item name="android:maxWidth">48dp</item>
+        <item name="android:width">48dp</item>
+    </style>
 </resources>

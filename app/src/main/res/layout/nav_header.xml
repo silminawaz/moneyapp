@@ -34,7 +34,7 @@
             android:src="@drawable/menu_settings_icon"
             android:layout_gravity="end"
             style="@style/Base.Widget.AppCompat.Button.Borderless"
-            android:background="@color/coloreWisePrimary"
+            android:background="@drawable/ewise_menu_icon_background"
             android:layout_alignTop="@+id/navHeaderProfileIcon"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="false"

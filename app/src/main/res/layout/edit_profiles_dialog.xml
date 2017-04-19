@@ -94,7 +94,6 @@
                     android:textColor="@color/coloreWiseSecondaryTextBlack"
                     android:textColorLink="@color/coloreWisePrimary"
                     android:textStyle="normal|bold|italic"
-                    android:drawableStart="@drawable/menu_help_icon"
                     android:drawableTint="@color/coloreWisePrimary"/>
 
 
@@ -133,36 +132,84 @@
                     <ImageView
                         android:layout_width="@dimen/ewise_touch_icon_size"
                         android:layout_height="@dimen/ewise_touch_icon_size"
-                        android:src="@drawable/rbanks"
+                        android:src="@drawable/ewise_profile_icon_man"
                         android:id="@+id/imageButton1"
                         android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
 
                     <ImageView
                         android:layout_width="@dimen/ewise_touch_icon_size"
                         android:layout_height="@dimen/ewise_touch_icon_size"
-                        android:src="@drawable/rshares"
+                        android:src="@drawable/ewise_profile_icon_woman"
                         android:id="@+id/imageButton2"
                         android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
 
                     <ImageView
                         android:layout_width="@dimen/ewise_touch_icon_size"
                         android:layout_height="@dimen/ewise_touch_icon_size"
-                        android:src="@drawable/rrewards"
+                        android:src="@drawable/ewise_profile_icon_family"
                         android:id="@+id/imageButton3"
                         android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
 
                     <ImageView
                         android:layout_width="@dimen/ewise_touch_icon_size"
                         android:layout_height="@dimen/ewise_touch_icon_size"
-                        android:src="@drawable/rairline"
+                        android:src="@drawable/ewise_profile_icon_business"
                         android:id="@+id/imageButton4"
                         android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
 
                         <ImageView
                             android:layout_width="@dimen/ewise_touch_icon_size"
                             android:layout_height="@dimen/ewise_touch_icon_size"
-                            android:src="@drawable/rutilities"
-                            android:id="@+id/imageButton5"
+                            android:src="@drawable/ewise_profile_icon_excercise"
+                            android:id="@+id/imageButton6"
+                            android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/ewise_touch_icon_size"
+                            android:layout_height="@dimen/ewise_touch_icon_size"
+                            android:src="@drawable/ewise_profile_icon_education"
+                            android:id="@+id/imageButton7"
+                            android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/ewise_touch_icon_size"
+                            android:layout_height="@dimen/ewise_touch_icon_size"
+                            android:src="@drawable/ewise_profile_icon_car_road"
+                            android:id="@+id/imageButton8"
+                            android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/ewise_touch_icon_size"
+                            android:layout_height="@dimen/ewise_touch_icon_size"
+                            android:src="@drawable/ewise_profile_icon_travel"
+                            android:id="@+id/imageButton9"
+                            android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/ewise_touch_icon_size"
+                            android:layout_height="@dimen/ewise_touch_icon_size"
+                            android:src="@drawable/ewise_profile_icon_home_1"
+                            android:id="@+id/imageButton10"
+                            android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+                        <ImageView
+                            android:layout_width="@dimen/ewise_touch_icon_size"
+                            android:layout_height="@dimen/ewise_touch_icon_size"
+                            android:src="@drawable/ewise_profile_icon_home"
+                            android:id="@+id/imageButton11"
+                            android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/ewise_touch_icon_size"
+                            android:layout_height="@dimen/ewise_touch_icon_size"
+                            android:src="@drawable/ewise_profile_icon_photos"
+                            android:id="@+id/imageButtonPhotos"
+                            android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/ewise_touch_icon_size"
+                            android:layout_height="@dimen/ewise_touch_icon_size"
+                            android:src="@drawable/ewise_profile_icon_camera"
+                            android:id="@+id/imageButtonCamera"
                             android:layout_marginEnd="@dimen/ewise_horizontal_margin"/>
 
                     </LinearLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/menu_context_sync"
+        android:title="@string/provider_menu_refresh_title"
+        android:icon="@drawable/ewise_sync_icon_white"
+        android:layout_height="8dp"
+        android:layout_width="8dp"
+        android:width="5dp"
+        android:height="5dp"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/menu_context_stopsync"
+        android:title="@string/provider_menu_stop_title"
+        android:icon="@drawable/ewise_stopsync_icon_white"
+        android:width="16dp"
+        android:height="16dp"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+
+    <item
+        android:id="@+id/menu_context_submit_otp"
+        android:title="@string/provider_menu_setverify_title"
+        android:width="16dp"
+        android:height="16dp"
+        android:icon="@drawable/ewise_submit_otp_icon_white"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/menu_context_edit"
+        android:title="@string/provider_menu_edit_title"
+        android:icon="@drawable/ewise_edit_icon_white"
+        android:width="16dp"
+        android:height="16dp"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+
+    <item
+        android:id="@+id/menu_context_delete"
+        android:title="@string/provider_menu_delete_title"
+        android:icon="@drawable/ewise_delete_icon_white"
+        android:width="16dp"
+        android:height="16dp"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+</menu>

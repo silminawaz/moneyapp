@@ -1,15 +1,17 @@
-package com.ewise.moneyapp;
+package com.ewise.moneyapp.Fragments;
 
 /**
  * Created by SilmiNawaz on 20/8/16.
  */
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.ewise.moneyapp.R;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -43,6 +45,18 @@ public class TransferFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_transfer, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(TAG + " : " + getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+        rootView.findViewById(R.id.transferFragmentTopLayout).setPadding(0,0,0,getActivity().findViewById(R.id.tabs).getHeight());
+
         return rootView;
     }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        getActivity().findViewById(R.id.transferFragmentTopLayout).setPadding(0,0,0,getActivity().findViewById(R.id.tabs).getHeight());
+
+    }
+
 }

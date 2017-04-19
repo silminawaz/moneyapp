@@ -105,7 +105,7 @@ import static java.util.Arrays.asList;
  */
 public class MoneyAppApp extends Application {
     private static final String TAG = MoneyAppApp.class.getName();
-    public static final String DEFAULT_USERNAME = "silmiandroid5demo4";
+    public static final String DEFAULT_USERNAME = "silmiandroid5demo5";
     public static final String DEFAULT_MM_HOST = "https://qa-50-wmm.ewise.com/api/";
     public static final String DEFAULT_SWAN_HOST = "https://qaswan.ewise.com/";
     public static final String EWISEDEMO = "com.ewise.android.pdv.EwiseSharedPref";
@@ -300,7 +300,7 @@ public class MoneyAppApp extends Application {
                 Log.d("MoneyAppApp", "onActivityResumed() - Activity = " + activity.getClass().getName());
                 if (activity.getClass().getName().equals(MainActivity.class.toString())){
                     MainActivity mainActivity = (MainActivity) activity;
-                    mainActivity.homeWatcher.startWatch();
+                    //mainActivity.homeWatcher.startWatch();
                     if (mainActivity.logOutDialog !=null){
                         if (mainActivity.logOutDialog.isShowing()){
                             mainActivity.logOutDialog.hide();
@@ -317,7 +317,7 @@ public class MoneyAppApp extends Application {
                 if (activity.getClass().getName().equals(MainActivity.class.toString())){
                     MainActivity mainActivity = (MainActivity) activity;
                     if (mainActivity.isFinishing()) {
-                        mainActivity.homeWatcher.stopWatch();
+                        //mainActivity.homeWatcher.stopWatch();
                         if (mainActivity.logOutDialog != null) {
                             if (mainActivity.logOutDialog.isShowing()) {
                                 mainActivity.logOutDialog.hide();

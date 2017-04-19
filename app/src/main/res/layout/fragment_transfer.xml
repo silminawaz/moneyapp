@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/transferFragmentTopLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -62,7 +63,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/welcome_message_budgets_title"
+            android:text="@string/welcome_message_transfer_title"
             android:textColor="@color/coloreWiseMainTextBlack"
             android:textSize="@dimen/ewise_welcome_title_size"
             android:textStyle="bold" />
@@ -70,7 +71,7 @@
         <ImageView
             android:layout_width="@dimen/ewise_welcome_screen_image_size"
             android:layout_height="@dimen/ewise_welcome_screen_image_size"
-            android:src="@drawable/welcome_image_budgets"
+            android:src="@drawable/menu_transfer_icon_green"
             android:paddingTop="@dimen/ewise_welcome_title_size"/>
 
         <TextView
@@ -79,7 +80,7 @@
             android:layout_marginTop="20dp"
             android:paddingLeft="@dimen/ewise_horizontal_margin_large"
             android:paddingRight="@dimen/ewise_horizontal_margin_large"
-            android:text="@string/welcome_message_budgets_message"
+            android:text="@string/welcome_message_transfer_message"
             android:textAlignment="center"
             android:textColor="@color/coloreWiseMainTextBlack"
             android:textSize="@dimen/ewise_welcome_desc_size" />
@@ -119,7 +120,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
 
 </LinearLayout>
