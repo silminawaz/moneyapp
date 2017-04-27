@@ -3,6 +3,7 @@ package com.ewise.moneyapp.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.ewise.moneyapp.MoneyAppApp;
@@ -34,6 +35,8 @@ public class Settings {
     private EncryptedPin encryptedPin;
     private HashMap<String, EncryptedPin> encryptedPinMap;
     private SignOnUsers signOnUsers=null;
+    private SignonUser activeUser=null;
+    private SignonProfile activeProfile=null;
     //private Context context;
 
     private static Settings settings = null;
@@ -99,11 +102,13 @@ public class Settings {
         try {
             outputStream = context.openFileOutput(FILE_SIGNON_USERS, Context.MODE_PRIVATE);//overwrite the file
             if (signOnUsers!=null){
+                Log.d(TAG, "saveSignOnUsers() - **SAVING FILE_SIGNON_USERS**");
                 String signOnUserString = PdvApiResults.toJsonString(signOnUsers);
                 outputStream.write(signOnUserString.getBytes());
                 outputStream.close();
                 return  true;
             }
+            Log.d(TAG, "saveSignOnUsers() - **NOT SAVING signOnUsers==null**");
             return false;
         }
         catch (IOException ioe){
@@ -148,18 +153,98 @@ public class Settings {
 
         if (signOnUsers==null) return null;
 
-        MoneyAppApp app = (MoneyAppApp) activity.getApplication();
-        String signonUserId=app.signonUserId;
-        SignOnSystem signOnSystem=app.signOnSystem;
+        if (activeUser==null) {
 
-        for (SignonUser user: signOnUsers.users){
-            if (user.system.equals(signOnSystem) && user.id.equals(signonUserId)){
-                return user;
+            MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+            String signonUserId = app.signonUserId;
+            SignOnSystem signOnSystem = app.signOnSystem;
+
+            for (SignonUser user : signOnUsers.users) {
+                if (user.system.equals(signOnSystem) && user.id.equals(signonUserId)) {
+                    activeUser=user;
+                    break;
+                }
             }
         }
 
-        return null;
+        return activeUser;
 
+    }
+
+    public void setActiveUser(String signOnSystemId, String signonUserId){
+        for (SignonUser user : signOnUsers.users) {
+            if (user.system.toString().equals(signOnSystemId) && user.id.equals(signonUserId)) {
+                activeUser=user;
+                break;
+            }
+        }
+    }
+
+
+
+    public boolean setActiveProfile(String profileName, Activity activity){
+        SignonUser user=getActiveUser(activity);
+        if (user!=null) {
+            for (SignonProfile profile : user.profiles) {
+                if (profile.name.trim().toLowerCase().equals(profileName.trim().toLowerCase())) {
+                    activeProfile = profile;
+                    break;
+                }
+            }
+            if (activeProfile != null) {
+                if (activeProfile.name.trim().toLowerCase().equals(profileName.trim().toLowerCase())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    public boolean setDefaultActiveProfile(Activity activity){
+        SignonUser user=getActiveUser(activity);
+        if (user!=null) {
+            activeProfile = user.profiles.get(0);
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public @Nullable SignonProfile getActiveProfile(Activity activity){
+        if (activeProfile==null){
+            if (!setDefaultActiveProfile(activity)){
+                return null;
+            }
+        }
+
+        return activeProfile;
+
+    }
+
+    /*
+    * This method is used to get the active users identifier. the identifier is used to call the Pdv.setUser() API and consists of
+    * Signon System name, Signon Userid and the selected Signon Profile. Must call "Settings.setActiveUser(), Settings.setActiveProfile()" before calling getActiveUserId
+    * otherwise you will get a "null" pointer in return.
+     */
+    public @Nullable String getActiveUserId (Activity activity){
+        String activeUserId=null;
+        if (activeUser!=null){
+            if (activeProfile!=null){
+                activeUserId = activeUser.system.toString() + "." + activeUser.id + "." + activeProfile.name;
+            }
+            else
+            {
+                Log.e(TAG, "getActiveUserId(): Must call Settings.setActiveProfile() before you call getActiveUserId()");
+            }
+        }
+        else
+        {
+            Log.e(TAG, "getActiveUserId(): Must call Settings.setActiveUser() followed by Settings.setActiveProfile() before you call getActiveUserId()");
+        }
+        return activeUserId;
     }
 
     //file based implementation supporting multiple users
@@ -170,7 +255,7 @@ public class Settings {
      * Get a SignonUser record of a user who has signed on to the app before
      * by passing the supported signon system (e.g. GOOGLE, FACEBOOK, EWISE etc.)
      * and the corresponding unique ID of the user in that system
-     * If a new user is logging on then call #addUpdateUser() to ake sure its created
+     * If a new user is logging on then call #loginUser() to ake sure its created
      * <p>
      *
      * @param  activity calling Activity
@@ -209,7 +294,7 @@ public class Settings {
      *
      * @return boolean true if user was added or updated
      */
-    public synchronized boolean addUpdateUser(Activity activity, SignonUser signonUser) {
+    public synchronized boolean loginUser(Activity activity, SignonUser signonUser) {
 
         try {
 
@@ -229,7 +314,7 @@ public class Settings {
             }
             else
             {
-                //user exists and has logged in before.. lets update their details
+                //user exists and has logged in before.. lets update their details first
                 //update the user
                 user.base64Image = signonUser.base64Image;
                 user.email = signonUser.email;
@@ -252,6 +337,10 @@ public class Settings {
             synchronized (this) {
                 saved = saveSignOnUsers(activity);
             }
+
+            //now that the login user is saved we can set it as active and set the default active profile
+            setActiveUser(signonUser.system.toString(), signonUser.id);
+            setDefaultActiveProfile(activity);
 
             return saved;
         }
@@ -318,6 +407,41 @@ public class Settings {
 
     }
 
+
+
+    /**
+     * Call this method to save an existing application profile to the currently active user
+     * <p>
+     * Should be called whenever the user requests to save an existing application profile
+     * An application profile allows the user to maintain mulitple partitions within the application
+     * allowing the user to create for example "Personal" , "Combined", "Family", "Child", "Business" profiles to view the
+     * data separately but within the same login without having to logout of the app and login again
+     * <p>
+     *
+     * @param  activity calling Activity
+     * @param  profile The new profile to add to the active users profiles
+     *
+     * @return boolean true if user was added or updated
+     */
+    public synchronized boolean saveExistingProfileToActiveUser(Activity activity, SignonProfile profile){
+        try{
+            boolean saved=false;
+            if (getActiveUser(activity).saveProfileData(profile)) {
+                synchronized (this) {
+                    saved = saveSignOnUsers(activity);
+                }
+            }
+            return saved;
+        }
+        catch (Exception e){
+            String sMethod = this.toString();
+            sMethod = sMethod + Thread.currentThread().getStackTrace()[2].getMethodName() + "() ";
+            generalExceptionHandler(e.getClass().getName(), e.getMessage(), sMethod, FileInputStream.class.getName(),e, activity);
+            return false;
+        }
+
+    }
+
     //callto addd profile , after adding the user
     public synchronized boolean removeProfileFromActiveUser(Activity activity, String profileName){
 
@@ -326,21 +450,25 @@ public class Settings {
             MoneyAppApp app = (MoneyAppApp) activity.getApplication();
             if (signOnUsers != null) {
                 if (signOnUsers.users != null) {
-                    Iterator<SignonUser> userIterator = signOnUsers.users.iterator();
-                    while (userIterator.hasNext()) {
-                        SignonUser user = userIterator.next();
-                        if (user.profiles != null) {
+                    //TODO: this code will remove the first users
+                    SignonUser user = getActiveUser(activity);
+                    if (user.profiles != null) {
+                        if (user.profiles.size()>1) {
                             Iterator<SignonProfile> profileIterator = user.profiles.iterator();
                             while (profileIterator.hasNext()) {
                                 SignonProfile profile = profileIterator.next();
                                 if (profile.name.equals(profileName)) {
                                     synchronized (this) {
                                         profileIterator.remove();
-                                        removed=saveSignOnUsers(activity);
+                                        removed = saveSignOnUsers(activity);
                                         return removed;
                                     }
                                 }
                             }
+                        }
+                        else
+                        {
+                            Log.d(TAG, "Cannot delete profile because only one profile exists");
                         }
                     }
                 }

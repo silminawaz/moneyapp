@@ -41,6 +41,28 @@ public class SignonUser {
         this.encryptedPIN = encryptedPIN;
     }
 
+    public boolean doesProfileExist(String profileName){
+        for (SignonProfile profile: profiles){
+            if (profile.name.toLowerCase().equals(profileName.toLowerCase())){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean saveProfileData(SignonProfile profileToSave){
+        for (SignonProfile profile: profiles){
+            if (profile.name.toLowerCase().equals(profileToSave.name.toLowerCase())){
+                profile.description=profileToSave.description;
+                profile.base64Image=profileToSave.base64Image;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
 
     private void generalExceptionHandler(String eType, String eMessage, String eMethod, String eObjectString, Exception e, Context context) {

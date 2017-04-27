@@ -99,7 +99,7 @@ public class AccountsObjectItemView extends RecyclerViewItemLayoutView<AccountsO
 
         Activity activity = (Activity) this.getContext();
         MoneyAppApp app = (MoneyAppApp) activity.getApplication();
-        if (!((MoneyAppApp) activity.getApplication()).pdvApiRequestQueue.isRequestInProgress()){
+        if (!((MoneyAppApp) activity.getApplication()).pdvApiRequestQueue.isRequestPending()){
             String accountObjJson = account.toString();
             Intent intent= new Intent(getContext(), AccountDetailsActivity_.class);
             intent.putExtra("com.wise.moneyapp.data.PdvAccountResponse.AccountsObject", accountObjJson);

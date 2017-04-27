@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ewise_profile_images">
+        <item>@drawable/ewise_profile_icon_man</item>
+        <item>@drawable/ewise_profile_icon_woman</item>
+        <item>@drawable/ewise_profile_icon_family</item>
+        <item>@drawable/ewise_profile_icon_home_1</item>
+        <item>@drawable/ewise_profile_icon_home</item>
+        <item>@drawable/ewise_profile_icon_business</item>
+        <item>@drawable/ewise_profile_icon_car_road</item>
+        <item>@drawable/ewise_profile_icon_education</item>
+        <item>@drawable/ewise_profile_icon_excercise</item>
+        <item>@drawable/ewise_profile_icon_travel</item>
+    </string-array>
+</resources>

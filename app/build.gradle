@@ -68,9 +68,36 @@ apt {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
+
+    //** Begin: eWise Android PDV dependencies **
+    compile files('libs/app.jar')
+    apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+    //SN-fix : had to change from 3.2.1 to 4:4.1 to remove build warnings/errors
+    compile([group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.4.1'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.4.1'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.4.1'])
+    testCompile 'junit:junit:4.12'
+
+    compile group: 'org.aspectj', name: 'aspectjrt', version: '1.8.9'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    compile group: 'de.mindpipe.android', name: 'android-logging-log4j', version: '1.0.3'
+    //**SN** fix : updated from 1.0.2 to 1.0.3
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    //**SN** fix : updated from 1.2.16 to 1.2.17
+
+    //ewise android pdv 0.5.0.2 xwalk webview implementation
+    compile('org.xwalk:xwalk_core_library:20.50.533.12') {
+        exclude module: 'support-v4';
+    }
+
+    //** End: eWise Android PDV dependencies **
+
+
+
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.android.support:design:24.1.1'
     compile 'com.android.support:support-v4:24.1.1'
@@ -79,44 +106,22 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
-
-    //** Begin: eWise Android PDV dependencies **
-    compile files('libs/app.jar')
     compile 'com.squareup.okhttp3:okhttp:3.0.1'
-    compile "com.squareup.okhttp3:okhttp-urlconnection:3.0.1"
-    apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow-sqlcipher:3.1.1@aar"
+    compile 'com.squareup.okhttp3:okhttp-urlconnection:3.0.1'
+    compile 'com.github.Raizlabs.DBFlow:dbflow-sqlcipher:3.1.1@aar'
     compile 'net.zetetic:android-database-sqlcipher:3.5.1'
     compile 'commons-io:commons-io:2.4'
-    compile 'org.apache.commons:commons-collections4:4.1'  //SN-fix : had to change from 3.2.1 to 4:4.1 to remove build warnings/errors
+    compile 'org.apache.commons:commons-collections4:4.1'
     compile 'com.google.android.gms:play-services:10.2.1'
     compile 'com.google.android.gms:play-services-auth:10.2.1'
     compile 'com.google.guava:guava:18.0'
     compile 'com.scottyab:aescrypt:0.0.1'
-    compile([group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.4.1'],
-            [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.4.1'],
-            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.4.1'])
-    testCompile 'junit:junit:4.12'
-
     compile 'com.mobsandgeeks:adapter-kit:0.5.3'
     compile 'com.squareup.dagger:dagger:1.2.2'
-    apt 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile group: 'org.aspectj', name: 'aspectjrt', version: '1.8.9'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-    compile group: 'de.mindpipe.android', name: 'android-logging-log4j', version: '1.0.3'  //**SN** fix : updated from 1.0.2 to 1.0.3
-    compile group: 'log4j', name: 'log4j', version: '1.2.17'  //**SN** fix : updated from 1.2.16 to 1.2.17
-
-    //ewise android pdv 0.5.0.2 xwalk webview implementation
-    compile('org.xwalk:xwalk_core_library:20.50.533.12'){
-        exclude module: 'support-v4';
-    }
-
-    //** End: eWise Android PDV dependencies **
+    testCompile 'junit:junit:4.12'
+    apt 'com.squareup.dagger:dagger-compiler:1.2.2'
 
     apply plugin: 'com.google.gms.google-services'
-
 
 }

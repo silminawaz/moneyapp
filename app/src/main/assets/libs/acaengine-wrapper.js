@@ -43,6 +43,9 @@
         getOtpKey: function() {
             return android_engine.getOtpKey();
         },
+        setOtpKey: function(otpKey) {
+            return android_engine.setOtpKey(otpKey);
+        },
         setTransferPrompts: function(transferPromptsJsonString) {
             android_engine.setTransferPrompts(transferPromptsJsonString);
         },
@@ -54,6 +57,21 @@
         },
         setLoginUrls: function(loginUrls) {
             android_engine.setLoginUrls(loginUrls);
+        },
+        setImageUrl: function(imageUrl) {
+            android_engine.setImageUrl(imageUrl);
+        },
+        setBase64Image: function(bas64Image) {
+            android_engine.setBase64Image(bas64Image);
+        },
+        setHeader: function(key, value) {
+            android_engine.setHeader(key, value);
+        },
+        getHeaders: function() {
+            return android_engine.getHeaders();
+        },
+        getPayload: function() {
+            return JSON.parse(android_engine.getPayload());
         }
     };
     var dataVault = {

@@ -19,7 +19,8 @@ import org.androidannotations.annotations.ViewById;
 
 import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.provider.Group;
-import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
+//import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
+import com.ewise.moneyapp.data.GroupedInstitution;
 import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.android.pdv.api.model.provider.Providers;
 import com.ewise.moneyapp.Utils.PdvApiResults;
@@ -66,6 +67,7 @@ public class AddInstitutionItemView extends RecyclerViewItemLayoutView<GroupedIn
 
         MoneyAppApp app = (MoneyAppApp) getContext().getApplicationContext();
 
+        /*
         int iconResId = app.getInstitutionCodeIconResourceId(dataObject.getInstCode());
         if (iconResId<=0) {
             accountinstitutionicon.setImageResource(getInstitutionIconResourceId(dataObject.getGroupId()));
@@ -73,7 +75,14 @@ public class AddInstitutionItemView extends RecyclerViewItemLayoutView<GroupedIn
         else
         {
             accountinstitutionicon.setImageResource(iconResId);
+
         }
+        */
+        if (dataObject.getInstitutionIcon()!=null)
+            accountinstitutionicon.setImageBitmap(dataObject.getInstitutionIcon());
+        else
+            accountinstitutionicon.setImageResource(R.drawable.rbanks);
+
         accountInstitutionName.setText(dataObject.getInstDesc());
     }
 

@@ -51,6 +51,12 @@ public class PdvAccountResponse {
     public List<AccountsObject> accounts;
     private boolean accountsRefreshed;
 
+    public void clearAccounts(){
+        if (accounts!=null){
+            accounts.clear();
+        }
+    }
+
     public DataUpdateType addUpdateAccount (AccountsObject account){
         //if an account exists , update it, if not add it
         if (accounts == null) {

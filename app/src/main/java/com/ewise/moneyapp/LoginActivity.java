@@ -72,7 +72,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 {
 
     public static final String TAG = "LoginActivity";
-    public static final String DEFAULT_SIGNON_PROFILE = "default";
     private static final int RC_SIGN_IN = 9001;
 
     /**
@@ -273,7 +272,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         settings = Settings.getInstance(this);
         activeUser = new SignonUser();
         defaultProfile = new SignonProfile();
-        defaultProfile.name=DEFAULT_SIGNON_PROFILE;
+        defaultProfile.name=getString(R.string.settings_profiles_default_signon_profile_name);
 
 
         mustReEnterPIN = settings.getEncryptedPin().mustReEnterPIN(this);
@@ -385,7 +384,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         activeUser.middleName="";
         activeUser.lastName=acct.getFamilyName();
         activeUser.email=acct.getEmail();
-        activeUser.imageURLPath=acct.getPhotoUrl().getPath();
+        activeUser.imageURLPath=acct.getPhotoUrl()==null?"":acct.getPhotoUrl().getPath();
     }
 
     private void clearActiveUser(){
@@ -537,7 +536,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         if (canLoginToApp){
-            settings.addUpdateUser(this, activeUser); //add (if new user) or update the active user to the system
+            settings.loginUser(this, activeUser); //add (if new user) or update the active user to the system
             ((MoneyAppApp)getApplication()).setAppLoggedIn(activeUser.system, activeUser.id);
             finish();
         }

@@ -27,6 +27,12 @@
             android:focusable="false"
             />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start"
+            android:layout_gravity="start">
 
         <TextView
             android:id="@+id/settingsProfilesName"
@@ -37,24 +43,29 @@
             android:clickable="false"
             android:text="Profile name"
             android:textColor="@color/coloreWiseMainTextBlack"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/ewise_horizontal_margin_large"
+            android:layout_gravity="start"
+            android:textStyle="bold"
             />
 
 
+            <TextView
+                android:id="@+id/settingsProfilesDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Profile description is multi line jsjhjhfhjjhd fjhjhdjfhjhhj dfdfkjdjfhjhdfjhj hdfjhjhdf jhhjdfjhjhdfjhdfjhdfhj"
+                android:textSize="@dimen/ewise_secondary_text_size"
+                android:layout_marginBottom="@dimen/ewise_vertical_margin"
+                android:layout_marginStart="@dimen/ewise_horizontal_margin_large"
+                android:layout_gravity="start"
+                />
 
+
+
+        </LinearLayout>
 
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/settingsProfilesDesc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Profile description is multi line jsjhjhfhjjhd fjhjhdjfhjhhj dfdfkjdjfhjhdfjhj hdfjhjhdf jhhjdfjhjhdfjhdfjhdfhj"
-        android:textSize="@dimen/ewise_primary_text_size"
-        android:layout_marginBottom="@dimen/ewise_vertical_margin"
-        />
 
 
 

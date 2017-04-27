@@ -6,6 +6,7 @@ package com.ewise.moneyapp.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,9 @@ import com.ewise.moneyapp.R;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class HelpFragment extends Fragment {
+public class HelpFragment extends MoneyAppFragment {
+
+    private static final String TAG="HelpFragment";
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -45,4 +48,12 @@ public class HelpFragment extends Fragment {
         //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
         return rootView;
     }
+
+
+    public void updatePageData(){
+        if (isAdded()){
+            Log.d(TAG, "TODO: Must implement updatePageData()");
+        }
+    }
+
 }

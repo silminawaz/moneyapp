@@ -169,6 +169,7 @@ public class PdvApiResults {
             String sFormat =  "***EXCEPTION*** encountered in ***Type*** %1$s ***Method*** %2$s ***Error*** %3$s ***Object*** %4$s";
             String eObjectString = (dataObject == null ? "" : dataObject.toString());
             Log.e("GeneralException", String.format(sFormat, e.getClass().getName(), sMethod, e.getMessage(), eObjectString));
+            return jsonString;
 
         }
         return jsonString;

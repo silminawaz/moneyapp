@@ -23,7 +23,8 @@ import android.widget.Toast;
 
 import com.ewise.android.pdv.api.PdvApi;
 import com.ewise.android.pdv.api.model.PromptEntry;
-import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
+//import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
+import com.ewise.moneyapp.data.GroupedInstitution;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
@@ -85,12 +86,14 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
         String instName = groupedInstitution.getInstDesc();
         textInstitutionName.setText(instName);
-        int resID = myApp.getInstitutionCodeIconResourceId(groupedInstitution.getInstCode());
-        if (resID==0){
-            resID = getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName());
-        }
+        int resID = myApp.getInstitutionCodeIconResourceId(groupedInstitution.getInstCode(), groupedInstitution.getGroupId());
+        //if (resID==0){
+        //    resID = getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName());
+        //}
         Log.d("AddInstResID", Integer.toString(resID));
         //imageInstitutionLogo.setImageResource(getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName()));
+
+        imageInstitutionLogo.setImageBitmap(groupedInstitution.getInstitutionIcon());
 
         addInstitutionText.setText(String.format(getString(R.string.add_provider_text),instName,instName));
 

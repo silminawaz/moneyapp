@@ -13,6 +13,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +26,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.webkit.WebView;
@@ -76,6 +78,7 @@ import org.xwalk.core.XWalkView;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -177,6 +180,14 @@ public class MoneyAppApp extends Application {
 
     public void setAppLoggedOff (){
         appLoggedIn=false;
+
+        if (userProfileData!=null && userProfileData.getUserprofile()!=null){
+            userProfileData.getUserprofile().clear();
+        }
+
+        if (pdvAccountResponse!=null){
+            pdvAccountResponse.clearAccounts();
+        }
     }
 
 
@@ -585,7 +596,17 @@ public class MoneyAppApp extends Application {
             }
         };
 
-        new Thread (runPdvGetUserProfiles).start();
+        try{
+            new Thread (runPdvGetUserProfiles).start();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            Log.e("MoneyAppApp", "pdvGetUserProfile() - exception " + e.getMessage());
+            PdvApiResults results = new PdvApiResults();
+            results.callBackCompleted=false;
+            results.callBackError=true;
+            callback.onGetUserProfileFail(results);
+        }
     }
 
 
@@ -915,7 +936,7 @@ public class MoneyAppApp extends Application {
         return R.drawable.rbanks;
     }
 
-    public int getInstitutionCodeIconResourceId (String instCode){
+    public int getInstitutionCodeIconResourceId (String instCode, String instGroup){
 
         //todo: implement retrieval of all implementaiton icons from server and then map it in memory
         //** DO NOT RETRIEVE ICONS ONE BY ONE BY INSTID FOR PERFORMANCE REASONS
@@ -923,9 +944,17 @@ public class MoneyAppApp extends Application {
         //for now we just map each institution icon to "INSTCODE_9999" resource id in drawables
         if (instCode!=null){
             String instCodeResourceName = MoneyAppApp.INSTCODE_DRAWABLE_PREFIX + instCode;
-            resId = getResources().getIdentifier(instCodeResourceName , "drawable", getPackageName());
+            resId = getResources().getIdentifier(instCodeResourceName.toLowerCase() , "drawable", getPackageName());
+            if (resId==0){
+                //get default resource
+                instCodeResourceName = MoneyAppApp.INSTCODE_DRAWABLE_PREFIX + instGroup.toLowerCase();
+                resId = getResources().getIdentifier(instCodeResourceName.toLowerCase() , "drawable", getPackageName());
+            }
+            if(resId==0){
+                resId= R.drawable.ewise_institutions_default;
+            }
         }
-        return resId;//could be zero
+        return resId;
     }
 
     public int getInstitutionIconResourceId (String instId){
@@ -938,7 +967,6 @@ public class MoneyAppApp extends Application {
         if (instCode!=null){
             String instCodeResourceName = MoneyAppApp.INSTCODE_DRAWABLE_PREFIX + instCode;
             resId = getResources().getIdentifier(instCodeResourceName , "drawable", getPackageName());
-            Log.d(TAG, "getInstitutionIconResourceId("+instId+") : instCodeResourceName="+instCodeResourceName + " : resId="+Integer.toString(resId));
             if (resId==0){
                 //get the group resource id
                 resId = getInstitutionGroupIconResourceId(instId);

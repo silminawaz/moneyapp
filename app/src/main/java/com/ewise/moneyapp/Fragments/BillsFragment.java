@@ -17,7 +17,7 @@ import com.ewise.moneyapp.R;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class BillsFragment extends Fragment {
+public class BillsFragment extends MoneyAppFragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -60,6 +60,12 @@ public class BillsFragment extends Fragment {
 
         getActivity().findViewById(R.id.billsFragmentTopLayout).setPadding(0,0,0,getActivity().findViewById(R.id.tabs).getHeight());
 
+    }
+
+    public void updatePageData(){
+        if (isAdded()){
+            Log.d(TAG, "TODO: Must implement updatePageData()");
+        }
     }
 
 }

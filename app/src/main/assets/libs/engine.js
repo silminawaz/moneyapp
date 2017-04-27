@@ -57,6 +57,15 @@
         eWise.engine.setState(JSON.stringify(state));
     };
 
+    eWise.getPayload = function() {
+        var payload = eWise.engine.getPayload();
+        if (payload) {
+            return JSON.parse(payload);
+        } else {
+            return payload;
+        }
+    };
+
     eWise.aca = function (acaFactory) {
         if (typeof acaFactory !== 'function') {
             eWise.acaEngineJSLogger.error('Illegal argument. eWise.aca expects a function.');

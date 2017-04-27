@@ -15,7 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ewise.android.pdv.api.model.provider.Group;
-import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
+//import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
+import com.ewise.moneyapp.data.GroupedInstitution;
 import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 
@@ -96,18 +97,24 @@ public class AddInstitutionFragment extends Fragment {
 
         try
         {
-            List<Institution> institutionList = group.getInstitutions();
-            List<GroupedInstitution> groupedInstitutionList = new ArrayList<>();
-            for (Institution institution : institutionList){
-                GroupedInstitution groupedInstitution = new GroupedInstitution();
-                groupedInstitution.setInstCode(institution.getInstCode());
-                groupedInstitution.setInstDesc(institution.getInstDesc());
-                groupedInstitution.setGroupId(group.getGroupId());
-                groupedInstitution.setGroupDesc(group.getGroupDesc());
-                groupedInstitutionList.add(groupedInstitution);
+            if (isAdded()) {
+                MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
+                List < Institution > institutionList = group.getInstitutions();
+                List<GroupedInstitution> groupedInstitutionList = new ArrayList<>();
+                for (Institution institution : institutionList) {
+                    GroupedInstitution groupedInstitution = new GroupedInstitution();
+                    groupedInstitution.setInstCode(institution.getInstCode());
+                    groupedInstitution.setInstDesc(institution.getInstDesc());
+                    groupedInstitution.setGroupId(group.getGroupId());
+                    groupedInstitution.setGroupDesc(group.getGroupDesc());
+                    groupedInstitution.setInstitutionIcon(app.getInstitutionCodeIconResourceId(institution.getInstCode(), group.getGroupId()), getActivity());
+                    groupedInstitutionList.add(groupedInstitution);
+                }
+                institutionItemViewAdapter.swapData(groupedInstitutionList);
+                return true;
             }
-            institutionItemViewAdapter.swapData(groupedInstitutionList);
-            return true;
+
+            return false;
         }
         catch (Exception e){
             String sMethod = this.toString();

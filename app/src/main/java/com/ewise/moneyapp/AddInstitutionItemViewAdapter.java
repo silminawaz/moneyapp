@@ -3,7 +3,8 @@ package com.ewise.moneyapp;
 import android.content.Context;
 import android.view.ViewGroup;
 
-import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
+//import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
+import com.ewise.moneyapp.data.GroupedInstitution;
 import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.moneyapp.views.RecyclerViewAdapterBase;
 import com.ewise.moneyapp.views.RecyclerViewItemLayoutView;
@@ -19,7 +20,6 @@ import org.androidannotations.annotations.RootContext;
 
 @EBean
 public class AddInstitutionItemViewAdapter extends RecyclerViewAdapterBase<GroupedInstitution, AddInstitutionItemView> {
-
 
     @RootContext
     Context context;

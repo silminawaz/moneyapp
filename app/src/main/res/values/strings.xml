@@ -29,6 +29,9 @@
     <string name="menu_name_logout">Logout</string>
 
     <string name="nav_header_profile_label">Select your profile</string>
+    <string name="nav_header_user_prelogin_text">Not logged in</string>
+    <string name="nav_header_email_prelogin_text">Not logged in</string>
+    <string name="nav_header_profilelist_prelogin_text">Please login&#8230;</string>
 
     <string name="var_base_currency">SGD</string>
 
@@ -74,7 +77,6 @@
     <string name="provider_menu_delete_title">Delete provider</string>
     <string name="provider_menu_stop_title">Stop sync</string>
     <string name="provider_menu_setverify_title">Submit OTP</string>
-
 
 
     <!-- Account page -->
@@ -238,7 +240,7 @@
     <string name="edit_provider_account_not_found_text">No accounts available</string>
     <string name="edit_provider_account_balance_text">Balance: </string>
 
-    <string name="edit_provider_try_again_text">There are pending requests in progress, please try again later...</string>
+    <string name="edit_provider_try_again_text">There are pending requests in progress, please try again later&#8230;</string>
 
     <string name="delete_provider_toast_message">Removing provider</string>
     <string name="delete_provider_alert_title">Confirm removing provider</string>
@@ -302,11 +304,11 @@
     <string name="login_status_text_signed_out_google">Please sign in to Google</string>
     <string name="login_google_disconnect_button">Disconnect</string>
     <string name="login_google_sign_out_button">Sign out</string>
-    <string name="login_google_dialog_loading">Connecting to Google...</string>
+    <string name="login_google_dialog_loading">Connecting to Google&#8230;</string>
     <string name="login_to_app_button">Login</string>
     <string name="login_enter_PIN_label">Enter your login PIN below</string>
     <string name="login_confirm_PIN_label">Confirm your login PIN below</string>
-    <string name="login_loading_message">Login in progress. Please wait...</string>
+    <string name="login_loading_message">Login in progress. Please wait&#8230;</string>
 
     <string name="pinentry_maxlength_error_message">Please enter a %1$s digit PIN</string>
     <string name="pinentry_pin_not_matching">Confimation PIN number does not match with input PIN number</string>
@@ -314,7 +316,7 @@
 
     <string name="mainactivity_finishing_notification_message">The app is finishing while there are SYNC requests pending or in progress, the SYNC will not complete</string>
 
-    <string name="logout_loading_message">Logout in progress. Please wait...</string>
+    <string name="logout_loading_message">Logout in progress. Please wait&#8230;</string>
     <string name="logout_dialog_title">Logout</string>
     <string name="logout_dialog_message">
         "Do you want to LOGOUT from the app?\n\n"
@@ -368,6 +370,7 @@
     </string>
 
     <!-- strings related to Settings menu -->
+    <string name="settings_profiles_default_signon_profile_name">default</string>
     <string name="settings_profiles_header">Profiles</string>
     <string name="settings_profiles_name_hint">Profile name</string>
     <string name="settings_profiles_desc_hint">Profile description</string>
@@ -383,6 +386,34 @@
         "for example you can create different profiles "
         "to separate your PERONAL, BUSINESS and FAMILY accounts "
     </string>
+
+    <string name="profile_name_validation_invalid_chars_message">Profile name must be alphanumeric and must not contain any special characters including spaces</string>
+    <string name="profile_name_validation_invalid_length_message">Profile name must be between %1$s and %2$s characters</string>
+
+    <string name="profile_name_validation_page_not_added">An unexpected error was encountered during valdiation. The page is not added</string>
+    <string name="profile_name_validation_profile_exists">A profile by this name already exists, please enter a new profile name</string>
+
+    <string name="profile_saved_message">Profile saved successfully</string>
+    <string name="profile_not_saved_message">Error: Unable to save profile</string>
+    <string name="profile_deleted_message">Profile deleted successfully</string>
+    <string name="profile_not_deleted_message">Error: Unable to delete profile</string>
+
+    <string name="error_unsupported_drawable">Error: Unsupported image type, we only support bitmap or vector images</string>
+
+    <string name="warning_must_implement_update_page_data">Warning: UpdatePageData() method not implemented for class %1$s</string>
+
+    <string name="profile_delete_dialog_title">Delete Profile</string>
+
+    <string name="profile_delete_loading_message">Delete in progress. Please wait&#8230;</string>
+
+    <string name="profile_delete_confirmation_message">
+        "Are you sure you want to DELETE the profile?\n\n"
+        "Press OK to DELETE. Press CANCEL to ABORT."
+    </string>
+
+    <string name="profile_switching_progress_title">Switching profiles</string>
+    <string name="profile_switching_progress_message">Switching profiles may take a few seconds. please wait&#8230;</string>
+    <string name="login_timeout_message">Login Timeout - There is a problem with logging into the PDV for your selected profile. Please LOGOUT and try using a different profile</string>
 
 
 </resources>

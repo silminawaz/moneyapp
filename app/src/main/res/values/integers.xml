@@ -9,4 +9,11 @@
     <integer name="ewise_instid_instcode_begin_index">5</integer>
     <integer name="ewise_instid_instcode_end_index">8</integer>
 
+    <integer name="ewise_profile_min_length">4</integer>
+    <integer name="ewise_profile_max_length">24</integer>
+
+    <integer name="ewise_profile_title_max_length">8</integer>
+
+
+
 </resources>

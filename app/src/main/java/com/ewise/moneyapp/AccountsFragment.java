@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 
 import com.ewise.android.pdv.api.model.PromptEntry;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
+import com.ewise.moneyapp.Fragments.MoneyAppFragment;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.data.AccountCardDataObject;
@@ -45,7 +46,7 @@ import java.util.Locale;
  */
 
 @EFragment(R.layout.fragment_account_recycler)
-public class AccountsFragment extends Fragment  implements MainActivity.FragmentUpdateListener {
+public class AccountsFragment extends MoneyAppFragment implements MainActivity.FragmentUpdateListener {
 
 
     private OnFragmentInteractionListener mListener;

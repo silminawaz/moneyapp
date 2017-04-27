@@ -4,29 +4,43 @@ package com.ewise.moneyapp.Fragments;
  * Created by SilmiNawaz on 20/8/16.
  */
 
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.ewise.moneyapp.MainActivity;
+import com.ewise.moneyapp.MoneyAppApp;
 import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.Utils.Settings;
 import com.ewise.moneyapp.Utils.SignonProfile;
 import com.ewise.moneyapp.Utils.SignonUser;
 import com.ewise.moneyapp.adapters.ProfilesItemViewAdapter;
+import com.ewise.moneyapp.data.AccountCardDataObject;
+import com.ewise.moneyapp.data.AccountCardListDataObject;
+
+import org.androidannotations.annotations.App;
 
 import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends MoneyAppFragment {
+
+    private static final String TAG = "SettingsFragment";
+
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -73,6 +87,16 @@ public class SettingsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        ((MainActivity)getActivity()).enableProfileFab();
+
+        LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.settingsProfilesListLayout);
+        TabLayout tab = (TabLayout)getActivity().findViewById(R.id.tabs);
+        AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.appbar);
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        //layout.getLayoutParams().height=size.y-tab.getHeight()-appBarLayout.getHeight();
 
         settingsProfileList.setClickable(true);
 
@@ -101,5 +125,40 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
+
+
     }
+
+
+    //NOTE: setUserVisibleHint() is called when the fragment is no longer visible or becomes visible
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        // Make sure that we are currently visible
+        if (this.isVisible()) {
+            // If we are becoming invisible, then...
+            //if (isAdded()) {
+
+                if (isVisibleToUser) {
+                    ((MainActivity)getActivity()).enableProfileFab();
+
+                } else {
+                    ((MainActivity)getActivity()).disableProfileFab();
+                }
+            //}
+        }
+    }
+
+    //This method always runs on UI thread as it is called by refreshFragmentUI()
+    public void updatePageData()
+    {
+        if (isAdded()) {
+            Log.d(TAG, "updatePageData()");
+            //there is no need to swap data because the adapter uses the profile data from the settings
+            profilesItemViewAdapter.updateImageCache();
+            profilesItemViewAdapter.notifyDataSetChanged();
+        }
+    }
+
 }

@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -41,13 +42,15 @@ import com.ewise.moneyapp.adapters.ProviderItemViewAdapter;
 import com.ewise.moneyapp.data.ProviderPopupMenuItemData;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
+import org.apache.log4j.chainsaw.Main;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
      * A placeholder fragment containing a simple view.
      */
-    public class ProvidersFragment extends Fragment implements MainActivity.FragmentUpdateListener {
+    public class ProvidersFragment extends MoneyAppFragment implements MainActivity.FragmentUpdateListener {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -319,6 +322,17 @@ import java.util.List;
 
         SparseBooleanArray selectedIds = providerAdapter.getSelectedIds();
 
+        if (isAdded()){
+            if (selectedIds.size()>0){
+            //turn off the drawer menu
+                ((MainActivity)getActivity()).drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            }
+            else
+            {
+                ((MainActivity)getActivity()).drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+        }
+
         if (selectedIds.size()==1){
             Log.d(TAG, "onSelectionChanged() - selectedIds.size()==1");
 
@@ -401,15 +415,25 @@ import java.util.List;
             }
         }
 
-        menu.getItem(CONTEXT_MENU_POSITION_SYNC).setVisible(showSync);
-        menu.getItem(CONTEXT_MENU_POSITION_STOPSYNC).setVisible(showStopSync);
-        menu.getItem(CONTEXT_MENU_POSITION_VERIFY).setVisible(showVerify);
-        menu.getItem(CONTEXT_MENU_POSITION_EDIT).setVisible(showEdit);
-        menu.getItem(CONTEXT_MENU_POSITION_DELETE).setVisible(showDelete);
+        if(selectedIds.size()>0) {
+            menu.getItem(CONTEXT_MENU_POSITION_SYNC).setVisible(showSync);
+            menu.getItem(CONTEXT_MENU_POSITION_STOPSYNC).setVisible(showStopSync);
+            menu.getItem(CONTEXT_MENU_POSITION_VERIFY).setVisible(showVerify);
+            menu.getItem(CONTEXT_MENU_POSITION_EDIT).setVisible(showEdit);
+            menu.getItem(CONTEXT_MENU_POSITION_DELETE).setVisible(showDelete);
+        }
+        else{
+            menu.getItem(CONTEXT_MENU_POSITION_SYNC).setVisible(false);
+            menu.getItem(CONTEXT_MENU_POSITION_STOPSYNC).setVisible(false);
+            menu.getItem(CONTEXT_MENU_POSITION_VERIFY).setVisible(false);
+            menu.getItem(CONTEXT_MENU_POSITION_EDIT).setVisible(false);
+            menu.getItem(CONTEXT_MENU_POSITION_DELETE).setVisible(false);
+        }
 
         return true;
     }
 
+    @Deprecated
     public void onSelectAction()
     {
 
@@ -607,7 +631,8 @@ import java.util.List;
         if (mActionMode!=null){
             mActionMode.getMenu().clear();
         }
-        menu.clear();
+
+        //menu.clear();
 
 
         //fragment specific menu creation
@@ -634,6 +659,7 @@ import java.util.List;
     }
 
     //method to handle user clicking the popup menu (Sync, Edit, Delete provider)
+    @Deprecated
     private void PopupMenuClicked(UserProviderEntry provider, ProviderPopupMenuItemData[] itemData, int item) {
 
         String itemString = itemData[item].text;
@@ -681,6 +707,7 @@ import java.util.List;
         }
      }
 
+    @Deprecated
     public void showOTPDialog(UserProviderEntry providerEntry){
         Log.d (TAG, "showOTPDialog instId=" + providerEntry.getIid());
 
@@ -724,6 +751,7 @@ import java.util.List;
 
     }
 
+    @Deprecated
     public void showEditProviderDialog(UserProviderEntry providerEntry){
         //mStackLevel++;
 
@@ -812,7 +840,6 @@ import java.util.List;
                 welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
             }
         }
-
     }
 
 

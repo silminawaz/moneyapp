@@ -1,33 +1,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settingProfileTopLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_marginTop="@dimen/ewise_vertical_margin_large"
     tools:context="com.ewise.moneyapp.PlaceholderFragment">
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/ewise_horizontal_margin"
-            android:layout_marginEnd="@dimen/ewise_horizontal_margin"
-            android:background="@color/coloreWiseCardViewBackground">
+            android:layout_marginEnd="@dimen/ewise_horizontal_margin">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/coloreWiseCardViewBackground">
+                android:orientation="vertical">
 
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -36,7 +41,20 @@
                     android:textSize="@dimen/ewise_subheader_text_size"
                     android:textStyle="bold"
                     android:layout_marginStart="@dimen/ewise_horizontal_margin"
-                    android:layout_marginTop="@dimen/ewise_vertical_margin_large"/>
+                    android:layout_marginTop="@dimen/ewise_vertical_margin_large"
+                    android:layout_alignParentStart="true"/>
+
+                    <Button
+                        android:id="@+id/settingsProfileAddBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_profiles_add_button_text"
+                        android:textColor="@color/coloreWiseBlueAegis"
+                        android:layout_marginEnd="@dimen/ewise_horizontal_margin"
+                        style="@style/Base.Widget.AppCompat.Button.Borderless"
+                        android:layout_alignParentEnd="true"/>
+
+                </RelativeLayout>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -46,27 +64,37 @@
                     android:textSize="@dimen/ewise_secondary_text_size"
                     android:layout_marginStart="@dimen/ewise_horizontal_margin"/>
 
+                <LinearLayout
+                    android:id="@+id/settingsProfilesListLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height= "@dimen/ewise_profile_listview_height">
+
                 <ListView
                     android:id="@+id/settingProfilesList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fillViewport="true"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
                    />
 
-                <Button
-                    android:id="@+id/settingsProfileAddBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings_profiles_add_button_text"
-                    android:textColor="@color/coloreWiseBlueAegis"
-                    android:layout_marginEnd="@dimen/ewise_horizontal_margin"
-                    style="@style/Base.Widget.AppCompat.Button.Borderless"
-                    android:layout_gravity="end"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/ewise_vertical_margin_xl" />
+
 
             </LinearLayout>
 
+
+
+
         </android.support.v7.widget.CardView>
+
 
     </LinearLayout>
 
+</ScrollView>
 
 </LinearLayout>

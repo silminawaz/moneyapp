@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class NetworthFragment extends Fragment implements MainActivity.FragmentUpdateListener {
+public class NetworthFragment extends MoneyAppFragment implements MainActivity.FragmentUpdateListener {
     /**
      * The fragment argument representing the section number for this
      * fragment.
