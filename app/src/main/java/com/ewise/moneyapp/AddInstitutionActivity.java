@@ -43,15 +43,23 @@ import java.util.List;
 public class AddInstitutionActivity extends AppCompatActivity implements PdvConnectivityCallback {
 
     PdvApiResults providerResults;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_institution);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         // Setup spinner
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
@@ -59,8 +67,8 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
         //sn: todo: call getprompts api and setup the data for the view
         MoneyAppApp myApp = ((MoneyAppApp) getApplication());
         PdvApi pdvApi = myApp.getPdvApi();
-        myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
-        // myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
+        //REMOVE XWALK myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
 
@@ -92,7 +100,6 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
 
 
         myApp.pdvGetInstitutions(this);  //callbacks will handle the rest
-
 
     }
 

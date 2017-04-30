@@ -377,7 +377,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void setGoogleActiveUser(GoogleSignInAccount acct){
         activeUser.system=SignOnSystem.SIGN_ON_SYSTEM_GOOGLE;
-        activeUser.profiles.add(defaultProfile);
+        //activeUser.profiles.add(defaultProfile);
+        activeUser.addUniqueProfile(defaultProfile);
         activeUser.id=acct.getId();
         activeUser.name=acct.getDisplayName();
         activeUser.firstName=acct.getGivenName();
@@ -528,7 +529,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (isInputPINValid()) {
                 //todo: validate PIN
                 //canLoginToApp = settings.getEncryptedPin().validatePIN(txtPinEntry.getText().toString(), this);  //@deprecated
-                canLoginToApp = settings.getActiveUserEncryptedPin(this).validatePIN(txtPinEntry.getText().toString(), this);
+                canLoginToApp = settings.getNewUserEncryptedPin(this, activeUser.system, activeUser.id).validatePIN(txtPinEntry.getText().toString(), this);
                 if (!canLoginToApp) {
                     loginErrorMessage = getString(R.string.pinentry_invalid_pin);
                 }

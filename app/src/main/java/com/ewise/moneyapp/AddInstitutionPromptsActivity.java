@@ -100,8 +100,8 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
         context = this;
 
         PdvApi pdvApi = myApp.getPdvApi();
-        myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
-//**XWALK**        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
+//REMOVE XWALK         myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
 

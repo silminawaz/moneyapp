@@ -42,7 +42,8 @@ import com.ewise.moneyapp.adapters.ProviderItemViewAdapter;
 import com.ewise.moneyapp.data.ProviderPopupMenuItemData;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
-import org.apache.log4j.chainsaw.Main;
+//import org.apache.log4j.chainsaw.Main;
+import org.xwalk.core.XWalkView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -665,15 +666,22 @@ import java.util.List;
         String itemString = itemData[item].text;
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
         if (itemString.equals(getString(R.string.provider_menu_refresh_title))) {
-            //sync the provider
-            if (isAdded()) {
-                WebView pdvWebView = (WebView) getActivity().findViewById(R.id.ewise_webview);
-                if (pdvWebView!=null) {
-                    app.pdvWebView = pdvWebView;
-                    app.pdvApi.apiInit(getActivity().getApplicationContext(), app.pdvWebView);
-                    app.syncExistingProvider(provider.getIid());
-                    providerAdapter.updateSyncStatus();
+            try {
+                //sync the provider
+                if (isAdded()) {
+                    //XWALK RMEMOVE WebView pdvWebView = (WebView) getActivity().findViewById(R.id.ewise_webview);
+                    XWalkView pdvWebView = (XWalkView) getActivity().findViewById(R.id.ewise_webview);
+                    if (pdvWebView != null) {
+                        app.pdvWebView = pdvWebView;
+                        app.pdvApi.apiInit(getActivity().getApplicationContext(), app.pdvWebView);
+                        app.syncExistingProvider(provider.getIid());
+                        providerAdapter.updateSyncStatus();
+                    }
                 }
+            }
+            catch (Exception e){
+                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
             }
 
         } else if (itemString.equals(getString(R.string.provider_menu_edit_title))) {

@@ -63,6 +63,20 @@ public class SignonUser {
         return false;
     }
 
+    public void addUniqueProfile(SignonProfile profileToAdd){
+        boolean found=false;
+        for (SignonProfile profile: profiles){
+            if (profile.name.toLowerCase().equals(profileToAdd.name.toLowerCase())){
+                profile.description=profileToAdd.description;
+                profile.base64Image=profileToAdd.base64Image;
+                found=true;
+                break;
+            }
+        }
+        if (!found){
+            profiles.add(profileToAdd);
+        }
+    }
 
 
     private void generalExceptionHandler(String eType, String eMessage, String eMethod, String eObjectString, Exception e, Context context) {

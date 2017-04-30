@@ -259,7 +259,7 @@
                                     android:background="@color/coloreWisePrimary">
 
                                     <ImageView
-                                        android:src="@drawable/google_g"
+                                        android:src="@drawable/menu_logout_icon"
                                         android:layout_gravity="center_vertical"
                                         android:layout_height="20dp"
                                         android:layout_width="20dp" />

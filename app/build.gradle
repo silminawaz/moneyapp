@@ -84,10 +84,15 @@ dependencies {
 
     compile group: 'org.aspectj', name: 'aspectjrt', version: '1.8.9'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-    compile group: 'de.mindpipe.android', name: 'android-logging-log4j', version: '1.0.3'
+    //compile group: 'de.mindpipe.android', name: 'android-logging-log4j', version: '1.0.3'
     //**SN** fix : updated from 1.0.2 to 1.0.3
-    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    //compile group: 'log4j', name: 'log4j', version: '1.2.17'
     //**SN** fix : updated from 1.2.16 to 1.2.17
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'com.github.tony19:logback-android-core:1.1.1-6'
+    compile('com.github.tony19:logback-android-classic:1.1.1-6') {
+        exclude group: 'com.google.android', module: 'android'
+    }
 
     //ewise android pdv 0.5.0.2 xwalk webview implementation
     compile('org.xwalk:xwalk_core_library:20.50.533.12') {

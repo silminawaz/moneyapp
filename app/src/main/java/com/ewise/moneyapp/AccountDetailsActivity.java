@@ -329,37 +329,6 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
         this.finish();
     }
 
-    /*
-    @Override
-    public Loader<PdvTransactionResponse> onCreateLoader(int id, Bundle args) {
-        return new PdvAccountTransactionResponseLoader(AccountDetailsActivity.this, _account);
-    }
-
-
-    @Override
-    public void onLoadFinished(Loader<PdvTransactionResponse> loader, PdvTransactionResponse data) {
-
-        Log.d("**TXN**LOAD***", String.format("Callback fired: AccountDetailsActivity.onLoadFinished() : %s", data.toString()));
-
-        TransactionCardListDataObject transactionList = new TransactionCardListDataObject(getApplicationContext(), data, _account, groupTransactionsBy);
-        transactionCardsViewAdapter.swapData(transactionList.get_transactionCardList());
-        accountdetails_open_transactions_img.setImageResource(transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE ? R.drawable.ic_action_folder_open : R.drawable.ic_action_folder_closed);
-        //accountdetails_transaction_select_spinner.setVisibility(View.VISIBLE);
-        ArrayAdapter<String> monthArrayAdapter = new ArrayAdapter <String>(this, R.layout.month_select_spinner_item, getTransactionSelectFilter());
-        accountdetails_transaction_select_spinner.setAdapter(monthArrayAdapter);
-        //create the linechart
-        initialiseLineChart();
-
-        Log.d("**TRACE:NOTIFY ALL***", "Callback fired: Notify changed");
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<PdvTransactionResponse> loader) {
-        transactionCardsViewAdapter.resetData();
-    }
-
-*/
 
     public void toggleTransactionDisplay() {
 

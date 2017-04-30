@@ -1,5 +1,7 @@
 package com.ewise.moneyapp.data;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -25,6 +27,8 @@ public class CurrencyExchangeRates {
      * exchangeRate : 0.7500
      * rateQuoteDirect : true
      */
+
+    private static final String TAG="CurrencyExchangeRates";
 
     //implement as a singleton
     private static CurrencyExchangeRates ourInstance = new CurrencyExchangeRates();
@@ -66,6 +70,7 @@ public class CurrencyExchangeRates {
     public BigDecimal exchangeAmountToCurrency (String toCurrency, String fromCurrency, BigDecimal amount){
 //        Currency accountCurr = Currency.getInstance(account.currency);
         MathContext mc = new MathContext(7, RoundingMode.HALF_UP);
+        BigDecimal convertedAmount= new BigDecimal(amount.toString(), mc);
 
         String currencyPair = toCurrency+fromCurrency;
         ExchangeRateItemsObject exchangeRate = exchangeRatesForCurrencyPairs.get(currencyPair);
@@ -83,10 +88,12 @@ public class CurrencyExchangeRates {
                 //Pair=USDSGD:1.40 (direct); fromCurrency=SGD, toCurrency=USD, Amount=100; convertedAmount=100/1.40 = 75 USD
                 //Pair=USDSGD:1.40 (direct); fromCurrency=USD, toCurrency=SGD, Amount=100; convertedAmount=100*1.40 = 140 SGD
                 if (fromCurrency.equals(exchangeRate.baseCurrencyCode)){
-                    return amount.multiply(rate);
+                    convertedAmount=convertedAmount.multiply(rate);
+                    //return amount.multiply(rate);
                 }
                 else{
-                    return amount.divide(rate);
+                    convertedAmount=convertedAmount.divide(rate, BigDecimal.ROUND_HALF_DOWN);
+                    //return amount.divide(rate);
                 }
             }
             else
@@ -98,15 +105,18 @@ public class CurrencyExchangeRates {
                 //Pair=USDSGD:0.75 (indirect); fromCurrency=SGD, toCurrency=USD, Amount=100; convertedAmount=100*0.75 = 75 USD
                 //Pair=USDSGD:0.75 (indirect); fromCurrency=USD, toCurrency=SGD, Amount=100; convertedAmount=100/0.75 = 140 SGD
                 if (toCurrency.equals(exchangeRate.baseCurrencyCode)){
-                    return amount.multiply(rate);
+                    convertedAmount=convertedAmount.multiply(rate);
+                    //return amount.multiply(rate);
                 }
                 else{
-                    return amount.divide(rate);
+                    convertedAmount=convertedAmount.divide(rate, BigDecimal.ROUND_HALF_DOWN);
+                    //return amount.divide(rate);
                 }
             }
+            Log.d(TAG, "From Amount = "+fromCurrency+" "+amount.toString()+ " | Exchange Rate="+exchangeRate.exchangeRate+ " | Converted amount = "+toCurrency+" "+convertedAmount.toString());
         }
 
-        return amount;
+        return convertedAmount;
 
     }
 

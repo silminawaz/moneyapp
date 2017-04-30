@@ -70,8 +70,8 @@ import com.ewise.moneyapp.data.AccountCardListDataObject;
 import com.ewise.moneyapp.data.DataUpdateType;
 import com.ewise.moneyapp.data.PdvAccountResponse;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
-import com.rogansoft.remotelogger.DebugHelper;
-import com.rogansoft.remotelogger.RemoteLogger;
+//import com.rogansoft.remotelogger.DebugHelper;
+//import com.rogansoft.remotelogger.RemoteLogger;
 
 import org.xwalk.core.XWalkView;
 
@@ -129,8 +129,8 @@ public class MoneyAppApp extends Application {
 
 
     public PdvApi pdvApi;
-    public WebView pdvWebView;
-//**XWALK**    public XWalkView pdvWebView;
+    // REMOVE XWALK **XWALK**     public WebView pdvWebView;
+    public XWalkView pdvWebView;
     public SignOnSystem signOnSystem=SignOnSystem.SIGN_ON_SYSTEM_UNKNOWN;
     public String signonUserId=null;
     public PdvLoginStatus pdvLoginStatus;
@@ -145,6 +145,7 @@ public class MoneyAppApp extends Application {
 
     private PdvApiCallbackCounter restoreAccountsCallBackCounter = null;
     private Date lastRestoredDateTime = null;
+
     private boolean pdvLoginFailed = false;
     private boolean appLoggedIn= false;
 

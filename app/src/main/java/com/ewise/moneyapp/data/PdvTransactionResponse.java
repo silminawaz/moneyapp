@@ -284,7 +284,8 @@ public class PdvTransactionResponse {
          * class: PdvTransactionResponse.AccountTransactionObject.TransactionsObject
          */
         public static class TransactionsObject {
-            public long id;
+            //REMOVE XWALK public long id;
+            public String id;
             public String date;
             public String description;
             public double amount;

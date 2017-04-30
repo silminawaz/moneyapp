@@ -85,7 +85,8 @@ import com.ewise.moneyapp.adapters.TransferMenuPagerAdapter;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
 import org.antlr.v4.codegen.model.Sync;
-import org.apache.log4j.chainsaw.Main;
+//import org.apache.log4j.chainsaw.Main;
+import org.xwalk.core.XWalkView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -231,8 +232,10 @@ public class MainActivity extends AppCompatActivity
             accountsFragmentUpdateListener.refreshFragmentUI();
         }
         //refresh all attached fragments derived from MoneyAppFragment
-        for (FragmentUpdateListener listener: fragmentListenerMap.values()){
-            listener.refreshFragmentUI();
+        if (fragmentListenerMap!=null) {
+            for (FragmentUpdateListener listener : fragmentListenerMap.values()) {
+                listener.refreshFragmentUI();
+            }
         }
 
     }
@@ -280,31 +283,25 @@ public class MainActivity extends AppCompatActivity
         public void run() {
             Log.d(TAG, "resetLoginTimeoutRunnable - START");
             MoneyAppApp app = (MoneyAppApp) getApplication();
-            if (loginTimeoutInProgress) {
-                Log.d(TAG, "resetLoginTimeoutRunnable - RESET");
-                if (app.pdvLoginStatus.isLoginInProgress() || app.pdvLoginStatus.isLoggedOffFromPdv()) {
-                    //app.setAppLoggedOff();
-                    //loginTimeoutInProgress = false;
-                    String message = getString(R.string.login_timeout_message);
-                    progress_overlay.setVisibility(View.VISIBLE);
-                    progressText.setText(message);
-                    if (profileProgressDialog != null && profileProgressDialog.isShowing()) {
-                        profileProgressDialog.setMessage(message);
-                        profileProgressDialog.dismiss();
-                    }
-                } else {
-                    if (app.pdvLoginStatus.isLoggedOnToPdv()) {
-                        loginTimeoutInProgress = false;
-                        if (profileProgressDialog != null && profileProgressDialog.isShowing()) {
-                            profileProgressDialog.dismiss();
-                        }
-                    }
+            loginTimeoutInProgress = false;
+            Log.d(TAG, "resetLoginTimeoutRunnable - RESET");
+            if (app.pdvLoginStatus.isLoginInProgress() || app.pdvLoginStatus.isLoggedOffFromPdv()) {
+                //app.setAppLoggedOff();
+                String message = getString(R.string.login_timeout_message);
+                progress_overlay.setVisibility(View.VISIBLE);
+                progressText.setText(message);
+                if (profileProgressDialog != null && profileProgressDialog.isShowing())
+                if (profileProgressDialog != null && profileProgressDialog.isShowing())
+                {
+                    profileProgressDialog.setMessage(message);
+                    profileProgressDialog.dismiss();
                 }
-            } else {
-                if (app.pdvLoginStatus.isLoggedOnToPdv()) {
-                    if (profileProgressDialog != null && profileProgressDialog.isShowing()) {
-                        profileProgressDialog.dismiss();
-                    }
+            }
+            else
+            {
+                if (profileProgressDialog != null && profileProgressDialog.isShowing())
+                {
+                    profileProgressDialog.dismiss();
                 }
             }
         }
@@ -331,7 +328,6 @@ public class MainActivity extends AppCompatActivity
                 if (app.pdvLoginStatus.isLoggedOnToPdv()) {
                     if (!app.pdvApiRequestQueue.isRequestInProgress()) {
                         Log.d("PdvApiRequestRunnable", "no requests in progress");
-                        //todo:  fix to the issue where timeouts are not correctly executed
                         if (profileProgressDialog != null && profileProgressDialog.isShowing()) {
                             profileProgressDialog.dismiss();
                         }
@@ -348,6 +344,8 @@ public class MainActivity extends AppCompatActivity
                         setDataFetchingStatus(true, null);
                     }
                 }
+
+
                 pdvApiRequestHandler.postDelayed(pdvApiRequestRunnable, 5000); //run every 5 seconds
             }
         }
@@ -719,8 +717,8 @@ public class MainActivity extends AppCompatActivity
 
         pdvApiResults = new PdvApiResults();
         PdvApi pdvApi = myApp.getPdvApi();
-        myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
-//**XWALK**        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
+//REMOVE XWALK **XWALK**        myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+        myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
 
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
@@ -1000,84 +998,27 @@ public class MainActivity extends AppCompatActivity
 
         MoneyAppApp app = (MoneyAppApp) getApplication();
 
-        app.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
-        app.pdvApi.apiInit(this, app.pdvWebView);
+        app.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
+        try {
+            app.pdvApi.apiInit(this, app.pdvWebView);
 
-        Intent intent = new Intent(this, PdvAcaBoundService.class);
+            Intent intent = new Intent(this, PdvAcaBoundService.class);
 
-        bindService(intent, pdvAcaServiceConnection, Context.BIND_AUTO_CREATE);
+            bindService(intent, pdvAcaServiceConnection, Context.BIND_AUTO_CREATE);
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiCallbackMessageReceiver,
-                new IntentFilter("pdv-aca-bound-service-callback"));
+            LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiCallbackMessageReceiver,
+                    new IntentFilter("pdv-aca-bound-service-callback"));
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiServiceErrorMessageReceiver,
-                new IntentFilter("pdv-aca-service-error"));
+            LocalBroadcastManager.getInstance(this).registerReceiver(pdvApiServiceErrorMessageReceiver,
+                    new IntentFilter("pdv-aca-service-error"));
 
-        setupNavigationDrawer(false);
-
-        /*
-        * **SN** TODO: BEGIN: REMOVE REFACTORED CODE
-        if (app.isAppLoggedIn() && !app.isPdvLoginFailed()){
-            this.progress_overlay.setVisibility(View.GONE);
-
-            Settings settings = Settings.getInstance(this);
-            if (settings.getSignOnUsers()!=null) {
-                TextView user = (TextView) nvDrawer.getHeaderView(0).findViewById(R.id.navHeaderProfileNameTxt);
-                SignonUser activeUser = settings.getActiveUser(this);
-                if (user != null) {
-                    user.setText(activeUser.name);
-                }
-                TextView email = (TextView) nvDrawer.getHeaderView(0).findViewById(R.id.navHeaderProfileEmailTxt);
-                if (email != null) {
-                    email.setText(activeUser.email);
-                }
-
-                SignonProfile activeProfile = settings.getActiveProfile(this);
-                navHeaderProfileIcon = (ImageView) nvDrawer.getHeaderView(0).findViewById(R.id.navHeaderProfileIcon);
-                if (activeProfile!=null) {
-                    navHeaderProfileIcon.setImageBitmap(Base64ImageConverter.fromBase64ToBitmap(activeProfile.base64Image));
-                }
-
-                //populate profiles spinner
-                profileSpinner = (Spinner) nvDrawer.getHeaderView(0).findViewById(R.id.navHeaderProfileSpinner);
-                String profileArray[] = new String[activeUser.profiles.size()];
-                for (int i=0; i<activeUser.profiles.size(); i++){
-                    profileArray[i] = activeUser.profiles.get(i).name.toLowerCase();
-                }
-
-                ArrayAdapter<String> profileAdapter = new ArrayAdapter<String>(this, R.layout.profile_spinner_item, profileArray);
-                profileAdapter.setDropDownViewResource(R.layout.profile_spinner_dropdown_item);
-                profileSpinner.setAdapter(profileAdapter);
-
-                profileSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                        Log.d(TAG, "profileSpinner.setOnItemSelectedListener.onItemSelected");
-                        SignonProfile profile = selectActiveProfile(i);
-                        SignonUser user=Settings.getInstance(MainActivity.this).getActiveUser(MainActivity.this);
-                        logoutFromApp(LogoutReason.LOGOUT_REASON_PROFILECHANGED);
-                        ((MoneyAppApp)getApplication()).setAppLoggedIn(user.system, user.id);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-
-                    }
-                });
-
-                ImageView settingsImage= (ImageView) nvDrawer.getHeaderView(0).findViewById(R.id.navHeaderSettingsIcon);
-
-                settingsImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        selectDrawerItem(R.id.navHeaderSettingsIcon);
-                    }
-                });
-            }
+            setupNavigationDrawer(false);
         }
-        * END: REMOVE REFACTORED CODE
-        */
-
+        catch(Exception e){
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+            notifyPdvLoginFail();
+        }
     }
 
 
@@ -1134,6 +1075,8 @@ public class MainActivity extends AppCompatActivity
                 setAppLoginStatus(false, getString(R.string.app_login_failed_message));
             }
 
+            selectDrawerItem(R.id.navMenuNetworth);
+
         }
 
         //if the result from the add provider form is returned
@@ -1154,6 +1097,16 @@ public class MainActivity extends AppCompatActivity
             Log.d("MainActivity", "onActivityResult() : **calling refreshAttachedFragments()**");
             refreshAttachedFragments();
         }
+
+        if (requestCode == MoneyAppApp.ACCOUNT_DETAILS_ACTIVITY) {
+
+            //go back o the same fragment
+            Log.d("MainActivity", "onActivityResult() : **calling refreshAttachedFragments()**");
+
+            selectDrawerItem(R.id.navMenuAccounts);
+
+        }
+
     }
 
     private void generalExceptionHandler(String eType, String eMessage, String eMethod, String eObjectString) {
@@ -1463,6 +1416,7 @@ public class MainActivity extends AppCompatActivity
         loginErrorText.setText(msg);
         loginErrorLayout.setVisibility(View.VISIBLE);
 
+        hideProgressDialog();
 
         Log.d("MainActivity", "notifyPdvLoginFail() - END");
 
@@ -1907,67 +1861,6 @@ public class MainActivity extends AppCompatActivity
         //empty for now
         return;
     }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    /*
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            if (position == TAB_POSITION_ACCOUNTS) {
-                //return the AccountFragment class
-                //return AccountFragment.newInstance (position + 1);
-                return AccountsFragment_.newInstance();
-            }
-            else if (position == TAB_POSITION_PROVIDERS){
-                //todo: return the providers fragment
-                return ProvidersFragment.newInstance(position);
-
-            }
-            else if (position == TAB_POSITION_NETWORTH){
-                return NetworthFragment.newInstance(position);
-            }
-            else if (position == TAB_POSITION_SPENDING){
-                return BudgetsFragment.newInstance(position);
-            }
-            else{
-                return PlaceholderFragment.newInstance(position + 1);
-            }
-
-        }
-
-        @Override
-        public int getCount() {
-            // Show 4 total pages.
-            return 4;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case TAB_POSITION_PROVIDERS:
-                    return getString(R.string.section_name_providers);
-                case TAB_POSITION_NETWORTH:
-                    return getString(R.string.section_name_networth);
-                case TAB_POSITION_ACCOUNTS:
-                    return getString(R.string.section_name_accounts);
-                case TAB_POSITION_SPENDING:
-                    return getString(R.string.section_name_spending);
-            }
-            return null;
-        }
-
-    }
-
-*/
 
 
 
