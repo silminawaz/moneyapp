@@ -41,12 +41,15 @@ public class AccountCardListDataObject {
         }
 
 
-    private void addAccountToList (Context context, PdvAccountResponse.AccountsObject account, String preferredCurrencyCode)
+    private void addAccountToList (Context context, PdvAccountResponse.AccountsObject acct, String preferredCurrencyCode)
     {
         try {
+            PdvAccountResponse.AccountsObject account = PdvAccountResponse.AccountsObject.clone(acct);
+            Log.d("AccountCardListData...", "addAccountToList() - START");
             //get the account category from the mapping
             CategoryTileMapping mapping = CategoryTileMapping.getInstance();
             if (mapping.categoryTileMapping.isEmpty()){
+                Log.d("AccountCardListData...", "addAccountToList() - Load category tile mapping");
                 mapping.loadData(context);
             }
 
@@ -57,6 +60,7 @@ public class AccountCardListDataObject {
                     ) {
 
                 if (accountCard.category == eAccountCategory) {
+                    Log.d("AccountCardListData...", "addAccountToList() - Adding account to existing card="+account.accountName);
                     accountCard.addAccount(account);
                     return;
                 }
@@ -64,7 +68,9 @@ public class AccountCardListDataObject {
 
             //no card for this type... lets create it
             ArrayList<PdvAccountResponse.AccountsObject> accountList = new ArrayList<>();
+            Log.d("AccountCardListData...", "addAccountToList() - Adding account to new tile="+account.accountName);
             accountList.add(account);
+            Log.d("AccountCardListData...", "addAccountToList() - Adding New account card="+account.accountName);
             AccountCardDataObject accountCard = new AccountCardDataObject(context, eAccountCategory, accountList, preferredCurrencyCode);
             this.accountCardList.add(accountCard);
         }

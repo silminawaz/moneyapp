@@ -149,7 +149,7 @@ public class NetworthFragment extends MoneyAppFragment implements MainActivity.F
         MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
 
         //set the fragment listener
-        ((MainActivity)getActivity()).setNetworthFragmentListener(this);
+        //((MainActivity)getActivity()).setNetworthFragmentListener(this);
 
 
         if (app.isProviderFoundInDevice() && app.pdvLoginStatus.isLoggedOnToPdv()) {

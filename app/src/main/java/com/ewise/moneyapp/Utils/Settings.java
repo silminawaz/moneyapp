@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.ewise.moneyapp.MoneyAppApp;
 import com.ewise.moneyapp.R;
+import com.ewise.moneyapp.data.ProviderLastUpdated;
+import com.ewise.moneyapp.data.ProviderLastUpdatedList;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -16,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,11 +32,14 @@ public class Settings {
 
     static final String SETTINGS_USER_NAME = "com.ewise.moneyapp.username.{profilename}";
     static final String SETTINGS_USER_EMAIL = "com.ewise.moneyapp.email.{profilename}";
+    static final String SHARED_PREFERENCES_PROVIDER_LASTUPDATED = "providerlastupdated";
+    static final String SETTINGS_PROVIDER_LAST_UPDATE_PREFIX = "provider.lastupdated";
 
     private String FILE_SIGNON_USERS = "signon_users.dat";
 
     private EncryptedPin encryptedPin;
     private HashMap<String, EncryptedPin> encryptedPinMap;
+    private ProviderLastUpdatedList providerLastUpdatedList;
     private SignOnUsers signOnUsers=null;
     private SignonUser activeUser=null;
     private SignonProfile activeProfile=null;
@@ -46,7 +52,9 @@ public class Settings {
         //this.context = context;
         encryptedPin = new EncryptedPin(context, null, null);//UNUSED
         encryptedPinMap = new HashMap<>();
+        providerLastUpdatedList = null;
         loadSignOnUsers(context);
+        loadProviderLastUpdatedList(context);
     }
 
     public static Settings getInstance(Context context){
@@ -58,6 +66,11 @@ public class Settings {
 
     public SignOnUsers getSignOnUsers() {
         return signOnUsers;
+    }
+
+    public void loadProviderLastUpdatedList(Context context){
+        SharedPreferences preferences=context.getSharedPreferences(SHARED_PREFERENCES_PROVIDER_LASTUPDATED, Context.MODE_PRIVATE);
+        //TODO: STOPPED HERE **SN** TODO
     }
 
     private void loadSignOnUsers(Context context){
@@ -485,8 +498,6 @@ public class Settings {
 
     }
 
-
-
     @Deprecated
     public String getActiveUserEmail(Activity activity) {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
@@ -537,7 +548,8 @@ public class Settings {
 * </pre> </blockquote>
 *
  */
-    @Deprecated    public String getUserName(Activity activity) {
+    @Deprecated
+    public String getUserName(Activity activity) {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         if (sharedPref.contains(SETTINGS_USER_NAME)){
             return sharedPref.getString(SETTINGS_USER_NAME, "");
@@ -561,6 +573,7 @@ public class Settings {
         }
         return false;
     }
+
 
     private void generalExceptionHandler(String eType, String eMessage, String eMethod, String eObjectString, Exception e, Context context) {
         String sFormat = context.getString(R.string.exception_format_string);

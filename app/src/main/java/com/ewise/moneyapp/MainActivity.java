@@ -183,6 +183,7 @@ public class MainActivity extends AppCompatActivity
     //todo: add a listener for each fragment that needs to be updated by the MainActivity
     HashMap<String, FragmentUpdateListener> fragmentListenerMap;
 
+    /*
     FragmentUpdateListener providerFragmentUpdateListener = null;
     FragmentUpdateListener networthFragmentUpdateListener = null;
     FragmentUpdateListener accountsFragmentUpdateListener = null;
@@ -192,6 +193,7 @@ public class MainActivity extends AppCompatActivity
     FragmentUpdateListener helpFragmentUpdateListener = null;
     FragmentUpdateListener reportIssueFragmentUpdateListener = null;
     FragmentUpdateListener transferFragmentUpdateListener = null;
+    */
 
     public void setAttachedFragmentUpdateListener(MoneyAppFragment fragment) {
         if (fragmentListenerMap == null) {
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity
         fragmentListenerMap.put(fragment.getClass().getName(), fragment);
     }
 
-
+/*
     public void setProviderFragmentListener(FragmentUpdateListener listener) {
         providerFragmentUpdateListener = listener;
     }
@@ -215,6 +217,7 @@ public class MainActivity extends AppCompatActivity
         accountsFragmentUpdateListener = listener;
     }
 
+*/
 
     private void refreshAttachedFragments() {
 
@@ -226,11 +229,13 @@ public class MainActivity extends AppCompatActivity
         if (networthFragmentUpdateListener != null) {
             networthFragmentUpdateListener.refreshFragmentUI();
         }
-        */
+
 
         if (accountsFragmentUpdateListener != null) {
             accountsFragmentUpdateListener.refreshFragmentUI();
         }
+        */
+
         //refresh all attached fragments derived from MoneyAppFragment
         if (fragmentListenerMap!=null) {
             for (FragmentUpdateListener listener : fragmentListenerMap.values()) {
