@@ -23,6 +23,7 @@ import com.ewise.android.pdv.api.model.PromptEntry;
 import com.ewise.android.pdv.api.model.UserProviderEntry;
 import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
+import com.ewise.moneyapp.MainActivity;
 import com.ewise.moneyapp.MoneyAppApp;
 import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.Utils.PdvApiResults;
@@ -61,9 +62,9 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        String providerString = PdvApiResults.toJsonString(providerEntry);
-        args.putString("providerString", providerString);
-        f.setArguments(args);
+        //String providerString = PdvApiResults.toJsonString(providerEntry);
+        //args.putString("providerString", providerString);
+        //f.setArguments(args);
 
         return f;
     }
@@ -78,16 +79,15 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        String providerString = getArguments().getString("providerString");
-        providerEntry = PdvApiResults.objectFromString(providerString, UserProviderEntry.class);
+        //String providerString = getArguments().getString("providerString");
+        //providerEntry = PdvApiResults.objectFromString(providerString, UserProviderEntry.class);
 
         View v = inflater.inflate(R.layout.edit_institution_prompts_dialog, container, false);
-        View tv = v.findViewById(R.id.text);
 
         TextView instName = (TextView) v.findViewById(R.id.textInstitutionName);
 
         MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
-
+        providerEntry = ((MainActivity) getActivity()).editProviderEntry;
 
         if (!providerEntry.getDesc().equals("")) {
             instName.setText(providerEntry.getDesc() + "\n" + providerEntry.getUid());
@@ -99,8 +99,6 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
                 instName.setText(inst.getInstDesc() + "\n" + providerEntry.getUid());
             }
         }
-
-        //instName.setCompoundDrawables(ContextCompat.getDrawable(getActivity(), app.getInstitutionIconResourceId(providerEntry.getIid())), null,null,null);
 
 
         editProviderPromptsLayout = (LinearLayout) v.findViewById(R.id.editProviderPromptsLayout);
