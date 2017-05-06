@@ -186,14 +186,14 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
                         // When the given dropdown item is selected, show its contents in the
                         // container view.
 
-                        Group group = providerResults.providers.getData().getGroups().get(position);
+                        //Group group = providerResults.providers.getData().getGroups().get(position);
 
-                        String strGroup = PdvApiResults.toJsonString(group);
+                        //String strGroup = PdvApiResults.toJsonString(group);
 
-                        Log.d("D1", strGroup);
+                        //Log.d("D1", strGroup);
 
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.container, AddInstitutionFragment.newInstance(position, strGroup))
+                                .replace(R.id.container, AddInstitutionFragment.newInstance(position))
                                 .commit();
                     }
 
@@ -290,9 +290,9 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
         super.onActivityResult(requestCode, resultCode, data);
 
         if ((data != null) && (requestCode == MoneyAppApp.ADD_PROVIDER_PROMPTS_REQUEST)){
-            String jsonPromptsData = data.getStringExtra("promptsData");
-            GetPromptsData promptsData = PdvApiResults.objectFromString(jsonPromptsData, GetPromptsData.class);
-            Log.d("AddInst-instCode", PdvApiResults.toJsonString(promptsData));
+            //String jsonPromptsData = data.getStringExtra("promptsData");
+            //GetPromptsData promptsData = PdvApiResults.objectFromString(jsonPromptsData, GetPromptsData.class);
+            //Log.d("AddInst-instCode", PdvApiResults.toJsonString(promptsData));
             setResult(Activity.RESULT_OK, data);
             finish();
         }

@@ -14,6 +14,8 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
+import java.util.List;
+
 /**
  * Created by SilmiNawaz on 23/2/17.
  */

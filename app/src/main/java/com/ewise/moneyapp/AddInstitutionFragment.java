@@ -5,6 +5,7 @@ package com.ewise.moneyapp;
  */
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,7 +47,7 @@ public class AddInstitutionFragment extends Fragment {
 
     AddInstitutionItemViewAdapter institutionItemViewAdapter;
 
-    String groupId;
+    Group group;
     int sectionNumber;
 
 
@@ -57,12 +58,12 @@ public class AddInstitutionFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static AddInstitutionFragment newInstance(int sectionNumber, String strGroup) {
+    public static AddInstitutionFragment newInstance(int sectionNumber) {
         AddInstitutionFragment fragment = new AddInstitutionFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        Log.d("D2", strGroup);
-        args.putString(ARG_PROVIDER_GROUP, strGroup);
+        //Log.d("D2", strGroup);
+        //args.putString(ARG_PROVIDER_GROUP, strGroup);
         fragment.setArguments(args);
         return fragment;
     }
@@ -82,15 +83,22 @@ public class AddInstitutionFragment extends Fragment {
 
         add_institution_recycler_view = (RecyclerView) rootView.findViewById(R.id.add_institution_recycler_view);
         add_institution_recycler_view.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        institutionItemViewAdapter = new AddInstitutionItemViewAdapter(this.getContext());
-        add_institution_recycler_view.setAdapter(institutionItemViewAdapter);
 
-        String strGroup = getArguments().getString(ARG_PROVIDER_GROUP);
-        Log.d("D3", strGroup);
-        Group group = (Group) PdvApiResults.objectFromString(strGroup, Group.class);
-        setInstitutionData(group);
+        //String strGroup = getArguments().getString(ARG_PROVIDER_GROUP);
+        //Log.d("D3", strGroup);
+        //group = PdvApiResults.objectFromString(strGroup, Group.class);
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
+        group = app.providerData.getGroups().get(sectionNumber);
+        setInstitutionData(group);
+
     }
 
     public boolean setInstitutionData(Group group){
@@ -110,7 +118,10 @@ public class AddInstitutionFragment extends Fragment {
                     groupedInstitution.setInstitutionIcon(app.getInstitutionCodeIconResourceId(institution.getInstCode(), group.getGroupId()), getActivity());
                     groupedInstitutionList.add(groupedInstitution);
                 }
-                institutionItemViewAdapter.swapData(groupedInstitutionList);
+
+                institutionItemViewAdapter = new AddInstitutionItemViewAdapter(this.getContext());
+                institutionItemViewAdapter.setItemList(groupedInstitutionList);
+                add_institution_recycler_view.setAdapter(institutionItemViewAdapter);
                 return true;
             }
 

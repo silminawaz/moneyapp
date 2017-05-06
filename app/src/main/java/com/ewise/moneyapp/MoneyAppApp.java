@@ -67,6 +67,7 @@ import com.ewise.moneyapp.Utils.Settings;
 import com.ewise.moneyapp.Utils.SignOnSystem;
 import com.ewise.moneyapp.data.AccountCardListDataObject;
 import com.ewise.moneyapp.data.DataUpdateType;
+import com.ewise.moneyapp.data.GroupedInstitution;
 import com.ewise.moneyapp.data.PdvAccountResponse;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 //import com.rogansoft.remotelogger.DebugHelper;
@@ -137,6 +138,8 @@ public class MoneyAppApp extends Application {
     public PdvApiRequestQueue   pdvApiRequestQueue = null;
     public GetUserProfileData   userProfileData = null;
     public Providers providerData = null;
+    private GroupedInstitution addInstitutionSelected = null;
+    private GetPromptsData promptsDataSelected = null;
     public HashMap<String, String> instCodeToGroupMap = null;
     public PdvAccountResponse pdvAccountResponse = null;
     Handler threadHandler = new Handler();
@@ -152,6 +155,34 @@ public class MoneyAppApp extends Application {
     private boolean pdvAcaServiceIsBound = false;
 
 
+    public GroupedInstitution getAddInstitutionSelected() {
+        return addInstitutionSelected;
+    }
+
+    public void setAddInstitutionSelected(GroupedInstitution addInstitutionSelected) {
+        if (this.addInstitutionSelected==null){
+            this.addInstitutionSelected=new GroupedInstitution();
+        }
+        this.addInstitutionSelected.setGroupId(addInstitutionSelected.getGroupId());
+        this.addInstitutionSelected.setGroupDesc(addInstitutionSelected.getGroupDesc());
+        this.addInstitutionSelected.setInstCode(addInstitutionSelected.getInstCode());
+        this.addInstitutionSelected.setInstDesc(addInstitutionSelected.getInstDesc());
+        this.addInstitutionSelected.setInstitutionIcon(addInstitutionSelected.getInstitutionIcon());
+    }
+
+    public GetPromptsData getPromptsDataSelected() {
+        return promptsDataSelected;
+    }
+
+    public void setPromptsDataSelected(GetPromptsData promptsDataSelected) {
+        if (this.promptsDataSelected==null){
+            this.promptsDataSelected=new GetPromptsData();
+        }
+        this.promptsDataSelected.setInstId(promptsDataSelected.getInstId());
+        List<PromptEntry> promptEntryList = new ArrayList<>();
+        promptEntryList.addAll(promptsDataSelected.getPrompts());
+        this.promptsDataSelected.setPrompts(promptEntryList);
+    }
 
     public boolean isPdvLoginFailed(){
         return pdvLoginFailed;

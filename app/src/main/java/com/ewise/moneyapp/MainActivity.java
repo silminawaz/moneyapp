@@ -1086,12 +1086,12 @@ public class MainActivity extends AppCompatActivity
 
         //if the result from the add provider form is returned
         if ((data != null) && (requestCode == MoneyAppApp.ADD_PROVIDER_LIST_REQUEST)) {
-            String jsonPromptsData = data.getStringExtra("promptsData");
+            //String jsonPromptsData = data.getStringExtra("promptsData");
             String instCode = data.getStringExtra("instCode");
             String instName = data.getStringExtra("instName");
 
-            GetPromptsData promptsData = PdvApiResults.objectFromString(jsonPromptsData, GetPromptsData.class);
-
+            //GetPromptsData promptsData = PdvApiResults.objectFromString(jsonPromptsData, GetPromptsData.class);
+            GetPromptsData promptsData = app.getPromptsDataSelected();
             setDataFetchingStatus(true, null);
 
             Log.d("MainActivity-instCode", PdvApiResults.toJsonString(promptsData));
