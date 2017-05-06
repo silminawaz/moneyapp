@@ -415,5 +415,19 @@
     <string name="profile_switching_progress_message">Switching profiles may take a few seconds. please wait&#8230;</string>
     <string name="login_timeout_message">Login Timeout - There is a problem with logging into the PDV for your selected profile. Please LOGOUT and try using a different profile</string>
 
-
+    <string name="last_updated_time_elapsed_year">year</string>
+    <string name="last_updated_time_elapsed_month">month</string>
+    <string name="last_updated_time_elapsed_week">week</string>
+    <string name="last_updated_time_elapsed_day">day</string>
+    <string name="last_updated_time_elapsed_hour">hour</string>
+    <string name="last_updated_time_elapsed_minute">minute</string>
+    <string name="last_updated_time_elapsed_second">second</string>
+    <string name="last_updated_time_elapsed_year_plural">years</string>
+    <string name="last_updated_time_elapsed_months_plural">months</string>
+    <string name="last_updated_time_elapsed_weeks_plural">weeks</string>
+    <string name="last_updated_time_elapsed_days_plural">days</string>
+    <string name="last_updated_time_elapsed_hours_plural">hours</string>
+    <string name="last_updated_time_elapsed_minutes_plural">minutes</string>
+    <string name="last_updated_time_elapsed_seconds_plural">seconds</string>
+    <string name="last_updated_time_elapsed_format">"%1$d %2$s ago"</string>
 </resources>

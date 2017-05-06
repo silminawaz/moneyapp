@@ -10,7 +10,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -211,7 +210,9 @@ public class MoneyAppApp extends Application {
     public AccountCardListDataObject getAccountCardListDO(Context context){
 
         if (pdvAccountResponse!=null){
+            Log.d(TAG, "getAccountCardListDO() - 1");
             if (pdvAccountResponse.accounts!=null){
+                Log.d(TAG, "getAccountCardListDO() - 2");
                 return new AccountCardListDataObject(context, pdvAccountResponse, getBaseCurrency());
             }
         }

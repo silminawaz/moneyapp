@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.ewise.moneyapp.R;
+import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.data.PdvAccountResponse.AccountsObject;
 import com.google.gson.Gson;
 
@@ -35,9 +36,11 @@ public class AccountCardDataObject {
         BILLS,
         OTHERASSETS,
         OTHERLIABILITIES
+
+
     }
 
-    private static final String TAG = "AccountsFragment";
+    //private static final String TAG = "AccountsFragment";
 
     private Context context;
     public eAccountCategory category;
@@ -55,11 +58,12 @@ public class AccountCardDataObject {
     public BigDecimal preferredCurrencyFunds;
 
 
-    public List<AccountsObject> accountList = new ArrayList<>();
+    public List<AccountsObject> accountList;
 
     public AccountCardDataObject(Context context, eAccountCategory category, ArrayList<AccountsObject> accountList, String preferredCurrencyCode) {
         this.context = context;
         this.category = category;
+        this.accountList= new ArrayList<>();
         this.accountList.addAll(accountList); //assumption: the account list is filtered and only contains accounts of this eAccountCategory
         this.preferredCurrencyCode = preferredCurrencyCode;
         this.displayCurrencyCode = this.preferredCurrencyCode; //set display currency to preferred currency
@@ -221,6 +225,7 @@ public class AccountCardDataObject {
     @Override
     public String toString() {
         //return super.toString();
+        /* **SN** AccountsFragment crashing with this
         try {
 
             String jsonString = new Gson().toJson(this);
@@ -232,6 +237,10 @@ public class AccountCardDataObject {
             Log.e(TAG, e.getMessage());
 
         }
+
+        */
+
+        //return PdvApiResults.toJsonString(this);
 
         return super.toString();
     }

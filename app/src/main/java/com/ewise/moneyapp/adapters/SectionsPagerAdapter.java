@@ -8,7 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.ewise.moneyapp.AccountsFragment_;
+import com.ewise.moneyapp.AccountsFragment2;
+//import com.ewise.moneyapp.AccountsFragment_;
 import com.ewise.moneyapp.Fragments.BudgetsFragment;
 import com.ewise.moneyapp.Fragments.NetworthFragment;
 import com.ewise.moneyapp.PlaceholderFragment;
@@ -37,7 +38,11 @@ public class SectionsPagerAdapter extends RemovableFragmentPagerAdapter {
         if (position == TAB_POSITION_ACCOUNTS) {
             //return the AccountFragment class
             //return AccountFragment.newInstance (position + 1);
-            return AccountsFragment_.newInstance();
+
+            //todo: **SN** testing crash on lollipop
+            return AccountsFragment2.newInstance();
+            //return PlaceholderFragment.newInstance(position + 1);
+
         }
         else if (position == TAB_POSITION_PROVIDERS){
             //todo: return the providers fragment

@@ -107,6 +107,8 @@ public class EncryptedPin {
 
 
     public boolean savePIN (String plainTextPin, Activity activity){
+        //Must always call this from the same activity to ensure that you get the correct saved results.
+
         boolean isPinSaved = false;
 
         if (isPINExpired(activity)){
@@ -135,7 +137,7 @@ public class EncryptedPin {
     }
 
     public boolean validatePIN (String plainTextPin, Activity activity){
-
+        //Must always call this from the same activity to ensure that you get the correct saved results.
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         String savedPin = sharedPref.getString(DEFAULT_PIN_KEY_ALIAS, null);
         if (savedPin!=null){
