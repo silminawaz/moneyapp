@@ -508,11 +508,20 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     @Override
     public void onGetCredentialFail(PdvApiResults results)
     {
-        Log.d("EditProviderDialogFr...", "onGetCredentialFail() : results=" + PdvApiResults.toJsonString(results));
-        linearlayoutGetPromptsMsg.setVisibility(View.GONE);
-        saveButton.setVisibility(View.VISIBLE);
-        editProviderPromptsLayout.setVisibility(View.VISIBLE);
+        if (isAdded()) {
+            if (getActivity() != null) {
 
+                Log.d("EditProviderDialogFr...", "onGetCredentialFail() : results=" + PdvApiResults.toJsonString(results));
+                getActivity().runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    linearlayoutGetPromptsMsg.setVisibility(View.GONE);
+                                                    saveButton.setVisibility(View.VISIBLE);
+                                                    editProviderPromptsLayout.setVisibility(View.VISIBLE);
+                                                }
+                });
+            }
+        }
 
     }
 

@@ -168,6 +168,21 @@ public class PdvAccountResponse {
         public String updatedAt;
         public String data;
 
+        public static AccountsObject clone(AccountsObject acct){
+            AccountsObject a=new AccountsObject();
+            a.accountId=acct.accountId;
+            a.accountName=acct.accountName;
+            a.currency=acct.currency;
+            a.accountNumber=acct.accountNumber;
+            a.balance=acct.balance;
+            a.accountHash=acct.accountHash;
+            a.availBalance=acct.availBalance;
+            a.category=acct.category;
+            a.data=acct.data;
+            a.instId=acct.instId;
+            return a;
+        }
+
         public static AccountsObject objectFromData(String str) {
 
             return new Gson().fromJson(str, AccountsObject.class);

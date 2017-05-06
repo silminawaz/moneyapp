@@ -228,7 +228,7 @@ import java.util.List;
         welcomeLayout = (LinearLayout) rootView.findViewById(R.id.providerWelcomeLayout);
         addProviderButton = (Button) rootView.findViewById(R.id.addProviderButton);
 
-        rootView.findViewById(R.id.providerFragmentTopLayout).setPadding(0,0,0,getActivity().findViewById(R.id.tabs).getHeight());
+        //rootView.findViewById(R.id.providerFragmentTopLayout).setPadding(0,0,0,getActivity().findViewById(R.id.tabs).getHeight());
 
 
         //if there are any legitimate providers , we can hide the welcome layout.
@@ -247,7 +247,7 @@ import java.util.List;
                 new IntentFilter("pdv-aca-bound-service-callback"));
 
         //set the fragment listener
-        ((MainActivity)getActivity()).setProviderFragmentListener(this);
+        //((MainActivity)getActivity()).setProviderFragmentListener(this);
 
 
         Log.d(TAG, "onCreateView() - END");
