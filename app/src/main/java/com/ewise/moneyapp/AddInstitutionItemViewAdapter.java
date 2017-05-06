@@ -3,16 +3,13 @@ package com.ewise.moneyapp;
 import android.content.Context;
 import android.view.ViewGroup;
 
-//import com.ewise.android.pdv.api.model.provider.GroupedInstitution;
 import com.ewise.moneyapp.data.GroupedInstitution;
-import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.moneyapp.views.RecyclerViewAdapterBase;
-import com.ewise.moneyapp.views.RecyclerViewItemLayoutView;
-import com.ewise.moneyapp.views.RecyclerViewWrapper;
 
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+
+import java.util.List;
 
 /**
  * Created by SilmiNawaz on 23/2/17.
