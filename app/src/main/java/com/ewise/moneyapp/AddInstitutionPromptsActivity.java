@@ -80,42 +80,17 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
 
         btnAddProvider.setVisibility(View.GONE);
 
-        Intent intent = getIntent();
-        //String objJsonString = intent.getStringExtra("com.wise.moneyapp.AddInstitutionPromptsActivity.GroupedInstitution");
-        //groupedInstitution = PdvApiResults.objectFromString(objJsonString, GroupedInstitution.class);
         groupedInstitution=myApp.getAddInstitutionSelected();
         String instName = groupedInstitution.getInstDesc();
         textInstitutionName.setText(instName);
-        int resID = myApp.getInstitutionCodeIconResourceId(groupedInstitution.getInstCode(), groupedInstitution.getGroupId());
-        //if (resID==0){
-        //    resID = getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName());
-        //}
-        Log.d("AddInstResID", Integer.toString(resID));
-        //imageInstitutionLogo.setImageResource(getResources().getIdentifier(groupedInstitution.getGroupId(), "drawable", getBaseContext().getPackageName()));
-
         imageInstitutionLogo.setImageBitmap(groupedInstitution.getInstitutionIcon());
-
         addInstitutionText.setText(String.format(getString(R.string.add_provider_text),instName,instName));
-
         context = this;
-
         PdvApi pdvApi = myApp.getPdvApi();
-//REMOVE XWALK         myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
+        //REMOVE XWALK         myApp.pdvWebView = (WebView) findViewById(R.id.ewise_webview);
         myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
         try {
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
-
-/*            //what do I want to do now?  - call getPrompts
-            if (myApp.pdvConnectivityStatus != PdvConnectivityStatus.SUCCESS) {
-                myApp.checkConnectivity(this, MoneyAppApp.DEFAULT_SWAN_HOST, this);
-            } else
-            {
-                onPdvConnected();
-            }
-*/
-            if (myApp.pdvLoginStatus.isLoggedOnToPdv()){
-                //Toast.makeText(getApplicationContext(), R.string.pdvapi_get_prompts_message, Toast.LENGTH_SHORT).show();
-            }
         } catch (Exception e) {
             String sMethod = this.toString();
             sMethod = sMethod + Thread.currentThread().getStackTrace()[2].getMethodName() + "() ";
@@ -123,9 +98,7 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
             generalExceptionHandler(e.getClass().getName(), e.getMessage(), sMethod, sObjString);
         }
 
-
         myApp.pdvGetPrompts(groupedInstitution.getInstCode(), this);
-
 
     }
 
@@ -198,8 +171,6 @@ public class AddInstitutionPromptsActivity extends AppCompatActivity implements 
                 public void onClick(DialogInterface dialog, int id) {
                     // User clicked OK button
                     Intent resultIntent = new Intent();
-//                    String promptsDataString = PdvApiResults.toJsonString(promptsData);
-//                    resultIntent.putExtra("promptsData", promptsDataString);
                     MoneyAppApp app = (MoneyAppApp) getApplication();
                     app.setPromptsDataSelected(promptsData);
                     resultIntent.putExtra("instCode", groupedInstitution.getInstCode());

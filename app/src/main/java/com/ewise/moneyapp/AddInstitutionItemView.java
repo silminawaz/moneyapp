@@ -65,18 +65,6 @@ public class AddInstitutionItemView extends RecyclerViewItemLayoutView<GroupedIn
         }
         );
 
-
-        /*
-        int iconResId = app.getInstitutionCodeIconResourceId(dataObject.getInstCode());
-        if (iconResId<=0) {
-            accountinstitutionicon.setImageResource(getInstitutionIconResourceId(dataObject.getGroupId()));
-        }
-        else
-        {
-            accountinstitutionicon.setImageResource(iconResId);
-
-        }
-        */
         if (dataObject.getInstitutionIcon()!=null)
             accountinstitutionicon.setImageBitmap(dataObject.getInstitutionIcon());
         else
@@ -98,12 +86,8 @@ public class AddInstitutionItemView extends RecyclerViewItemLayoutView<GroupedIn
     public void startAddInstitutionPromptsActivity(GroupedInstitution groupedInstitution){
 
         MoneyAppApp app = (MoneyAppApp) getContext().getApplicationContext();
-
         app.setAddInstitutionSelected(groupedInstitution);
-
-        //String objJsonString = PdvApiResults.toJsonString(groupedInstitution);
         Intent intent= new Intent(getContext(), AddInstitutionPromptsActivity.class);
-        //intent.putExtra("com.wise.moneyapp.AddInstitutionPromptsActivity.GroupedInstitution", objJsonString);
         Activity activity = (Activity) this.getContext();
         activity.startActivityForResult(intent, MoneyAppApp.ADD_PROVIDER_PROMPTS_REQUEST );
 

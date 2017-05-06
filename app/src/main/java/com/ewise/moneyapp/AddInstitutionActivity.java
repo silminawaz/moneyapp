@@ -290,9 +290,6 @@ public class AddInstitutionActivity extends AppCompatActivity implements PdvConn
         super.onActivityResult(requestCode, resultCode, data);
 
         if ((data != null) && (requestCode == MoneyAppApp.ADD_PROVIDER_PROMPTS_REQUEST)){
-            //String jsonPromptsData = data.getStringExtra("promptsData");
-            //GetPromptsData promptsData = PdvApiResults.objectFromString(jsonPromptsData, GetPromptsData.class);
-            //Log.d("AddInst-instCode", PdvApiResults.toJsonString(promptsData));
             setResult(Activity.RESULT_OK, data);
             finish();
         }

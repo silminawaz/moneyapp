@@ -181,6 +181,7 @@ public class MoneyAppApp extends Application {
         this.promptsDataSelected.setInstId(promptsDataSelected.getInstId());
         List<PromptEntry> promptEntryList = new ArrayList<>();
         promptEntryList.addAll(promptsDataSelected.getPrompts());
+        if (this.promptsDataSelected.getPrompts()!=null) this.promptsDataSelected.getPrompts().clear();
         this.promptsDataSelected.setPrompts(promptEntryList);
     }
 

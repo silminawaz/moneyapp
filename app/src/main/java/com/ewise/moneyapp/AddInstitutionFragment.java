@@ -62,8 +62,6 @@ public class AddInstitutionFragment extends Fragment {
         AddInstitutionFragment fragment = new AddInstitutionFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        //Log.d("D2", strGroup);
-        //args.putString(ARG_PROVIDER_GROUP, strGroup);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,10 +81,6 @@ public class AddInstitutionFragment extends Fragment {
 
         add_institution_recycler_view = (RecyclerView) rootView.findViewById(R.id.add_institution_recycler_view);
         add_institution_recycler_view.setLayoutManager(new LinearLayoutManager(this.getContext()));
-
-        //String strGroup = getArguments().getString(ARG_PROVIDER_GROUP);
-        //Log.d("D3", strGroup);
-        //group = PdvApiResults.objectFromString(strGroup, Group.class);
 
         return rootView;
     }
