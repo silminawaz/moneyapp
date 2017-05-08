@@ -44,6 +44,7 @@ public class NetworthDataObject {
 
     private Context context;
     Map<AccountCardDataObject.eAccountCategory, eNetworthType> typeToCategoryMap;
+    Map<AccountCardDataObject.eAccountCategory, eNetworthType> typeToNegativeCategoryMap;
 
     private BigDecimal totalAssetsAmount=null;
     private BigDecimal totalLiabilitiesAmount=null;
@@ -57,6 +58,7 @@ public class NetworthDataObject {
     public NetworthDataObject(Context context, AccountCardListDataObject accountCardList, String baseCurrency){
         this.context = context;
         typeToCategoryMap = new HashMap<AccountCardDataObject.eAccountCategory, eNetworthType>();
+        typeToNegativeCategoryMap = new HashMap<AccountCardDataObject.eAccountCategory, eNetworthType>();
         currency = Currency.getInstance(baseCurrency);
         MathContext mc = new MathContext(currency.getDefaultFractionDigits(), RoundingMode.HALF_UP);
         double dZero = 0.0;
@@ -83,6 +85,20 @@ public class NetworthDataObject {
         typeToCategoryMap.put(AccountCardDataObject.eAccountCategory.REWARDS, eNetworthType.UNKNOWN);
         typeToCategoryMap.put(AccountCardDataObject.eAccountCategory.UNKNOWN, eNetworthType.UNKNOWN);
 
+        //exception to the rule, when assets become a liability (OVERDRAWN ASSET TYPE e.g Overdrawn CASH account) and a liability becomes an asset (OVERPAID liability type e.g. Credit card)
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.CASH, eNetworthType.LIABILITY);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.INVESTMENT, eNetworthType.LIABILITY);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.RETIREMENT, eNetworthType.LIABILITY);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.PROPERTY, eNetworthType.LIABILITY);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.OTHERASSETS, eNetworthType.LIABILITY);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.CREDIT, eNetworthType.ASSET);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.LOAN, eNetworthType.ASSET);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.BILLS, eNetworthType.ASSET);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.OTHERLIABILITIES, eNetworthType.ASSET);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.INSURANCE, eNetworthType.ASSET);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.REWARDS, eNetworthType.UNKNOWN);
+        typeToNegativeCategoryMap.put(AccountCardDataObject.eAccountCategory.UNKNOWN, eNetworthType.UNKNOWN);
+
         calculateNetworth(accountCardList);
     }
 
@@ -101,16 +117,16 @@ public class NetworthDataObject {
                             Log.d ("NetworthDataObject", "calculateNetworth() - accountCardList found");
                             NetworthEntry e = new NetworthEntry();
                             e.accountCard = aco;
-                            e.type = typeToCategoryMap.get(aco.category);
+                            e.type = (aco.preferredCurrencyBalance.doubleValue()>=0)?typeToCategoryMap.get(aco.category):typeToNegativeCategoryMap.get(aco.category);
                             switch (e.type) {
                                 case ASSET:
                                     Log.d ("NetworthDataObject", "calculateNetworth() - accountCardList found - Adding to Total Assets =" + aco.preferredCurrencyBalance);
                                     if (totalAssetsAmount==null){
-                                        totalAssetsAmount = new BigDecimal(aco.preferredCurrencyBalance.doubleValue());
+                                        totalAssetsAmount = new BigDecimal(Math.abs(aco.preferredCurrencyBalance.doubleValue()));
                                     }
                                     else
                                     {
-                                        totalAssetsAmount = BigDecimal.valueOf(aco.preferredCurrencyBalance.doubleValue()).add(BigDecimal.valueOf(totalAssetsAmount.doubleValue()));
+                                        totalAssetsAmount = BigDecimal.valueOf(Math.abs(aco.preferredCurrencyBalance.doubleValue())).add(BigDecimal.valueOf(totalAssetsAmount.doubleValue()));
 
                                     }
                                     Log.d ("NetworthDataObject", "calculateNetworth() - totalAssetsAmount=" + totalAssetsAmount);
@@ -119,11 +135,11 @@ public class NetworthDataObject {
                                 case LIABILITY:
                                     Log.d ("NetworthDataObject", "calculateNetworth() - accountCardList found - Adding to Total Liabilities =" + aco.preferredCurrencyBalance);
                                     if (totalLiabilitiesAmount==null){
-                                        totalLiabilitiesAmount = new BigDecimal(aco.preferredCurrencyBalance.doubleValue());
+                                        totalLiabilitiesAmount = new BigDecimal(Math.abs(aco.preferredCurrencyBalance.doubleValue()));
                                     }
                                     else
                                     {
-                                        totalLiabilitiesAmount = BigDecimal.valueOf(aco.preferredCurrencyBalance.doubleValue()).add(BigDecimal.valueOf(totalLiabilitiesAmount.doubleValue()));
+                                        totalLiabilitiesAmount = BigDecimal.valueOf(Math.abs(aco.preferredCurrencyBalance.doubleValue())).add(BigDecimal.valueOf(totalLiabilitiesAmount.doubleValue()));
 
                                     }
                                     Log.d ("NetworthDataObject", "calculateNetworth() - totalLiabilitiesAmount=" + totalLiabilitiesAmount);
@@ -132,7 +148,7 @@ public class NetworthDataObject {
                                 default:
                                     Log.d ("NetworthDataObject", "calculateNetworth() - accountCardList found - Adding to Total Unknown =" + aco.preferredCurrencyBalance);
                                     if (totalUnknownAmount==null){
-                                        totalUnknownAmount = new BigDecimal(aco.preferredCurrencyBalance.doubleValue());
+                                        totalUnknownAmount = new BigDecimal( aco.preferredCurrencyBalance.doubleValue());
                                     }
                                     else
                                     {
