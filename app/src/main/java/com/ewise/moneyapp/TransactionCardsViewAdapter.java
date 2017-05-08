@@ -14,7 +14,7 @@ import org.androidannotations.annotations.RootContext;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 10/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 10/9/16.
  */
 
 @EBean

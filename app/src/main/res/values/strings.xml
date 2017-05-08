@@ -430,4 +430,10 @@
     <string name="last_updated_time_elapsed_minutes_plural">minutes</string>
     <string name="last_updated_time_elapsed_seconds_plural">seconds</string>
     <string name="last_updated_time_elapsed_format">"%1$d %2$s ago"</string>
+
+    <string name="provider_message_partial_response_text">Partial success</string>
+    <string name="provider_message_status_text">"Status: "</string>
+    <string name="provider_message_error_type_text">"Error type: "</string>
+    <string name="provider_message_message_text">"Message: "</string>
+
 </resources>

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by SilmiNawaz on 5/3/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 5/3/17.
  */
 public class PdvApiRequestParams {
 

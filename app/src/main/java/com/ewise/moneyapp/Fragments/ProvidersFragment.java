@@ -820,23 +820,6 @@ import java.util.List;
 
 
 
-    @Override
-    public void refreshFragmentUI(){
-
-        Log.d("AccountsFragment", "refreshFragment()");
-
-        if (isAdded()) {
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //accounts retrieval failed
-                    updatePageData();
-                }
-            });
-        }
-    }
-
     public void updatePageData(){
 
         if (isAdded()) {

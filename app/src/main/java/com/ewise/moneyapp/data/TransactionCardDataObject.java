@@ -23,7 +23,7 @@ import com.google.gson.Gson;
 
 
 /**
- * Created by SilmiNawaz on 9/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 9/9/16.
  * A TransactionCardDataObject maintains a list of transactions for an account
  */
 public class TransactionCardDataObject {

@@ -20,7 +20,7 @@ import com.ewise.moneyapp.R;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 20/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 20/4/17.
  */
 public class ProfileSelectImageViewAdapter extends RecyclerView.Adapter<ProfileSelectImageViewAdapter.ViewHolder>{
 

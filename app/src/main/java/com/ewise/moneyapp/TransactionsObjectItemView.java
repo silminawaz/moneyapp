@@ -18,7 +18,7 @@ import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
 /**
- * Created by SilmiNawaz on 7/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 7/9/16.
  */
 
 

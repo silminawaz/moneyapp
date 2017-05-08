@@ -1,7 +1,7 @@
 package com.ewise.moneyapp.Fragments;
 
 /**
- * Created by SilmiNawaz on 20/8/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 20/8/16.
  */
 
 import android.os.Bundle;

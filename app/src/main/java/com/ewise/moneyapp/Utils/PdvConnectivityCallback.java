@@ -9,7 +9,7 @@ import com.ewise.android.pdv.api.model.provider.Providers;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 22/2/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 22/2/17.
  */
 
 public interface PdvConnectivityCallback {

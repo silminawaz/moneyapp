@@ -34,7 +34,7 @@ import java.util.Locale;
 
 
 /**
- * Created by SilmiNawaz on 19/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 19/9/16.
  */
 public class CashflowLineChart {
 

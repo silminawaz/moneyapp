@@ -39,7 +39,7 @@ import com.ewise.moneyapp.Utils.SignonUser;
 import com.ewise.moneyapp.adapters.ProfileSelectImageViewAdapter;
 
 /**
- * Created by SilmiNawaz on 1/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 1/4/17.
  */
 public class EditProfilesDialogFragment extends DialogFragment {
 

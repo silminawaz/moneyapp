@@ -26,7 +26,7 @@ import com.ewise.moneyapp.views.RecyclerViewBindInterface;
 import com.ewise.moneyapp.views.RecyclerViewItemLayoutView;
 
 /**
- * Created by SilmiNawaz on 10/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 10/9/16.
  */
 
 

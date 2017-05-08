@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 5/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 5/9/16.
  * Builds lists of AccountCardDataObject using PdvAccountResponse data
  * This class is used to builds the account tiles in the "Account" page
  */
@@ -27,7 +27,11 @@ public class AccountCardListDataObject {
         {
             context = context;
             //build the list of cards based on the accountResponse
-            for (PdvAccountResponse.AccountsObject acct : accountResponse.accounts) {
+            //first make a copy of the account response since it could be in use outside of this method
+            List<PdvAccountResponse.AccountsObject> accountsObjectList = new ArrayList<>();
+            accountsObjectList.addAll(accountResponse.accounts);
+
+            for (PdvAccountResponse.AccountsObject acct : accountsObjectList) {
                 addAccountToList(context, acct, preferredCurrencyCode);
             }
         }

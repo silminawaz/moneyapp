@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 13/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 13/4/17.
  */
 public class SignonUser {
 

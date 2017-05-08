@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by SilmiNawaz on 15/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 15/4/17.
  */
 public class RemovableFragmentPagerAdapter extends FragmentStatePagerAdapter {
 

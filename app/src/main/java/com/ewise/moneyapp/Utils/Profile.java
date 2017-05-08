@@ -1,7 +1,7 @@
 package com.ewise.moneyapp.Utils;
 
 /**
- * Created by SilmiNawaz on 13/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 13/4/17.
  */
 
 @Deprecated

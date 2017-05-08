@@ -6,7 +6,7 @@ import android.util.Log;
 import com.ewise.moneyapp.R;
 
 /**
- * Created by SilmiNawaz on 13/3/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 13/3/17.
  */
 public class ProviderPopupMenuItemData {
 

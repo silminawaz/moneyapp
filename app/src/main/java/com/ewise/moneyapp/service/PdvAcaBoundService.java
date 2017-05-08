@@ -326,6 +326,7 @@ public class PdvAcaBoundService extends Service {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = error");
                                 results.transactions = transactionsResponse;
                                 results.callBackError = true;
+                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ERROR, requestParams, results);
                             } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {
@@ -413,6 +414,7 @@ public class PdvAcaBoundService extends Service {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = error");
                                 results.transactions = transactionsResponse;
                                 results.callBackError = true;
+                                requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_COMPLETED);
                                 requestQueue.setRequestResults(results);
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_ERROR, requestParams, results);
                             } else if (transactionsResponse.getStatus().equals(StatusCode.STATUS_VERIFY)) {

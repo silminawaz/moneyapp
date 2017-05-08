@@ -1,7 +1,7 @@
 package com.ewise.moneyapp.data;
 
 /**
- * Created by SilmiNawaz on 16/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 16/9/16.
  */
 public class TransactionGroupByFilterDataObject {
 

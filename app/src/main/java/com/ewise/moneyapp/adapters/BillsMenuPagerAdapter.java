@@ -9,7 +9,7 @@ import com.ewise.moneyapp.Fragments.BillsFragment;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 14/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 14/4/17.
  */
 public class BillsMenuPagerAdapter extends RemovableFragmentPagerAdapter {
 

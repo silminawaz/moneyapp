@@ -9,7 +9,7 @@ import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.data.PdvAccountResponse;
 
 /**
- * Created by SilmiNawaz on 21/3/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 21/3/17.
  */
 public class PdvAccountDataMapper {
 

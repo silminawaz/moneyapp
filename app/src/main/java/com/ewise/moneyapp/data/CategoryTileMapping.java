@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 4/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 4/9/16.
  */
 public class CategoryTileMapping {
 

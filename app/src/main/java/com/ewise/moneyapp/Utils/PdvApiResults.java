@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.ewise.android.pdv.api.PdvApi;
 import com.ewise.android.pdv.api.model.PromptEntry;
 import com.ewise.android.pdv.api.model.Response;
+import com.ewise.android.pdv.api.model.StatusCode;
 import com.ewise.android.pdv.api.model.provider.Providers;
 import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by SilmiNawaz on 21/2/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 21/2/17.
  * common result data model for any PdvApi call responses
  * static methods can be used to convert to and from Json
  */
@@ -153,6 +154,41 @@ public class PdvApiResults {
         return null;
     }
 
+    public boolean isPartialResponse(){
+        if (accounts!=null){
+            return accounts.getPartial();
+        }
+        else if (transactions!=null){
+            return transactions.getPartial();
+        }
+        return false;
+    }
+
+
+    public String getMessageText(Context context){
+        String getMessageText="";
+        Response r = getResponse();
+        if (r != null) {
+            if (r.getStatus()!=null && r.getStatus().equals(StatusCode.STATUS_ERROR)){
+                getMessageText=r.getErrorType();
+            }
+            else {
+                if (r.getStatus()!=null && r.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
+                    if (isPartialResponse()) {
+                        getMessageText=context.getString(R.string.provider_message_partial_response_text) + " " + r.getErrorType() + " " + r.getMessage();
+                    } else {
+                        getMessageText=r.getMessage();
+                    }
+                }
+                else{
+                    getMessageText=r.getMessage();
+                }
+            }
+        }
+
+        return getMessageText;
+
+    }
 
     public static String toJsonString(Object dataObject){
         Gson gson = new Gson();

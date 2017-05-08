@@ -1,7 +1,7 @@
 package com.ewise.moneyapp.adapters;
 
 /**
- * Created by SilmiNawaz on 15/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 15/4/17.
  */
 
 import android.support.v4.app.Fragment;
@@ -39,7 +39,6 @@ public class SectionsPagerAdapter extends RemovableFragmentPagerAdapter {
             //return the AccountFragment class
             //return AccountFragment.newInstance (position + 1);
 
-            //todo: **SN** testing crash on lollipop
             return AccountsFragment2.newInstance();
             //return PlaceholderFragment.newInstance(position + 1);
 

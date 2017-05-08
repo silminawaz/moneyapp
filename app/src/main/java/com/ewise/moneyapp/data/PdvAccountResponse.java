@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 3/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 3/9/16.
  */
 public class PdvAccountResponse {
 

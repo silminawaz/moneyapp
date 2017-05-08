@@ -18,7 +18,8 @@ import java.io.InputStreamReader;
 #parse("File Header.java")
 
 /**
- * Created by SilmiNawaz on 5/9/16.
+ * Copyright (c) 2017 eWise Singapore. 
+ * Created on 5/9/16.
  */
 public class ${NAME} extends AsyncTaskLoader<${DATAOBJECT}> {
 

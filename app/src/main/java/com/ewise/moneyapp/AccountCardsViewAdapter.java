@@ -10,7 +10,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 /**
- * Created by SilmiNawaz on 4/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 4/9/16.
  */
 
 @EBean

@@ -1,7 +1,7 @@
 package com.ewise.moneyapp.views;
 
 /**
- * Created by SilmiNawaz on 1/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 1/9/16.
  *
  * RecyclerViewBindInterface
  * -------------------------

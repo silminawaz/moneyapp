@@ -31,7 +31,7 @@ import com.google.gson.Gson;
 
 
 /**
- * Created by SilmiNawaz on 23/2/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 23/2/17.
  */
 
 
