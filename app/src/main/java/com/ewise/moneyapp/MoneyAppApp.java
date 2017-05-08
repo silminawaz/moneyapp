@@ -66,6 +66,7 @@ import com.ewise.moneyapp.Utils.PdvLoginStatus;
 import com.ewise.moneyapp.Utils.Settings;
 import com.ewise.moneyapp.Utils.SignOnSystem;
 import com.ewise.moneyapp.data.AccountCardListDataObject;
+import com.ewise.moneyapp.data.CurrencyExchangeRates;
 import com.ewise.moneyapp.data.DataUpdateType;
 import com.ewise.moneyapp.data.GroupedInstitution;
 import com.ewise.moneyapp.data.PdvAccountResponse;
@@ -440,6 +441,9 @@ public class MoneyAppApp extends Application {
 
         setupAppConfig();
 
+        //setup the currency rates
+        CurrencyExchangeRates rates = CurrencyExchangeRates.getInstance();
+        rates.loadExchangeRatesFromJsonAssets(getApplicationContext());
 
     }
 

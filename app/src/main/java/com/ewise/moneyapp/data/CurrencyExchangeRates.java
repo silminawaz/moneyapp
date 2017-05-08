@@ -1,5 +1,11 @@
 package com.ewise.moneyapp.data;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -8,6 +14,10 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -38,21 +48,8 @@ public class CurrencyExchangeRates {
     }
 
     private CurrencyExchangeRates() {
-        exchangeRatesForCurrencyPairs= new HashMap<String, ExchangeRateItemsObject>();
-        String[] currencyPairs =       {"SGDSGD", "SGDAUD", "SGDUSD", "SGDEUR", "SGDGBP", "SGDCHF", "SGDHKD", "SGDINR"};
-        String[] exchangeRates =       {"1.0",    "1.1",    "0.75",    "0.66",  "0.57",    "0.71",   "5.56",  "46.81"};
-        boolean[] rateQuoteDirect =    {true,      true,      true,     true,    true,      true,     true,    true,};
 
-        int i=0;
-        for (String currencyPair: currencyPairs) {
-            ExchangeRateItemsObject rate = new ExchangeRateItemsObject();
-            rate.baseCurrencyCode=currencyPair.substring(0,2);
-            rate.quoteCurrencyCode = currencyPair.substring(3,5);
-            rate.exchangeRate = exchangeRates[i];
-            rate.rateQuoteDirect = rateQuoteDirect[i];
-            exchangeRatesForCurrencyPairs.put(currencyPair, rate);
-            i++;
-        }
+        exchangeRatesForCurrencyPairs = new HashMap<>();
     }
 
     public List<ExchangeRateItemsObject> exchangeRateItems;
@@ -119,6 +116,46 @@ public class CurrencyExchangeRates {
         return convertedAmount;
 
     }
+
+
+    public boolean loadExchangeRatesFromJsonAssets(Context context) {
+
+        try {
+            //open file
+            String fileName = "CurrencyExchangeRates.json";
+            AssetManager assetManager = context.getAssets();
+            InputStream input = assetManager.open(fileName);
+            BufferedReader streamReader = new BufferedReader(new InputStreamReader(input));
+            StringBuilder jsonDataStrBuilder = new StringBuilder();
+            String inputStr;
+            while ((inputStr = streamReader.readLine()) != null) {
+                jsonDataStrBuilder.append(inputStr);
+            }
+
+            JSONObject jsonObject = new JSONObject(jsonDataStrBuilder.toString());
+
+            CurrencyExchangeRatesObject currencyExchangeRatesObject = CurrencyExchangeRatesObject.objectFromData(jsonObject.toString());
+
+            for (CurrencyExchangeRatesObject.ExchangeRateItemsObject rateItemsObject: currencyExchangeRatesObject.exchangeRateItems) {
+                ExchangeRateItemsObject rate = new ExchangeRateItemsObject();
+                rate.baseCurrencyCode=rateItemsObject.currencyPair.substring(0,2);
+                rate.quoteCurrencyCode = rateItemsObject.currencyPair.substring(3,5);
+                rate.exchangeRate = rateItemsObject.exchangeRate;
+                rate.rateQuoteDirect = rateItemsObject.rateQuoteDirect;
+                exchangeRatesForCurrencyPairs.put(rateItemsObject.currencyPair, rate);
+            }
+
+            return true;
+        }
+        //todo: better exception handling
+        catch (JSONException | IOException e) {
+            Log.e("EXCEPTION", e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 
     public static CurrencyExchangeRates objectFromData(String str) {
 
