@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 28/8/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 28/8/16.
  */
 public class CurrencyExchangeRates {
     /**

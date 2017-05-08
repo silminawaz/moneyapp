@@ -63,6 +63,7 @@ import com.ewise.moneyapp.Fragments.EditProfilesDialogFragment;
 import com.ewise.moneyapp.Fragments.EditProviderDialogFragment;
 import com.ewise.moneyapp.Fragments.EwiseOTPFragment;
 import com.ewise.moneyapp.Fragments.MoneyAppFragment;
+import com.ewise.moneyapp.Fragments.ProvidersFragment;
 import com.ewise.moneyapp.Fragments.SettingsFragment;
 import com.ewise.moneyapp.Utils.Base64ImageConverter;
 import com.ewise.moneyapp.Utils.FragmentPagerAdapterHelper;
@@ -376,7 +377,7 @@ public class MainActivity extends AppCompatActivity
             if (!app.pdvApiRequestQueue.isRequestInProgress()) {
                 Log.d("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() - no more requests in progress");
                 setDataFetchingStatus(false, null);
-
+                refreshAttachedFragmentUI(ProvidersFragment.class);
             }
 
 
@@ -417,6 +418,8 @@ public class MainActivity extends AppCompatActivity
                     Log.d("MainActivity", "pdvApiCallbackMessageReceiver() - showing OTP_DIALOG");
                     otpFragment.show(getSupportFragmentManager(), "OTP_DIALOG");
                 }
+
+                refreshAttachedFragmentUI(ProvidersFragment.class);
 
             }
 
@@ -546,7 +549,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onHomePressed() {
         Log.d("MainActivity", "onHomePressed()");
-        /* todo: **SN** too much friction to user on home and long press
+        /* todo: too much friction to user on home and long press
         if (MainActivity.this!=null){
             if (!MainActivity.this.isFinishing()) {
                 logoutFromApp(LogoutReason.LOGOUT_REASON_HOMEPRESSED);
@@ -559,7 +562,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onHomeLongPressed() {
         Log.d("MainActivity", "onHomeLongPressed()");
-        /* todo: **SN** too much friction to user on home and long press
+        /* todo: too much friction to user on home and long press
         if (MainActivity.this!=null){
             if (!MainActivity.this.isFinishing()) {
                 logoutFromApp(LogoutReason.LOGOUT_REASON_HOMELONGPRESSED);
@@ -1138,7 +1141,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (reason == LogoutReason.LOGOUT_REASON_PROFILECHANGED) {
-            //**SN** allow changing profile after failure to login to another profile without logging out
+            //allow changing profile after failure to login to another profile without logging out
             synchronized (this){
                 loginTimeoutInProgress=false;//reset the login timeout
             }

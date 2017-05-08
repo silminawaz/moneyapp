@@ -1,7 +1,7 @@
 package com.ewise.moneyapp.Fragments;
 
 /**
- * Created by SilmiNawaz on 20/8/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 20/8/16.
  */
 
 import android.os.Bundle;
@@ -38,6 +38,8 @@ import java.util.List;
  * A placeholder fragment containing a simple view.
  */
 public class NetworthFragment extends MoneyAppFragment implements MainActivity.FragmentUpdateListener {
+
+    private static final String TAG = "NetworthFragment";
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -308,27 +310,11 @@ public class NetworthFragment extends MoneyAppFragment implements MainActivity.F
     }
 
 
-    @Override
-    public void refreshFragmentUI(){
-
-        Log.d("AccountsFragment", "refreshFragment()");
-
-        if (isAdded()) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //accounts retrieval failed
-                    updatePageData();
-                }
-            });
-        }
-    }
-
 
     public void updatePageData()
     {
 
-        Log.d("NetworthFragment", "updatePageData() - START");
+        Log.d(TAG, "updatePageData() - START");
 
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
         AccountCardListDataObject accountCardListDO = app.getAccountCardListDO(getContext());
@@ -338,16 +324,16 @@ public class NetworthFragment extends MoneyAppFragment implements MainActivity.F
                 welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
                 netWorthLayout.setVisibility(app.isProviderFoundInDevice() ? View.VISIBLE : View.GONE);
 
-                Log.d("NetworthFragment", "updatePageData() - accountCardListDO.getAccountCardList()!=null");
+                Log.d(TAG, "updatePageData() - accountCardListDO.getAccountCardList()!=null");
 
                 NetworthDataObject nwdo = new NetworthDataObject( getContext(), accountCardListDO, app.getBaseCurrency());
                 //including building the various networth charts - if possible do this in the networthdataobject
-                Log.d("NetworthFragment", "updatePageData() - totalAssetsAmount=" + nwdo.getTotalAssetsAmount());
+                Log.d(TAG, "updatePageData() - totalAssetsAmount=" + nwdo.getTotalAssetsAmount());
                 BigDecimal totalAssetsAmount = nwdo.getTotalAssetsAmount();
-                Log.d("NetworthFragment", "updatePageData() - totalLiabilitiesAmount=" + nwdo.getTotalLiabilitiesAmount());
+                Log.d(TAG, "updatePageData() - totalLiabilitiesAmount=" + nwdo.getTotalLiabilitiesAmount());
                 BigDecimal totalLiabilitiesAmount = nwdo.getTotalLiabilitiesAmount();
                 BigDecimal totalNetworthAmount = totalAssetsAmount.subtract(totalLiabilitiesAmount);
-                Log.d("NetworthFragment", "updatePageData() - totalNetworthAmount=" + totalNetworthAmount);
+                Log.d(TAG, "updatePageData() - totalNetworthAmount=" + totalNetworthAmount);
                 String currencyCode = nwdo.getCurrency().getCurrencyCode();
 
                 DecimalFormat df = new DecimalFormat();
@@ -390,7 +376,7 @@ public class NetworthFragment extends MoneyAppFragment implements MainActivity.F
             }
 
         }
-        Log.d("NetworthFragment", "updatePageData() - END");
+        Log.d(TAG, "updatePageData() - END");
 
 
     }

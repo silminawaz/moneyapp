@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 12/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 12/4/17.
  * Singleton implemntation of SignOnUsers
  */
 public class SignOnUsers {

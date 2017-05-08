@@ -18,7 +18,7 @@ import java.util.List;
 
 
 /**
- * Created by SilmiNawaz on 28/8/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 28/8/16.
  */
 public class AccountCardDataObject {
 
@@ -225,7 +225,7 @@ public class AccountCardDataObject {
     @Override
     public String toString() {
         //return super.toString();
-        /* **SN** AccountsFragment crashing with this
+        /* AccountsFragment crashing with this
         try {
 
             String jsonString = new Gson().toJson(this);

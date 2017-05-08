@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by SilmiNawaz on 22/3/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 22/3/17.
  */
 public class NetworthDataObject {
 

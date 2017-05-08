@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 8/3/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 8/3/17.
  */
 public class PdvApiRequestQueue {
     private static String TAG = "PdvApiRequestQueue";

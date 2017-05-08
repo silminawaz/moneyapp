@@ -4,7 +4,7 @@ import android.content.Context;
 import android.widget.RelativeLayout;
 
 /**
- * Created by SilmiNawaz on 1/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 1/9/16.
  * RecyclerViewItemLayoutView is a parameterised abstract class that is used as a custom view
  * extend this class to for the specific custom views
  */

@@ -259,7 +259,6 @@ public class AccountsFragment extends MoneyAppFragment implements MainActivity.F
             Log.d("AccountsFragment", "updatePageData() - 4");
             if (cardDataList!=null){
                 Log.d("AccountsFragment", "updatePageData() - cardDataList!=null; swapping data");
-                //TODO: **SN** TESTING CRASH BUG HERE!!! when running Android lollipop
                 AccountCardsViewAdapter cardsViewAdapter1 = new AccountCardsViewAdapter(getActivity());
                 //cardsViewAdapter.swapData(cardDataList);
                 cardsViewAdapter1.setItemList(cardDataList);

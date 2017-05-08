@@ -228,49 +228,23 @@ public class AccountsFragment2 extends MoneyAppFragment implements MainActivity.
 
 
 
-
-    @Override
-    public void refreshFragmentUI(){
-
-        Log.d(TAG, "refreshFragment()");
-
-        if (isAdded()) {
-            Log.d(TAG, "refreshFragment() - isAdded()");
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //hide the login layout\
-                    Log.d(TAG, "refreshFragment() - isAdded() - runOnUiThread.run()");
-                    MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
-                    if (welcomeLayout == null) {
-                        welcomeLayout = (LinearLayout) getActivity().findViewById(R.id.accountsWelcomeLayout);
-                    }
-                    if (welcomeLayout != null)
-                        welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
-                    updatePageData();
-                }
-            });
-        }
-    }
-
     public void updatePageData()
     {
         Log.d(TAG, "updatePageData()");
 
         if (isAdded()) {
-            pageLoadingLayout = (LinearLayout) getActivity().findViewById(R.id.pageLoadingLayout);
             MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
-            Log.d(TAG, "updatePageData() - 1");
+            if (welcomeLayout == null) {
+                welcomeLayout = (LinearLayout) getActivity().findViewById(R.id.accountsWelcomeLayout);
+            }
+            if (welcomeLayout != null) {
+                welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
+            }
+            pageLoadingLayout = (LinearLayout) getActivity().findViewById(R.id.pageLoadingLayout);
             AccountCardListDataObject accountCardListDO = app.getAccountCardListDO(getActivity());
-            Log.d(TAG, "updatePageData() - 2");
             if (accountCardListDO != null) {
-                Log.d(TAG, "updatePageData() - 3");
                 List<AccountCardDataObject> cardDataList = accountCardListDO.getAccountCardList();
-                Log.d(TAG, "updatePageData() - 4");
                 if (cardDataList != null) {
-                    Log.d(TAG, "updatePageData() - cardDataList!=null; swapping data");
-                    //TODO: **SN** TESTING CRASH BUG HERE!!! when running Android lollipop
                     if (cardsViewAdapter == null) {
                         cardsViewAdapter = new AccountCardsViewAdapter(getActivity());
                         account_recycler_view.setAdapter(cardsViewAdapter);

@@ -28,7 +28,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
- * Created by SilmiNawaz on 26/3/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 26/3/17.
  */
 public class NetworthHBarChart {
 

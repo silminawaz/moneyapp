@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 27/3/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 27/3/17.
  */
 public class NetworthAssetLiabilityPieChart implements OnChartValueSelectedListener {
 

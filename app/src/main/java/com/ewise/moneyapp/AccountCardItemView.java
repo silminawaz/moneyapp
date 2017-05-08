@@ -17,7 +17,7 @@ import org.androidannotations.annotations.ViewById;
 
 
 /**
- * Created by SilmiNawaz on 31/8/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 31/8/16.
  */
 @EViewGroup(R.layout.account_card_layout)
 public class AccountCardItemView extends RecyclerViewItemLayoutView<AccountCardDataObject> implements RecyclerViewBindInterface<AccountCardDataObject> {

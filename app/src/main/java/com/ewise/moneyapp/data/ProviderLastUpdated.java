@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by SilmiNawaz on 1/5/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 1/5/17.
  */
 public class ProviderLastUpdated extends Object {
 

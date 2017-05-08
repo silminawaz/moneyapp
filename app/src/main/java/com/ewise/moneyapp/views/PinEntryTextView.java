@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 import com.ewise.moneyapp.R;
 /*
- * Created by SilmiNawaz on 9/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 9/4/17.
  */
 
 /**

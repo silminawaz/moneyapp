@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 30/8/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 30/8/16.
  */
 public abstract class RecyclerViewAdapterBase<T, V extends RecyclerViewItemLayoutView<T>> extends RecyclerView.Adapter<RecyclerViewWrapper<V>> {
 

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 21/3/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 21/3/17.
  */
 public class PdvTransactionResponseDataMapper {
 

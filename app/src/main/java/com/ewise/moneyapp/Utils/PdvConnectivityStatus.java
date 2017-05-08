@@ -1,7 +1,7 @@
 package com.ewise.moneyapp.Utils;
 
 /**
- * Created by SilmiNawaz on 22/2/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 22/2/17.
  */
 
 public enum PdvConnectivityStatus {

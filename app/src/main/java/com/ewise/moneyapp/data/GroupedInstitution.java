@@ -8,7 +8,7 @@ import android.support.annotation.DrawableRes;
 import com.ewise.moneyapp.Utils.Base64ImageConverter;
 
 /**
- * Created by SilmiNawaz on 22/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 22/4/17.
  */
 public class GroupedInstitution extends com.ewise.android.pdv.api.model.provider.GroupedInstitution {
 

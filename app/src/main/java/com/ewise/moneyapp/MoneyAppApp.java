@@ -104,7 +104,7 @@ import dagger.ObjectGraph;
 import static java.util.Arrays.asList;
 
 /**
- * Created by SilmiNawaz on 5/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 5/9/16.
  */
 public class MoneyAppApp extends Application {
     private static final String TAG = MoneyAppApp.class.getName();
@@ -299,7 +299,7 @@ public class MoneyAppApp extends Application {
             Log.e("MoneyApp", "uncaught exception: ", e );
             e.printStackTrace(); // not all Android versions will print the stack trace automatically
             Intent intent = new Intent ();
-            //todo: **SN** to create send_log ativity to report crashes
+            //todo: to create send_log ativity to report crashes
             intent.setAction ("com.ewise.moneyapp.SEND_LOG");
             intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity (intent);
@@ -763,17 +763,29 @@ public class MoneyAppApp extends Application {
                             results.pdvApiName = PdvApiName.RESTORE_ACCOUNTS;
                             results.callBackCompleted = true;
                             results.accounts = accountsResponse;
-                            if (results.accounts.getStatus().equals(StatusCode.STATUS_DATA)){
-                                //save the data for the institution
-                                if (pdvAccountResponse.addUpdateAccount(PdvAccountDataMapper.getMappedObject(results.accounts.getData(), getApplicationContext())).equals(DataUpdateType.DATA_UPDATE_TYPE_ERROR)){
-                                    Log.e("MoneyAppApp", "pdvRestoreAccounts() - Error adding or updating account in pdvAccountResponse. "
-                                            + " InstId=" + results.accounts.getData().getInstId()
-                                            + " | accountHash=" + results.accounts.getData().getAccountHash());
-                                }
-                            }
-                            else if (results.accounts.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
+
+                            //CHANGE: Ignoring "data" callback record by record
+                            //if (results.accounts.getStatus().equals(StatusCode.STATUS_DATA)){
+                            //    //save the data for the institution
+                            //    if (pdvAccountResponse.addUpdateAccount(PdvAccountDataMapper.getMappedObject(results.accounts.getData(), getApplicationContext())).equals(DataUpdateType.DATA_UPDATE_TYPE_ERROR)){
+                            //        Log.e("MoneyAppApp", "pdvRestoreAccounts() - Error adding or updating account in pdvAccountResponse. "
+                            //                + " InstId=" + results.accounts.getData().getInstId()
+                            //                + " | accountHash=" + results.accounts.getData().getAccountHash());
+                            //    }
+                            //}
+                            //else
+                            if (results.accounts.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
                                 List<String> instIdList = new ArrayList<String>();
                                 instIdList.add(instId);
+                                //add account list
+                                for (AccountEntry accountEntry:results.accounts.getDataList()) {
+                                    //save the data for the institution
+                                    if (pdvAccountResponse.addUpdateAccount(PdvAccountDataMapper.getMappedObject(accountEntry, getApplicationContext())).equals(DataUpdateType.DATA_UPDATE_TYPE_ERROR)){
+                                        Log.e("MoneyAppApp", "pdvRestoreAccounts() - Error adding or updating account in pdvAccountResponse. "
+                                                + " InstId=" + results.accounts.getData().getInstId()
+                                                + " | accountHash=" + results.accounts.getData().getAccountHash());
+                                    }
+                                }
                                 callback.onRestoreAccountsComplete(accountsResponse.getInstId());
                                 synchronized (this){
                                     restoreAccountsCallBackCounter.decrement();

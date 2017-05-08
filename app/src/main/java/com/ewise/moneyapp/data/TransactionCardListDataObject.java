@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by SilmiNawaz on 9/9/16.
+ * Copyright (c) 2017 eWise Singapore. Created  on 9/9/16.
  * DataObject contains lists of transaction cards by date
  */
 public class TransactionCardListDataObject {

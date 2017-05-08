@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 15/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 15/4/17.
  */
 public class FragmentPagerAdapterHelper {
 

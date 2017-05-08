@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 9/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 9/4/17.
  */
 public class Settings {
 
@@ -70,7 +70,7 @@ public class Settings {
 
     public void loadProviderLastUpdatedList(Context context){
         SharedPreferences preferences=context.getSharedPreferences(SHARED_PREFERENCES_PROVIDER_LASTUPDATED, Context.MODE_PRIVATE);
-        //TODO: STOPPED HERE **SN** TODO
+        //TODO: STOPPED HERE **SN** TODO Last updated for providers
     }
 
     private void loadSignOnUsers(Context context){

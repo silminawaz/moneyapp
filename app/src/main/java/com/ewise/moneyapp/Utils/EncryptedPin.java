@@ -32,7 +32,7 @@ import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
 
 /**
- * Created by SilmiNawaz on 9/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 9/4/17.
  */
 public class EncryptedPin {
 

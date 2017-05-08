@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ewise.android.pdv.api.model.Response;
+import com.ewise.android.pdv.api.model.StatusCode;
 import com.ewise.android.pdv.api.model.UserProviderEntry;
 import com.ewise.android.pdv.api.model.provider.Institution;
 import com.ewise.moneyapp.MoneyAppApp;
@@ -31,7 +32,7 @@ import com.ewise.moneyapp.Utils.PdvApiRequestQueue;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 12/3/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 12/3/17.
  */
 public class ProviderItemViewAdapter extends BaseAdapter {
 
@@ -107,12 +108,7 @@ public class ProviderItemViewAdapter extends BaseAdapter {
         PdvApiRequestParams p = app.pdvApiRequestQueue.getRequestForInstitution(providerEntry.getIid());
         if (p!=null) {
             if (p.results!=null) {
-                Response r = p.results.getResponse();
-                if (r != null) {
-                    providerMessage.setText(r.getMessage());
-                } else {
-                    providerMessage.setText("");
-                }
+                providerMessage.setText(p.results.getMessageText(mActivity));
             }
         }
 

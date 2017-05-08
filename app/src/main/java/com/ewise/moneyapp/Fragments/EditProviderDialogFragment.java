@@ -33,7 +33,7 @@ import com.ewise.moneyapp.data.PdvAccountResponse;
 import java.util.List;
 
 /**
- * Created by SilmiNawaz on 1/4/17.
+ * Copyright (c) 2017 eWise Singapore. Created  on 1/4/17.
  */
 public class EditProviderDialogFragment extends DialogFragment implements PdvConnectivityCallback {
 
@@ -78,9 +78,6 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        //String providerString = getArguments().getString("providerString");
-        //providerEntry = PdvApiResults.objectFromString(providerString, UserProviderEntry.class);
 
         View v = inflater.inflate(R.layout.edit_institution_prompts_dialog, container, false);
 

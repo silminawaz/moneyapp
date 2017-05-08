@@ -30,14 +30,11 @@ public abstract class MoneyAppFragment extends Fragment implements MainActivity.
 
     private static final String TAG = "MoneyAppFragment";
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    //refresh timeout required to ensure that the page refresh happens after
+    // all pending fragment manager transactions are executed
+    private static final long FRAGMENT_UI_REFRESH_TIMEOUT_MS = 1000;
+    private static final long FRAGMENT_UI_REFRESH_WAIT_TIME_MS = 100;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -49,17 +46,13 @@ public abstract class MoneyAppFragment extends Fragment implements MainActivity.
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment MoneyAppFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Fragment newInstance(String param1, String param2) {
+    public static Fragment newInstance() {
         Fragment fragment = new Fragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+        //fragment.setArguments(args);
         return fragment;
     }
 
@@ -72,8 +65,7 @@ public abstract class MoneyAppFragment extends Fragment implements MainActivity.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            //todo: read any arguments
         }
     }
 
@@ -148,6 +140,18 @@ public abstract class MoneyAppFragment extends Fragment implements MainActivity.
 
     @Override
     public void refreshFragmentUI(){
+
+        long timeout=0;
+        while (!isAdded() && timeout<=FRAGMENT_UI_REFRESH_TIMEOUT_MS){
+            try {
+                timeout+=FRAGMENT_UI_REFRESH_WAIT_TIME_MS;
+                wait(timeout);
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                break;
+            }
+        }
 
         if (isAdded()) {
 
