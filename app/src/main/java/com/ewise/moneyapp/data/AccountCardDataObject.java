@@ -164,11 +164,12 @@ public class AccountCardDataObject {
         for (AccountsObject acct : accountList) {
             //find the exchange rate for account currency to preferred currency
             String acctCurrency = acct.currency;
-            if (acct.category.equals(this.category.toString())){ //really should be an ASSERT
-                //if (acctCurrency.equals(this.preferredCurrencyCode)){
+            //if (acct.category.equals(this.category.toString())){ //really should be an ASSERT
+                if (acctCurrency!=null && !acctCurrency.isEmpty()){
+                    //only add the account totals if there is a real currency code
                     addAccountToTotal(acct);
-               // }
-            }
+                }
+            //}
 
         }
 
@@ -201,18 +202,31 @@ public class AccountCardDataObject {
                 }
             }
 
-            BigDecimal acctBalance = new BigDecimal("0.0", mc);
+            //BigDecimal acctBalance = new BigDecimal("0.0", mc);
             BigDecimal acctFunds = new BigDecimal("0.0", mc);
 
-            acctBalance = acctBalance.add(new BigDecimal(account.balance, mc));
-            if (!fromCurrency.equals(toCurrency)) { acctBalance = rates.exchangeAmountToCurrency(toCurrency, fromCurrency, acctBalance);}
-            if (account.availBalance.length()>0) {
-                acctFunds = acctFunds.add(new BigDecimal(account.availBalance, mc));
-                if (!fromCurrency.equals(toCurrency)) { acctFunds = rates.exchangeAmountToCurrency(toCurrency, fromCurrency, acctFunds);}
+            BigDecimal acctBalance = new BigDecimal(account.balance, mc);
+            if (!fromCurrency.equals(toCurrency)) {
+                acctBalance = rates.exchangeAmountToCurrency(toCurrency, fromCurrency, acctBalance);
             }
-            this.preferredCurrencyBalance = this.preferredCurrencyBalance.add(acctBalance);
-            this.preferredCurrencyFunds = this.preferredCurrencyFunds.add(acctFunds);
+            if (account.availBalance.length()>0) {
+                acctFunds = new BigDecimal(account.availBalance, mc);
+                if (!fromCurrency.equals(toCurrency)) {
+                    acctFunds = rates.exchangeAmountToCurrency(toCurrency, fromCurrency, acctFunds);
+                }
+            }
+            this.preferredCurrencyBalance = BigDecimal.valueOf(this.preferredCurrencyBalance.doubleValue()).add(acctBalance);
+            this.preferredCurrencyFunds = BigDecimal.valueOf(this.preferredCurrencyFunds.doubleValue()).add(acctFunds);
             this.numAccounts = String.format("(%d)", accountList.size());
+
+            String msg =
+                    "AccountCardDataObject.addAccountToTotal() - "
+                    + "Card: " + this.getTitle()
+                    + "| Account=" + account.accountName
+                    + "| Account Balance=" + account.balance
+                    + "| Card Balance = " + preferredCurrencyBalance.toString();
+            Log.d("AccountCardDataObject", msg);
+
         }
         catch (Exception e)
         {
