@@ -55,7 +55,6 @@ public class TransactionCardDataObject {
         this.transactionDate = transactionDate;
 
         this.transactionMonth = new SimpleDateFormat(context.getString(R.string.transaction_groupby_month_format), Locale.getDefault()).format(transactionDate);
-        Log.d("**TRACE**", String.format("transactionMonth = : %s", transactionMonth));
         this.transactionYear = new SimpleDateFormat(context.getString(R.string.transaction_groupby_year_format), Locale.getDefault()).format(transactionDate);
 
         this.groupTransactionsBy = groupTransactionsBy;
@@ -70,8 +69,6 @@ public class TransactionCardDataObject {
     }
 
     public void addTransaction (TransactionsObject transaction){
-        Log.d("***TRACE***", String.format("Adding transaction : %s", transaction.toString()));
-
         transactionList.add(transaction);
         addTransactionToTotals (transaction);
     }
@@ -84,11 +81,8 @@ public class TransactionCardDataObject {
             BigDecimal transactionAmount = BigDecimal.valueOf(transaction.amount);
             if (transactionAmount.compareTo(BigDecimal.ZERO)<0) {
                 this.totalCashOut = this.totalCashOut.add(transactionAmount);
-                Log.d("***TRACE***", String.format("Date: %s | TransactionAmount : %f | Cashout : %f", transaction.date, transactionAmount.doubleValue(), totalCashOut.doubleValue()));
-
             } else {
                 this.totalCashIn = this.totalCashIn.add(transactionAmount);
-                Log.d("***TRACE***", String.format("Date: %s | TransactionAmount : %f | Cashin : %f", transaction.date, transactionAmount.doubleValue(), totalCashIn.doubleValue()));
             }
         }
         catch (Exception e)

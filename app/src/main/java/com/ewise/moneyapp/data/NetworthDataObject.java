@@ -109,18 +109,15 @@ public class NetworthDataObject {
             if (accountCardList != null) {
                 try {
                     if (accountCardList.getAccountCardList() != null) {
-                        Log.d ("NetworthDataObject", "calculateNetworth() - accountCardList found");
                         MathContext mc = new MathContext(currency.getDefaultFractionDigits(), RoundingMode.HALF_UP);
                         CurrencyExchangeRates rates = CurrencyExchangeRates.getInstance();
                         List<AccountCardDataObject> acoList = accountCardList.getAccountCardList();
                         for (AccountCardDataObject aco : acoList) {
-                            Log.d ("NetworthDataObject", "calculateNetworth() - accountCardList found");
                             NetworthEntry e = new NetworthEntry();
                             e.accountCard = aco;
                             e.type = (aco.preferredCurrencyBalance.doubleValue()>=0)?typeToCategoryMap.get(aco.category):typeToNegativeCategoryMap.get(aco.category);
                             switch (e.type) {
                                 case ASSET:
-                                    Log.d ("NetworthDataObject", "calculateNetworth() - accountCardList found - Adding to Total Assets =" + aco.preferredCurrencyBalance);
                                     if (totalAssetsAmount==null){
                                         totalAssetsAmount = new BigDecimal(Math.abs(aco.preferredCurrencyBalance.doubleValue()));
                                     }
@@ -129,11 +126,9 @@ public class NetworthDataObject {
                                         totalAssetsAmount = BigDecimal.valueOf(Math.abs(aco.preferredCurrencyBalance.doubleValue())).add(BigDecimal.valueOf(totalAssetsAmount.doubleValue()));
 
                                     }
-                                    Log.d ("NetworthDataObject", "calculateNetworth() - totalAssetsAmount=" + totalAssetsAmount);
                                     this.assetsList.add(e);
                                     break;
                                 case LIABILITY:
-                                    Log.d ("NetworthDataObject", "calculateNetworth() - accountCardList found - Adding to Total Liabilities =" + aco.preferredCurrencyBalance);
                                     if (totalLiabilitiesAmount==null){
                                         totalLiabilitiesAmount = new BigDecimal(Math.abs(aco.preferredCurrencyBalance.doubleValue()));
                                     }
@@ -142,11 +137,9 @@ public class NetworthDataObject {
                                         totalLiabilitiesAmount = BigDecimal.valueOf(Math.abs(aco.preferredCurrencyBalance.doubleValue())).add(BigDecimal.valueOf(totalLiabilitiesAmount.doubleValue()));
 
                                     }
-                                    Log.d ("NetworthDataObject", "calculateNetworth() - totalLiabilitiesAmount=" + totalLiabilitiesAmount);
                                     this.liabilitiesList.add(e);
                                     break;
                                 default:
-                                    Log.d ("NetworthDataObject", "calculateNetworth() - accountCardList found - Adding to Total Unknown =" + aco.preferredCurrencyBalance);
                                     if (totalUnknownAmount==null){
                                         totalUnknownAmount = new BigDecimal( aco.preferredCurrencyBalance.doubleValue());
                                     }

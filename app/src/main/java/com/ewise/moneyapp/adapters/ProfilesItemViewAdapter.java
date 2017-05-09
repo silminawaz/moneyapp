@@ -94,7 +94,6 @@ public class ProfilesItemViewAdapter extends BaseAdapter {
     }
 
     public void swapData(List<SignonProfile> newData){
-        Log.d("**TXN**LOAD***", String.format("ProfilesItemViewAdapter: swapping data size : %s", String.format("%d",newData.size())));
 
         mItems.clear();
         mItems.addAll(newData);

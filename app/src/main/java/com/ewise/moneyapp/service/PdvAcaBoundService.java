@@ -216,7 +216,7 @@ public class PdvAcaBoundService extends Service {
                     pdvApi.updateAccounts(requestParams.updateParams.instIds, new PdvApiCallback.PdvApiAccountsCallback() {
                         @Override
                         public void result(AccountsResponse accountsResponse) {
-                            Log.d("accountsResponse", PdvApiResults.toJsonString(accountsResponse));
+                            //Log.d("accountsResponse", PdvApiResults.toJsonString(accountsResponse));
                             if (accountsResponse.getStatus().equals(StatusCode.STATUS_DATA)) {
                                 Log.d("UpdateAccountRequest", "updateAccounts() response = data");
                                 results.accounts = accountsResponse;
@@ -308,7 +308,7 @@ public class PdvAcaBoundService extends Service {
                     pdvApi.updateTransactions(requestParams.updateParams.instIds, null, null, new PdvApiCallback.PdvApiTransactionsCallback() {
                         @Override
                         public void result(TransactionsResponse transactionsResponse) {
-                            Log.d("transactionsResponse=", PdvApiResults.toJsonString(transactionsResponse));
+                            //Log.d("transactionsResponse=", PdvApiResults.toJsonString(transactionsResponse));
                             if (transactionsResponse.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = complete");
                                 results.transactions = transactionsResponse;
@@ -397,7 +397,7 @@ public class PdvAcaBoundService extends Service {
                     pdvApi.updateTransactions(requestParams.updateParams.instIds, null, null, new PdvApiCallback.PdvApiTransactionsCallback() {
                         @Override
                         public void result(TransactionsResponse transactionsResponse) {
-                            Log.d("transactionsResponse=", PdvApiResults.toJsonString(transactionsResponse));
+                            //Log.d("transactionsResponse=", PdvApiResults.toJsonString(transactionsResponse));
                             if (transactionsResponse.getStatus().equals(StatusCode.STATUS_COMPLETE)) {
                                 Log.d("UpdateTransactions", "UpdateTransactions() response status = complete");
                                 results.transactions = transactionsResponse;
@@ -477,8 +477,8 @@ public class PdvAcaBoundService extends Service {
         //todo: remove debug logging
         Log.d ("PdvAcaBoundService", "sendBroadcastMessage apiName:" + apiName);
         Log.d ("PdvAcaBoundService", "sendBroadcastMessage callbackStatus:" + callbackStatus);
-        Log.d ("PdvAcaBoundService", "sendBroadcastMessage requestParams:" + sRequestParams);
-        Log.d ("PdvAcaBoundService", "sendBroadcastMessage results:" + sResults);
+        //Log.d ("PdvAcaBoundService", "sendBroadcastMessage requestParams:" + sRequestParams);
+        //Log.d ("PdvAcaBoundService", "sendBroadcastMessage results:" + sResults);
 
         Intent intent = new Intent("pdv-aca-bound-service-callback");
         intent.putExtra("apiName", apiName.toString());
@@ -494,7 +494,7 @@ public class PdvAcaBoundService extends Service {
         String stringResults = PdvApiResults.toJsonString(results);
 
         //todo: remove debug logging
-        Log.d ("PdvAcaBoundService", "sendBroadcastMessage results:" + stringResults);
+        //Log.d ("PdvAcaBoundService", "sendBroadcastMessage results:" + stringResults);
 
         Intent intent = new Intent("pdv-aca-stop-callback");
         intent.putExtra("stringResults", stringResults);

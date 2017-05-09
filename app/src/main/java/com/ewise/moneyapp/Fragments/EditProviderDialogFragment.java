@@ -126,7 +126,6 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
 
-                Log.d("EditProviderDialogFr...", "cancelButton.setOnClickListener.onClick()");
                 dismissAllowingStateLoss();
             }
         });
@@ -134,7 +133,6 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
-                Log.d("EditProviderDialogFr...", "saveButton.setOnClickListener.onClick()");
                 saveCredentials();
             }
         });
@@ -142,7 +140,6 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
         editProviderAccountsText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("EditProviderDialogFr...", "editProviderAccountsText.setOnClickListener.onClick()");
                 toggleDisplayAccounts();
             }
         });
@@ -150,7 +147,6 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
         editProviderAccountsInfoIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("EditProviderDialogFr...", "editProviderAccountsInfoIcon.setOnClickListener.onClick()");
                 toggleDisplayAccounts();
             }
         });
@@ -401,7 +397,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     @Override
     public void onGetPromptsFail(PdvApiResults results)
     {
-        Log.d("EditProviderDialogFr...", "onGetPromptsFail() : results=" + PdvApiResults.toJsonString(results));
+        //Log.d("EditProviderDialogFr...", "onGetPromptsFail() : results=" + PdvApiResults.toJsonString(results));
 
 
     }
@@ -458,7 +454,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     @Override
     public void onGetCredentialSuccess(PdvApiResults results)
     {
-        Log.d("EditProviderDialogFr...", " () : results=" + PdvApiResults.toJsonString(results));
+        //Log.d("EditProviderDialogFr...", " () : results=" + PdvApiResults.toJsonString(results));
         promptsData = results.credential.getData();
 
         Runnable setPromptValues = new Runnable() {
@@ -506,7 +502,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
         if (isAdded()) {
             if (getActivity() != null) {
 
-                Log.d("EditProviderDialogFr...", "onGetCredentialFail() : results=" + PdvApiResults.toJsonString(results));
+                //Log.d("EditProviderDialogFr...", "onGetCredentialFail() : results=" + PdvApiResults.toJsonString(results));
                 getActivity().runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -524,7 +520,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     public void onSetCredentialSuccess(PdvApiResults results)
     {
         if (isAdded()) {
-            Log.d("EditProviderDialogFr...", "onSetCredentialSuccess() : results=" + PdvApiResults.toJsonString(results));
+            //Log.d("EditProviderDialogFr...", "onSetCredentialSuccess() : results=" + PdvApiResults.toJsonString(results));
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -540,7 +536,7 @@ public class EditProviderDialogFragment extends DialogFragment implements PdvCon
     @Override
     public void onSetCredentialFail(PdvApiResults results)
     {
-        Log.d("EditProviderDialogFr...", "onSetCredentialFail() : results=" + PdvApiResults.toJsonString(results));
+        //Log.d("EditProviderDialogFr...", "onSetCredentialFail() : results=" + PdvApiResults.toJsonString(results));
 
         if (isAdded()) {
             getActivity().runOnUiThread(new Runnable() {
