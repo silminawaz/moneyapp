@@ -10,12 +10,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ewise.moneyapp.Utils.CurrencyAmount;
 import com.ewise.moneyapp.data.PdvTransactionResponse.AccountTransactionsObject.TransactionsObject;
 import com.ewise.moneyapp.views.RecyclerViewBindInterface;
 import com.ewise.moneyapp.views.RecyclerViewItemLayoutView;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+
+import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.Locale;
 
 /**
  * Copyright (c) 2017 eWise Singapore. Created  on 7/9/16.
@@ -48,8 +53,9 @@ public class TransactionsObjectItemView extends RecyclerViewItemLayoutView<Trans
 
 
         this.transaction_description.setText(dataObject.description);
-        //TODO: Format balance correctly
-        this.transaction_amount.setText(String.format("%f",dataObject.amount));
+
+
+        this.transaction_amount.setText(CurrencyAmount.getFormattedAmount(dataObject.amount, dataObject.currency));
 
         //set on click on the icon
         this.transaction_category_icon.setOnClickListener(new OnClickListener() {

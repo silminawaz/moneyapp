@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ewise.moneyapp.Utils.CurrencyAmount;
 import com.ewise.moneyapp.data.AccountCardDataObject;
 import com.ewise.moneyapp.views.RecyclerViewBindInterface;
 import com.ewise.moneyapp.views.RecyclerViewItemLayoutView;
@@ -55,7 +56,7 @@ public class AccountCardItemView extends RecyclerViewItemLayoutView<AccountCardD
         acctcard_title.setText(accountCard.title);
         acctcard_numaccts.setText(accountCard.numAccounts);
         acctcard_currency.setText(accountCard.preferredCurrencyCode);
-        acctcard_total.setText(accountCard.preferredCurrencyBalance.toString());
+        acctcard_total.setText(CurrencyAmount.getFormattedAmount(accountCard.preferredCurrencyBalance.doubleValue(), accountCard.preferredCurrencyCode));
 
         //initialise and bind child RecyclerView layout
         //Attach adapter and load the data

@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ewise.moneyapp.APIDataMappers.PdvTransactionResponseDataMapper;
+import com.ewise.moneyapp.Utils.CurrencyAmount;
 import com.ewise.moneyapp.Utils.PdvApiResults;
 import com.ewise.moneyapp.Utils.PdvConnectivityCallback;
 import com.ewise.moneyapp.adapters.TransactionGroupByFilterAdapter;
@@ -146,7 +147,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
         accountdetails_accounticon.setImageResource(app.getInstitutionIconResourceId(_account.instId));
         accountdetails_accountname.setText(_account.accountName);
         accountdetails_accountnumber.setText(_account.accountNumber);
-        accountdetails_accountbalance.setText(_account.balance);
+        accountdetails_accountbalance.setText(CurrencyAmount.getFormattedAmount(_account.balance, _account.currency));
         accountdetails_accountcurrency.setText(_account.currency);
         accountdetails_lastupdated.setText(_account.updatedAt);
 
