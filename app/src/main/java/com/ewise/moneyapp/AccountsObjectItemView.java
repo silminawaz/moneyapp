@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ewise.moneyapp.Utils.CurrencyAmount;
 import com.ewise.moneyapp.data.PdvAccountResponse.AccountsObject;
 import com.ewise.moneyapp.views.RecyclerViewBindInterface;
 import com.ewise.moneyapp.views.RecyclerViewItemLayoutView;
@@ -88,7 +89,7 @@ public class AccountsObjectItemView extends RecyclerViewItemLayoutView<AccountsO
         this.accountname.setText(dataObject.accountName);
         this.accountnumber.setText(dataObject.accountNumber);
         this.accountcurrency.setText(dataObject.currency);
-        this.accountbalance.setText(dataObject.balance);  //TODO: format account balance properly
+        this.accountbalance.setText(CurrencyAmount.getFormattedAmount(dataObject.balance, dataObject.currency));
         this.accounticon.setImageResource(((MoneyAppApp) getContext().getApplicationContext()).getInstitutionIconResourceId(dataObject.instId));
 
     }

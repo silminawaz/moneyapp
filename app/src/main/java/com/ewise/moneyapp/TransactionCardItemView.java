@@ -19,6 +19,7 @@ import java.util.Locale;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
+import com.ewise.moneyapp.Utils.CurrencyAmount;
 import com.ewise.moneyapp.data.PdvTransactionResponse;
 import com.ewise.moneyapp.data.TransactionCardDataObject;
 
@@ -79,7 +80,7 @@ public class TransactionCardItemView extends RecyclerViewItemLayoutView<Transact
             BigDecimal cashflowAmount = cardDataObject.totalCashIn.add(cardDataObject.totalCashOut);
             Log.d("***TRACE***", String.format("Date: %s | Cashflow : %f", transactioncard_date.getText(), cashflowAmount.doubleValue()));
 
-            this.transactioncard_cashflow.setText(String.format(Locale.getDefault(), "%f", cashflowAmount.doubleValue()));
+            this.transactioncard_cashflow.setText(CurrencyAmount.getFormattedAmount(cashflowAmount.doubleValue(), cardDataObject.account.currency));
 
             //initialise and bind child RecyclerView layout
             //Attach adapter and load the data
