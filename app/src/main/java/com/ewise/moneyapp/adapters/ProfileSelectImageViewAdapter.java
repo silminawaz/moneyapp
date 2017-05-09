@@ -50,14 +50,12 @@ public class ProfileSelectImageViewAdapter extends RecyclerView.Adapter<ProfileS
         mSelectedItemPosition=-1;
         mProfileImageToSet=profileImageToSet;
         TypedArray typedArray = mContext.getResources().obtainTypedArray(imgArrayResId);
-        Log.d(TAG, "ProfileSelectImageViewAdapter()  - mProfileImageResourceIdList.getIndexCount()="+typedArray.length());
 
 
         int len = typedArray.length();
         mProfileImageResourceIdList = new int[len];
         for (int i = 0; i < len; i++) {
             mProfileImageResourceIdList[i] = typedArray.getResourceId(i, 0);
-            Log.d(TAG, "ProfileSelectImageViewAdapter()  - typedArray.getResourceId("+Integer.toString(i)+", 0)="+Integer.toString(mProfileImageResourceIdList[i]));
 
         }
         typedArray.recycle();
@@ -89,8 +87,6 @@ public class ProfileSelectImageViewAdapter extends RecyclerView.Adapter<ProfileS
         // - replace the contents of the view with that element
 
         if (mSelectedItemPosition==position){
-            Log.d(TAG, "onBindViewHolder(): - mSelectedItemPosition==position **SET SELECTED IMAGE**");
-
             // change the curent position image
             Resources r = mContext.getResources();
             Drawable[] layers = new Drawable[2];
@@ -103,15 +99,12 @@ public class ProfileSelectImageViewAdapter extends RecyclerView.Adapter<ProfileS
 
         }
         else{
-            Log.d(TAG, "onBindViewHolder(): - mSelectedItemPosition!=position **SET REGULAR IMAGE**");
-
             holder.mImageView.setImageResource(mProfileImageResourceIdList[position]);
         }
 
         holder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "ImageView.onClick(): -  **CLICKED ON IMAGE**");
                 mSelectedItemPosition=holder.getAdapterPosition();
                 notifyDataSetChanged();
 

@@ -368,8 +368,8 @@ public class MainActivity extends AppCompatActivity
 
             Log.d("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() apiName:" + apiName);
             Log.d("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() callbackStatus:" + callbackStatus);
-            Log.d("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() requestParams:" + sRequestParams);
-            Log.d("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() results:" + sResults);
+            //Log.d("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() requestParams:" + sRequestParams);
+            //Log.d("MainActivity", "pdvApiCallbackMessageReceiver.onReceive() results:" + sResults);
 
 
             //reset data fetching if there isn't any more requests

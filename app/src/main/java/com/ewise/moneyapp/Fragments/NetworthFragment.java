@@ -323,17 +323,11 @@ public class NetworthFragment extends MoneyAppFragment implements MainActivity.F
 
                 welcomeLayout.setVisibility(app.isProviderFoundInDevice() ? View.GONE : View.VISIBLE);
                 netWorthLayout.setVisibility(app.isProviderFoundInDevice() ? View.VISIBLE : View.GONE);
-
-                Log.d(TAG, "updatePageData() - accountCardListDO.getAccountCardList()!=null");
-
                 NetworthDataObject nwdo = new NetworthDataObject( getContext(), accountCardListDO, app.getBaseCurrency());
                 //including building the various networth charts - if possible do this in the networthdataobject
-                Log.d(TAG, "updatePageData() - totalAssetsAmount=" + nwdo.getTotalAssetsAmount());
                 BigDecimal totalAssetsAmount = nwdo.getTotalAssetsAmount();
-                Log.d(TAG, "updatePageData() - totalLiabilitiesAmount=" + nwdo.getTotalLiabilitiesAmount());
                 BigDecimal totalLiabilitiesAmount = nwdo.getTotalLiabilitiesAmount();
                 BigDecimal totalNetworthAmount = totalAssetsAmount.subtract(totalLiabilitiesAmount);
-                Log.d(TAG, "updatePageData() - totalNetworthAmount=" + totalNetworthAmount);
                 String currencyCode = nwdo.getCurrency().getCurrencyCode();
 
                 DecimalFormat df = new DecimalFormat();

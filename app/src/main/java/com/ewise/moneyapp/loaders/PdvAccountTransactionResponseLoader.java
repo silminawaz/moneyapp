@@ -81,7 +81,7 @@ public class PdvAccountTransactionResponseLoader extends AsyncTaskLoader<PdvTran
 
             PdvTransactionResponse object = PdvTransactionResponse.objectFromData(jsonObject.toString());
 
-            Log.d("**TXN**", String.format("Transactions loaded : %s", object.toString()));
+            //Log.d("**TXN**", String.format("Transactions loaded : %s", object.toString()));
 
             return object;
         }

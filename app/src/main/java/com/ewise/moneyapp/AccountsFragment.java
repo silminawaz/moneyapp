@@ -250,15 +250,10 @@ public class AccountsFragment extends MoneyAppFragment implements MainActivity.F
 
         pageLoadingLayout = (LinearLayout) getActivity().findViewById(R.id.pageLoadingLayout);
         MoneyAppApp app = (MoneyAppApp)getActivity().getApplication();
-        Log.d("AccountsFragment", "updatePageData() - 1");
         AccountCardListDataObject accountCardListDO = app.getAccountCardListDO(getActivity());
-        Log.d("AccountsFragment", "updatePageData() - 2");
         if (accountCardListDO!=null){
-            Log.d("AccountsFragment", "updatePageData() - 3");
             List<AccountCardDataObject> cardDataList = accountCardListDO.getAccountCardList();
-            Log.d("AccountsFragment", "updatePageData() - 4");
             if (cardDataList!=null){
-                Log.d("AccountsFragment", "updatePageData() - cardDataList!=null; swapping data");
                 AccountCardsViewAdapter cardsViewAdapter1 = new AccountCardsViewAdapter(getActivity());
                 //cardsViewAdapter.swapData(cardDataList);
                 cardsViewAdapter1.setItemList(cardDataList);

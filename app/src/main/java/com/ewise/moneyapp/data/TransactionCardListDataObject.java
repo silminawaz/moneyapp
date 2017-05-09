@@ -123,14 +123,14 @@ public class TransactionCardListDataObject {
             for (TransactionCardDataObject transactionCard : this._transactionCardList){
                 if (groupTransactionsBy == eGroupTransactionsBy.DAY) {
                     if (transactionCard.transactionDate.equals(transactionDate)) {
-                        Log.d("**TXN**ADD", String.format("getTransactionCard () - Existing card : %s", transaction.toString()));
+                        //Log.d("**TXN**ADD", String.format("getTransactionCard () - Existing card : %s", transaction.toString()));
                         return transactionCard;
                     }
                 }
                 else if (groupTransactionsBy == eGroupTransactionsBy.MONTH) {
                     //get the transaction month
                     String transactionMonth = new SimpleDateFormat(_context.getString(R.string.transaction_groupby_month_format), Locale.getDefault()).format(transactionDate);
-                    Log.d("**TRACE**", String.format("transactionCard.transactionMonth = %s | transactionMonth = O%s", transactionCard.transactionMonth, transactionMonth));
+                    //Log.d("**TRACE**", String.format("transactionCard.transactionMonth = %s | transactionMonth = O%s", transactionCard.transactionMonth, transactionMonth));
 
                     if (transactionCard.transactionMonth.equals(transactionMonth)) {
                         return transactionCard;
@@ -146,7 +146,7 @@ public class TransactionCardListDataObject {
                     }
                 }
             }
-            Log.d("**TXN**ADD", String.format("getTransactionCard () New card : %s", transaction.toString()));
+            //Log.d("**TXN**ADD", String.format("getTransactionCard () New card : %s", transaction.toString()));
             TransactionCardDataObject transactionCard = new TransactionCardDataObject(_context, _account, transactionDate, groupTransactionsBy);
             _transactionCardList.add(transactionCard);
             return transactionCard;

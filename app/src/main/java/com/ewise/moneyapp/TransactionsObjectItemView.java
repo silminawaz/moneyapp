@@ -48,13 +48,7 @@ public class TransactionsObjectItemView extends RecyclerViewItemLayoutView<Trans
 
     public void bind(final TransactionsObject dataObject) {
 
-        Log.d("**TRACE**", String.format("Binding Transaction Object  : %s", dataObject.toString()));
-
-
-
         this.transaction_description.setText(dataObject.description);
-
-
         this.transaction_amount.setText(CurrencyAmount.getFormattedAmount(dataObject.amount, dataObject.currency));
 
         //set on click on the icon

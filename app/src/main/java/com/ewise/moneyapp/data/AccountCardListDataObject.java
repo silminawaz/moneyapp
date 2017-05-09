@@ -64,7 +64,7 @@ public class AccountCardListDataObject {
                     ) {
 
                 if (accountCard.category == eAccountCategory) {
-                    Log.d("AccountCardListData...", "addAccountToList() - Adding account to existing card="+account.accountName);
+                    //Log.d("AccountCardListData...", "addAccountToList() - Adding account to existing card="+account.accountName);
                     accountCard.addAccount(account);
                     return;
                 }
@@ -72,16 +72,16 @@ public class AccountCardListDataObject {
 
             //no card for this type... lets create it
             ArrayList<PdvAccountResponse.AccountsObject> accountList = new ArrayList<>();
-            Log.d("AccountCardListData...", "addAccountToList() - Adding account to new tile="+account.accountName);
+            //Log.d("AccountCardListData...", "addAccountToList() - Adding account to new tile="+account.accountName);
             accountList.add(account);
-            Log.d("AccountCardListData...", "addAccountToList() - Adding New account card="+account.accountName);
+            //Log.d("AccountCardListData...", "addAccountToList() - Adding New account card="+account.accountName);
             AccountCardDataObject accountCard = new AccountCardDataObject(context, eAccountCategory, accountList, preferredCurrencyCode);
             this.accountCardList.add(accountCard);
         }
         catch (Exception e)
         {
             //something went wrong
-            Log.d("ERROR", "Exception : adding account to Account Card List");
+            Log.e("ERROR", "Exception : adding account to Account Card List");
             throw e;
 
         }

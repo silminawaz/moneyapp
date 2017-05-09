@@ -890,8 +890,8 @@ import java.util.List;
 
                 Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() apiName:" + apiName);
                 Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() callbackStatus:" + callbackStatus);
-                Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() requestParams:" + sRequestParams);
-                Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() results:" + sResults);
+                //Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() requestParams:" + sRequestParams);
+                //Log.d(TAG, "pdvApiCallbackMessageReceiver.onReceive() results:" + sResults);
 
                 //todo: process the results
                 providerAdapter.notifyDataSetChanged();

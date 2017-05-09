@@ -243,9 +243,7 @@ public class MoneyAppApp extends Application {
     public AccountCardListDataObject getAccountCardListDO(Context context){
 
         if (pdvAccountResponse!=null){
-            Log.d(TAG, "getAccountCardListDO() - 1");
             if (pdvAccountResponse.accounts!=null){
-                Log.d(TAG, "getAccountCardListDO() - 2");
                 return new AccountCardListDataObject(context, pdvAccountResponse, getBaseCurrency());
             }
         }

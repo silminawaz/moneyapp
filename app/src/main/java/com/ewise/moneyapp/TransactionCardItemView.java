@@ -60,7 +60,6 @@ public class TransactionCardItemView extends RecyclerViewItemLayoutView<Transact
         {
             cardDataObject = cardDataObject;
 
-            Log.d("**TRACE 1**", String.format("Binding Transaction Card  : %s", cardDataObject.transactionDate.toString()));
 
             switch (cardDataObject.groupTransactionsBy){
                 case DAY:
@@ -75,10 +74,7 @@ public class TransactionCardItemView extends RecyclerViewItemLayoutView<Transact
             }
 
 
-            Log.d("***TRACE***", String.format("Date: %s | Cashin : %f | Cashout : %f", transactioncard_date.getText(), cardDataObject.totalCashIn.doubleValue(),cardDataObject.totalCashOut.doubleValue()));
-
             BigDecimal cashflowAmount = cardDataObject.totalCashIn.add(cardDataObject.totalCashOut);
-            Log.d("***TRACE***", String.format("Date: %s | Cashflow : %f", transactioncard_date.getText(), cashflowAmount.doubleValue()));
 
             this.transactioncard_cashflow.setText(CurrencyAmount.getFormattedAmount(cashflowAmount.doubleValue(), cardDataObject.account.currency));
 
@@ -92,10 +88,6 @@ public class TransactionCardItemView extends RecyclerViewItemLayoutView<Transact
             this.
 
             transactionlist_recycler_view.setVisibility(cardDataObject._transactionVisibility);
-
-            Log.d("**TRACE 2**", String.format("Binding Transaction Card : %s", cardDataObject.toString()));
-
-
             this.account_transaction_cardview.setOnClickListener(new OnClickListener(){
                 @Override
                 public void onClick(View view) {

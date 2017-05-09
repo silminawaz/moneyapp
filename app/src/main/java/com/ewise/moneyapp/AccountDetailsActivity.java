@@ -556,10 +556,6 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
             TransactionCardListDataObject transactionList =
                     new TransactionCardListDataObject(getApplicationContext(), _transactions, _account, groupTransactionsBy);
 
-            if (transactionList != null) {
-                Log.d("AccountDetailsActivity", "updatePageData() - transactionList=" + transactionList.toString());
-            }
-
             transactionCardsViewAdapter.swapData(transactionList.get_transactionCardList(TransactionCardListDataObject.TransactionSortOrder.DATE_DESCENDING));
 
             accountdetails_open_transactions_img.setImageResource(transactionCardsViewAdapter.get_showTransactions() == View.VISIBLE ? R.drawable.ic_action_folder_open : R.drawable.ic_action_folder_closed);

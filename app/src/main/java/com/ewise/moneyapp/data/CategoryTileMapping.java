@@ -63,7 +63,7 @@ public class CategoryTileMapping {
                 String jsonString = jsonObject.toString();
                 CategoryTileMapping object = CategoryTileMapping.objectFromData(jsonObject.toString());
                 this.categoryTileMapping = object.categoryTileMapping;
-                Log.d("INFO", String.format("CategoryTileMapping.loadData() done with %d mapping objects", this.categoryTileMapping.size()));
+                //Log.d("INFO", String.format("CategoryTileMapping.loadData() done with %d mapping objects", this.categoryTileMapping.size()));
             }
         }
         catch (JSONException e)
