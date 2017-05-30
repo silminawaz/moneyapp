@@ -13,6 +13,8 @@
     <integer name="ewise_profile_max_length">24</integer>
 
     <integer name="ewise_profile_title_max_length">8</integer>
+    <integer name="ewise_sync_request_runnable_frequency_milliseconds">5000</integer>
+    <integer name="ewise_login_timeout_milliseconds">60000</integer>
     <integer name="ewise_fragment_refresh_timeout_milliseconds">1000</integer>
 
 

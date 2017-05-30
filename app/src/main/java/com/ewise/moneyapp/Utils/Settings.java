@@ -3,9 +3,12 @@ package com.ewise.moneyapp.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.ewise.android.pdv.api.util.ConnectivityReceiver;
 import com.ewise.moneyapp.MoneyAppApp;
 import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.data.ProviderLastUpdated;
@@ -62,6 +65,17 @@ public class Settings {
             settings = new Settings(context);
         }
         return settings;
+    }
+
+    public boolean isDeviceOnline(Context context) {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
+
+    public boolean isServerOnline(Context context, final String swanHost){
+        return ConnectivityReceiver.isConnected(context, swanHost);
     }
 
     public SignOnUsers getSignOnUsers() {

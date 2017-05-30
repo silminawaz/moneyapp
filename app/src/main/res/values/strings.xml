@@ -414,6 +414,7 @@
     <string name="profile_switching_progress_title">Switching profiles</string>
     <string name="profile_switching_progress_message">Switching profiles may take a few seconds. please wait&#8230;</string>
     <string name="login_timeout_message">Login Timeout - There is a problem with logging into the PDV for your selected profile. Please LOGOUT and try using a different profile</string>
+    <string name="login_timeout_network_issue">Login Timeout - Unable to connect to the server due to a network connectivity issue</string>
 
     <string name="last_updated_time_elapsed_year">year</string>
     <string name="last_updated_time_elapsed_month">month</string>
