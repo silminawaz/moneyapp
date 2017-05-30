@@ -117,7 +117,7 @@ public class MoneyAppApp extends Application {
 
 
     //todo: implement inactivity timeout for the app login
-    public static final int APP_INACTIVITY_TIMEOUT = 180000; //30 minutes default timeout for the app for login
+    public static final int DEFAULT_APP_INACTIVITY_TIMEOUT = 180000; //30 minutes default timeout for the app for login
 
     static final int LOGIN_REQUEST = 1;
     static final int ACCOUNT_DETAILS_ACTIVITY = 2;

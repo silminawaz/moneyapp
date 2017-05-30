@@ -627,7 +627,7 @@ public class AccountDetailsActivity extends AppCompatActivity implements Gesture
     public void onRestoreTransactionsAllComplete(final PdvApiResults results) {
 
         if (results.callBackCompleted && results.transactions != null) {
-            Log.d("AccountDetailsActivity", "onRestoreTransactionsAllComplete() - results=" + PdvApiResults.toJsonString(results));
+            //Log.d("AccountDetailsActivity", "onRestoreTransactionsAllComplete() - results=" + PdvApiResults.toJsonString(results));
             this._transactions = PdvTransactionResponseDataMapper.getMappedObject(results.transactions, AccountDetailsActivity.this);
         }
         this.runOnUiThread(new Runnable() {

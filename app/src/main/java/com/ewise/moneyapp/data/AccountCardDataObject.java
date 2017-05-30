@@ -219,6 +219,7 @@ public class AccountCardDataObject {
             this.preferredCurrencyFunds = BigDecimal.valueOf(this.preferredCurrencyFunds.doubleValue()).add(acctFunds);
             this.numAccounts = String.format("(%d)", accountList.size());
 
+            /*
             String msg =
                     "AccountCardDataObject.addAccountToTotal() - "
                     + "Card: " + this.getTitle()
@@ -226,6 +227,7 @@ public class AccountCardDataObject {
                     + "| Account Balance=" + account.balance
                     + "| Card Balance = " + preferredCurrencyBalance.toString();
             Log.d("AccountCardDataObject", msg);
+            */
 
         }
         catch (Exception e)

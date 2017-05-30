@@ -59,12 +59,18 @@ import com.ewise.android.pdv.api.model.consent.ConsentUpdateRequest;
 import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.android.pdv.api.model.response.TransactionsResponse;
+import com.ewise.moneyapp.Fragments.BillsFragment;
+import com.ewise.moneyapp.Fragments.BudgetsFragment;
 import com.ewise.moneyapp.Fragments.EditProfilesDialogFragment;
 import com.ewise.moneyapp.Fragments.EditProviderDialogFragment;
 import com.ewise.moneyapp.Fragments.EwiseOTPFragment;
+import com.ewise.moneyapp.Fragments.HelpFragment;
 import com.ewise.moneyapp.Fragments.MoneyAppFragment;
+import com.ewise.moneyapp.Fragments.NetworthFragment;
 import com.ewise.moneyapp.Fragments.ProvidersFragment;
+import com.ewise.moneyapp.Fragments.ReportIssueFragment;
 import com.ewise.moneyapp.Fragments.SettingsFragment;
+import com.ewise.moneyapp.Fragments.TransferFragment;
 import com.ewise.moneyapp.Utils.Base64ImageConverter;
 import com.ewise.moneyapp.Utils.FragmentPagerAdapterHelper;
 import com.ewise.moneyapp.Utils.OnHomePressedListener;
@@ -156,6 +162,7 @@ public class MainActivity extends AppCompatActivity
     public PdvAcaBoundService pdvAcaBoundService;
     public boolean pdvAcaServiceIsBound = false;
     public boolean isPdvConnected = false;
+    public boolean isServerOnline;
 
     ImageView imagePdvConnected;
     boolean checkConnectivity;
@@ -185,17 +192,6 @@ public class MainActivity extends AppCompatActivity
     //todo: add a listener for each fragment that needs to be updated by the MainActivity
     HashMap<String, FragmentUpdateListener> fragmentListenerMap;
 
-    /*
-    FragmentUpdateListener providerFragmentUpdateListener = null;
-    FragmentUpdateListener networthFragmentUpdateListener = null;
-    FragmentUpdateListener accountsFragmentUpdateListener = null;
-    FragmentUpdateListener budgetsFragmentUpdateListener = null;
-    FragmentUpdateListener settingsFragmentUpdateListener = null;
-    FragmentUpdateListener billsFragmentUpdateListener = null;
-    FragmentUpdateListener helpFragmentUpdateListener = null;
-    FragmentUpdateListener reportIssueFragmentUpdateListener = null;
-    FragmentUpdateListener transferFragmentUpdateListener = null;
-    */
 
     public void setAttachedFragmentUpdateListener(MoneyAppFragment fragment) {
         if (fragmentListenerMap == null) {
@@ -205,43 +201,25 @@ public class MainActivity extends AppCompatActivity
         fragmentListenerMap.put(fragment.getClass().getName(), fragment);
     }
 
-/*
-    public void setProviderFragmentListener(FragmentUpdateListener listener) {
-        providerFragmentUpdateListener = listener;
+    public void resetAttachedFragmentUpdateListener(MoneyAppFragment fragment) {
+        if (fragmentListenerMap == null) {
+            fragmentListenerMap = new HashMap<>();
+        }
+
+        fragmentListenerMap.put(fragment.getClass().getName(), null);
     }
 
-    public void setNetworthFragmentListener(FragmentUpdateListener listener) {
-        networthFragmentUpdateListener = listener;
-    }
-
-
-    public void setAccountsFragmentListener(FragmentUpdateListener listener) {
-        accountsFragmentUpdateListener = listener;
-    }
-
-*/
 
     private void refreshAttachedFragments() {
 
-        /* Al fragments apart from AccountsFragment derives from MoneyAppFragment, so no need for explicit listener
-        if (providerFragmentUpdateListener != null) {
-            providerFragmentUpdateListener.refreshFragmentUI();
-        }
-
-        if (networthFragmentUpdateListener != null) {
-            networthFragmentUpdateListener.refreshFragmentUI();
-        }
-
-
-        if (accountsFragmentUpdateListener != null) {
-            accountsFragmentUpdateListener.refreshFragmentUI();
-        }
-        */
-
         //refresh all attached fragments derived from MoneyAppFragment
+        Log.d(TAG, "refreshAttachedFragments() for Fragment class - START");
         if (fragmentListenerMap!=null) {
             for (FragmentUpdateListener listener : fragmentListenerMap.values()) {
-                listener.refreshFragmentUI();
+                if (listener!=null) {
+                    Log.d(TAG, "refreshAttachedFragments() for Fragment class ->" + listener.getClass().getName());
+                    listener.refreshFragmentUI();
+                }
             }
         }
 
@@ -291,24 +269,60 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG, "resetLoginTimeoutRunnable - START");
             MoneyAppApp app = (MoneyAppApp) getApplication();
             loginTimeoutInProgress = false;
-            Log.d(TAG, "resetLoginTimeoutRunnable - RESET");
-            if (app.pdvLoginStatus.isLoginInProgress() || app.pdvLoginStatus.isLoggedOffFromPdv()) {
-                //app.setAppLoggedOff();
-                String message = getString(R.string.login_timeout_message);
+
+            isServerOnline = true;
+            Runnable connectivityChecker = new Runnable() {
+                @Override
+                public void run() {
+                    isServerOnline = Settings.getInstance(MainActivity.this).isServerOnline(MainActivity.this, MoneyAppApp.DEFAULT_SWAN_HOST);
+                }
+            };
+
+
+            try {
+                Thread t = new Thread(connectivityChecker);
+                t.start();
+                t.join();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                Log.d(TAG, "resetLoginTimeoutRunnable - Error JOINING connectivityChecker Runnable thread");
+
+            }
+
+
+
+            if (!isServerOnline) {
+                //server is offline or internet is down
+                //**SN** stopped here... add network issues messsage to progress overlay
+                Log.d(TAG, "resetLoginTimeoutRunnable - NETWORK ISSUE");
+                String message = getString(R.string.login_timeout_network_issue);
                 progress_overlay.setVisibility(View.VISIBLE);
                 progressText.setText(message);
-                if (profileProgressDialog != null && profileProgressDialog.isShowing())
-                if (profileProgressDialog != null && profileProgressDialog.isShowing())
-                {
-                    profileProgressDialog.setMessage(message);
+                if (profileProgressDialog!=null){
+                    Log.d(TAG, "resetLoginTimeoutRunnable - CLOSING PROGRESS DIALOG 1");
                     profileProgressDialog.dismiss();
                 }
             }
-            else
-            {
-                if (profileProgressDialog != null && profileProgressDialog.isShowing())
-                {
-                    profileProgressDialog.dismiss();
+            else {
+                if (app.pdvLoginStatus.isLoginInProgress() || app.pdvLoginStatus.isLoggedOffFromPdv()) {
+                    //app.setAppLoggedOff();
+                    Log.d(TAG, "resetLoginTimeoutRunnable - TIMEOUT ON LOGIN");
+                    String message = getString(R.string.login_timeout_message);
+                    progress_overlay.setVisibility(View.VISIBLE);
+                    progressText.setText(message);
+                    if (profileProgressDialog != null && profileProgressDialog.isShowing()) {
+                        Log.d(TAG, "resetLoginTimeoutRunnable - CLOSING PROGRESS DIALOG 2");
+                        profileProgressDialog.setMessage(message);
+                        profileProgressDialog.dismiss();
+                    }
+                } else {
+                    Log.d(TAG, "resetLoginTimeoutRunnable - LOGIN SUCCESS");
+
+                    if (profileProgressDialog != null && profileProgressDialog.isShowing()) {
+                        Log.d(TAG, "resetLoginTimeoutRunnable - CLOSING PROGRESS DIALOG 3");
+                        profileProgressDialog.dismiss();
+                    }
                 }
             }
         }
@@ -324,7 +338,8 @@ public class MainActivity extends AppCompatActivity
                 if (app.pdvLoginStatus.isLoggedOffFromPdv() && !app.isPdvLoginFailed()) {
                     if (!loginTimeoutInProgress) {  //if there is no login still in progress
                         Log.d(TAG, "pdvApiRequestRunnable - Starting postdelayed resetLoginTimeoutRunnable");
-                        pdvApiRequestHandler.postDelayed(resetLoginTimeoutRunnable, 30000); //if we dont login within 30 seconds , timeout
+                        int loginTimeoutMS = getResources().getInteger(R.integer.ewise_login_timeout_milliseconds);
+                        pdvApiRequestHandler.postDelayed(resetLoginTimeoutRunnable, loginTimeoutMS); //if we dont login within 30 seconds , timeout
                         loginToPDV();
                     } else {
                         Log.d(TAG, "pdvApiRequestRunnable - loginTimeoutInProgress - there is a previous login still in progress or may have timed out");
@@ -352,8 +367,8 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
 
-
-                pdvApiRequestHandler.postDelayed(pdvApiRequestRunnable, 5000); //run every 5 seconds
+                int syncFrequency = getResources().getInteger(R.integer.ewise_sync_request_runnable_frequency_milliseconds);
+                pdvApiRequestHandler.postDelayed(pdvApiRequestRunnable, syncFrequency); //run every n seconds
             }
         }
     };
@@ -770,6 +785,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.navHeaderSettingsIcon:
                 showTabs(SettingsMenuPagerAdapter.class);
                 mViewPager.setCurrentItem(SettingsMenuPagerAdapter.TAB_POSITION_SETTINGS);
+                refreshAttachedFragmentUI(SettingsFragment.class);
                 break;
             case R.id.navMenuPermissions:
                 showTabs(SettingsMenuPagerAdapter.class);
@@ -778,34 +794,38 @@ public class MainActivity extends AppCompatActivity
             case R.id.navMenuAccounts:
                 showTabs(SectionsPagerAdapter.class);
                 mViewPager.setCurrentItem(SectionsPagerAdapter.TAB_POSITION_ACCOUNTS);
-                refreshAttachedFragments();
+                refreshAttachedFragmentUI(AccountsFragment2.class);
                 break;
             case R.id.navMenuProviders:
                 showTabs(SectionsPagerAdapter.class);
                 mViewPager.setCurrentItem(SectionsPagerAdapter.TAB_POSITION_PROVIDERS);
-                refreshAttachedFragments();
+                refreshAttachedFragmentUI(ProvidersFragment.class);
                 break;
             case R.id.navMenuNetworth:
                 showTabs(SectionsPagerAdapter.class);
                 mViewPager.setCurrentItem(SectionsPagerAdapter.TAB_POSITION_NETWORTH);
                 refreshAttachedFragments();
+                refreshAttachedFragmentUI(NetworthFragment.class);
                 break;
             case R.id.navMenuBudgets:
                 showTabs(SectionsPagerAdapter.class);
                 mViewPager.setCurrentItem(SectionsPagerAdapter.TAB_POSITION_SPENDING);
-                refreshAttachedFragments();
+                refreshAttachedFragmentUI(BudgetsFragment.class);
                 break;
             case R.id.navMenuBills:
                 showTabs(BillsMenuPagerAdapter.class);
                 mViewPager.setCurrentItem(BillsMenuPagerAdapter.TAB_POSITION_BILLS);
+                refreshAttachedFragmentUI(BillsFragment.class);
                 break;
             case R.id.navMenuTransfer:
                 showTabs(TransferMenuPagerAdapter.class);
                 mViewPager.setCurrentItem(TransferMenuPagerAdapter.TAB_POSITION_TRANSFER);
+                refreshAttachedFragmentUI(TransferFragment.class);
                 break;
             case R.id.navMenuSendIssue:
                 showTabs(ReportIssueMenuPagerAdapter.class);
                 mViewPager.setCurrentItem(ReportIssueMenuPagerAdapter.TAB_POSITION_REPORTISSUE);
+                refreshAttachedFragmentUI(ReportIssueFragment.class);
                 break;
             case R.id.navMenuLogout:
                 logoutFromApp(LogoutReason.LOGOUT_REASON_MENUPRESSED);
@@ -813,6 +833,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.navMenuHelp:
                 showTabs(HelpMenuPagerAdapter.class);
                 mViewPager.setCurrentItem(HelpMenuPagerAdapter.TAB_POSITION_HELP);
+                refreshAttachedFragmentUI(HelpFragment.class);
                 break;
             default:
                 break;
@@ -1413,6 +1434,11 @@ public class MainActivity extends AppCompatActivity
         loginErrorText.setText(msg);
         loginErrorLayout.setVisibility(View.VISIBLE);
 
+        synchronized (this){
+            Log.d("MainActivity", "notifyPdvLoginFail() - setting loginTimeoutInProgress=false");
+            loginTimeoutInProgress=false;//reset the login timeout
+        }
+
         hideProgressDialog();
 
         Log.d("MainActivity", "notifyPdvLoginFail() - END");
@@ -1479,7 +1505,9 @@ public class MainActivity extends AppCompatActivity
 
         //do not call app.pdvGetInstitutions() more than once in MainActivity
         final String msg = getString(R.string.pdvapi_on_getinstitution_fail_message);
-        String.format(msg, results.userProfile.getMessage());
+        if (results!=null && results.providers!=null){
+        String.format(msg, results.providers.getMessage());
+        }
 
         runOnUiThread(new Runnable() {
             @Override
@@ -1544,7 +1572,10 @@ public class MainActivity extends AppCompatActivity
     public void onGetUserProfileFail(PdvApiResults results){
 
         final String msg = getString(R.string.pdvapi_on_getuserprofile_fail_message);
-        String.format(msg, results.userProfile.getMessage());
+
+        if (results!=null && results.userProfile!=null) {
+            String.format(msg, results.userProfile.getMessage());
+        }
 
         runOnUiThread(new Runnable() {
             @Override

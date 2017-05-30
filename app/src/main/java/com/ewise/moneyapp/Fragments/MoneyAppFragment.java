@@ -139,17 +139,25 @@ public abstract class MoneyAppFragment extends Fragment implements MainActivity.
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        ((MainActivity) getActivity()).resetAttachedFragmentUpdateListener(this);
+    }
+
+    @Override
     public void refreshFragmentUI(){
 
+        //TODO: **SN** this code is buggy
         long timeout=0;
-        while (!isAdded() && timeout<=FRAGMENT_UI_REFRESH_TIMEOUT_MS){
-            try {
-                timeout+=FRAGMENT_UI_REFRESH_WAIT_TIME_MS;
-                wait(timeout);
-            }
-            catch(Exception e){
-                e.printStackTrace();
-                break;
+        synchronized (Thread.currentThread()) {
+            while (!isAdded() && timeout <= FRAGMENT_UI_REFRESH_TIMEOUT_MS) {
+                try {
+                        timeout += FRAGMENT_UI_REFRESH_WAIT_TIME_MS;
+                        Thread.currentThread().wait(timeout);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
             }
         }
 

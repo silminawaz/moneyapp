@@ -68,7 +68,7 @@ public class TransactionCardListDataObject {
     public void addAccountTransactions(AccountTransactionsObject accountTransaction, eGroupTransactionsBy groupTransactionsBy){
         try
         {
-            Log.d("**TXN**ADD", String.format("Adding transactions : %s", accountTransaction.toString()));
+            //Log.d("**TXN**ADD", String.format("Adding transactions : %s", accountTransaction.toString()));
 
             _account = accountTransaction.account.getAccountsObject();
             TransactionCardDataObject transactionCard=null;
