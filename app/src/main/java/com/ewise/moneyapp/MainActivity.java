@@ -92,14 +92,10 @@ import com.ewise.moneyapp.adapters.ReportIssueMenuPagerAdapter;
 import com.ewise.moneyapp.adapters.TransferMenuPagerAdapter;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
-import org.antlr.v4.codegen.model.Sync;
-//import org.apache.log4j.chainsaw.Main;
 import org.xwalk.core.XWalkView;
 
 import java.util.HashMap;
 import java.util.List;
-
-import kotlin.jvm.Synchronized;
 
 
 public class MainActivity extends AppCompatActivity
