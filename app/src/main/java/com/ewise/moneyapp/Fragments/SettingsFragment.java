@@ -13,6 +13,9 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -79,6 +82,9 @@ public class SettingsFragment extends MoneyAppFragment {
 
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+        setHasOptionsMenu(true);
+
         return rootView;
     }
 
@@ -129,6 +135,33 @@ public class SettingsFragment extends MoneyAppFragment {
 
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+
+
+        //fragment specific menu creation
+        inflater.inflate(R.menu.menu_settings, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_changepin) {
+            //
+            if (isAdded()) {
+                ((MainActivity)getActivity()).showChangePinDialog();
+            }
+            //return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     //NOTE: setUserVisibleHint() is called when the fragment is no longer visible or becomes visible
     @Override

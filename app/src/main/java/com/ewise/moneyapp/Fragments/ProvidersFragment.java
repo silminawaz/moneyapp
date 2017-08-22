@@ -824,6 +824,7 @@ import java.util.List;
 
         if (isAdded()) {
 
+            Log.d(TAG, "updatePageData() - **UPDATING FRAGMENT PAGE DATA**");
             //reset data fetching if there isn't any more requests
             MoneyAppApp app = (MoneyAppApp) getActivity().getApplication();
             if (app.userProfileData.getUserprofile() != null) {

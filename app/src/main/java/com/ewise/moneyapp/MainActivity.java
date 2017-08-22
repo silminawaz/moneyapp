@@ -61,6 +61,7 @@ import com.ewise.android.pdv.api.model.response.GetPromptsData;
 import com.ewise.android.pdv.api.model.response.TransactionsResponse;
 import com.ewise.moneyapp.Fragments.BillsFragment;
 import com.ewise.moneyapp.Fragments.BudgetsFragment;
+import com.ewise.moneyapp.Fragments.ChangePinDialogFragment;
 import com.ewise.moneyapp.Fragments.EditProfilesDialogFragment;
 import com.ewise.moneyapp.Fragments.EditProviderDialogFragment;
 import com.ewise.moneyapp.Fragments.EwiseOTPFragment;
@@ -207,6 +208,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         fragmentListenerMap.put(fragment.getClass().getName(), null);
+        fragmentListenerMap.remove(fragment.getClass().getName());
     }
 
 
@@ -282,6 +284,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 Thread t = new Thread(connectivityChecker);
                 t.start();
+                Log.d(TAG, "resetLoginTimeoutRunnable - **Waiting to JOIN connectivity checker thread**");
                 t.join();
             }
             catch (Exception e){
@@ -591,6 +594,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate() - START");
         this.setTheme(R.style.AppTheme_NoActionBar); //remove the splash theme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -745,13 +749,15 @@ public class MainActivity extends AppCompatActivity
         myApp.pdvWebView = (XWalkView) findViewById(R.id.ewise_webview);
 
         try {
+            Log.d(TAG, "onCreate() - about to initialise API");
             pdvApi.apiInit(getApplicationContext(), myApp.pdvWebView);
             myApp.checkConnectivity(this, MoneyAppApp.DEFAULT_SWAN_HOST, this);
             //if successfully connected, the callback will handle the login
             if (!myApp.isAppLoggedIn()) {
+                Log.d(TAG, "onCreate() - Must Login");
                 startLoginActivity();
             } else {
-                pdvApiRequestRunnable.run();
+
             }
         } catch (Exception e) {
             String sMethod = this.toString();
@@ -1043,6 +1049,11 @@ public class MainActivity extends AppCompatActivity
                     new IntentFilter("pdv-aca-service-error"));
 
             setupNavigationDrawer(false);
+
+            if (app.isAppLoggedIn()) {
+                Log.d(TAG, "onCreate() - Going to run Request Runnable");
+                handler.post(pdvApiRequestRunnable);
+            }
         }
         catch(Exception e){
             Log.e(TAG, e.getMessage());
@@ -1069,6 +1080,7 @@ public class MainActivity extends AppCompatActivity
         unbindService(pdvAcaServiceConnection);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(pdvApiCallbackMessageReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(pdvApiServiceErrorMessageReceiver);
+        handler.removeCallbacks(pdvApiRequestRunnable);
     }
 
     @Override
@@ -1099,13 +1111,13 @@ public class MainActivity extends AppCompatActivity
             if (app.isAppLoggedIn()) {
 
                 setAppLoginStatus(true, null);
-                pdvApiRequestRunnable.run();
+                //pdvApiRequestRunnable.run(); //TODO: **SN** TESTING
             } else {
                 //login failed
                 setAppLoginStatus(false, getString(R.string.app_login_failed_message));
             }
 
-            selectDrawerItem(R.id.navMenuNetworth);
+            //selectDrawerItem(R.id.navMenuNetworth); //TODO: **SN** TESTING
 
         }
 
@@ -1116,7 +1128,6 @@ public class MainActivity extends AppCompatActivity
             GetPromptsData promptsData = app.getPromptsDataSelected();
             setDataFetchingStatus(true, null);
             app.addNewProvider(instCode, instName, promptsData);
-            refreshAttachedFragments();
         }
 
         if (requestCode == MoneyAppApp.ACCOUNT_DETAILS_ACTIVITY) {
@@ -1124,6 +1135,8 @@ public class MainActivity extends AppCompatActivity
             //go back to the same fragment
             selectDrawerItem(R.id.navMenuAccounts);
         }
+
+        refreshAttachedFragments();
 
     }
 
@@ -1251,7 +1264,6 @@ public class MainActivity extends AppCompatActivity
                 Log.d("MainActivity", "loginToPDV() : Runnable login - START");
 
                 //String username = myApp.getIMEI();//todo: get imei number by allowing READ_PHONE_STATE permission
-                //todo: remove hardcoded username (i.e. for production we need to allow a login user name on first time login and Persistent PIN for access)
                 //      login first time should prevent an existing login from being re-used without proper authorisation - i.e. an authentication mechanism is needed - maybe a login TOKEN
                 setDataFetchingStatus(true, getString(R.string.pdv_api_login_to_pdv));
                 setProgressStatus(true, getString(R.string.pdv_api_login_to_pdv));
@@ -1276,7 +1288,8 @@ public class MainActivity extends AppCompatActivity
                                     pdvApiResults.callBackCompleted = true;
                                     Log.d("INIT", status);
                                     if (status.equals(StatusCode.STATUS_SUCCESS)) {
-                                        handler.post(new Runnable() {
+
+                                        runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 notifyPdvLoginSuccess();
@@ -1954,6 +1967,25 @@ public void reloadProfileSpinner() {
     }
 }
 
+
+
+    public void showChangePinDialog(){
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("change_pin_dialog");
+        if (prev != null) {
+            ChangePinDialogFragment changePinDialog = (ChangePinDialogFragment) prev;
+            changePinDialog.dismiss();
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        ChangePinDialogFragment newFragment = ChangePinDialogFragment.newInstance();
+        newFragment.show(ft, "change_pin_dialog");
+    }
+
+
     public void showEditProfilesDialog(SignonProfile signonProfile){
         //mStackLevel++;
 
@@ -1971,7 +2003,7 @@ public void reloadProfileSpinner() {
 
         // Create and show the dialog.
         EditProfilesDialogFragment newFragment = EditProfilesDialogFragment.newInstance(signonProfile);
-        newFragment.show(ft, "edit_institution_prompts_dialog");
+        newFragment.show(ft, "edit_profiles_dialog");
     }
 
     public void showEditProviderDialog(UserProviderEntry providerEntry){

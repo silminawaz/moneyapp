@@ -480,7 +480,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void setMustReEnterPIN(boolean signedIn){
         if (signedIn)
         {
-            mustReEnterPIN = settings.getNewUserEncryptedPin(this, activeUser.system, activeUser.id).mustReEnterPIN(this);
+            mustReEnterPIN = settings.getEncryptedPin(this, activeUser.system, activeUser.id).mustReEnterPIN(this);
             if (mustReEnterPIN){
                 //only display confirm PIN field if user must re enter the PIN
                 findViewById(R.id.txtPinEntryLabel2).setVisibility(View.VISIBLE);
@@ -521,15 +521,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (isReEnterPINValid()){
                 //PIN is valid.. lets try to save it
                 //canLoginToApp = settings.getEncryptedPin().savePIN(txtPinEntry.getText().toString(), this);  //@deprecated
-                canLoginToApp = settings.getNewUserEncryptedPin(this, activeUser.system, activeUser.id).savePIN(txtPinEntry.getText().toString(), this);
+                canLoginToApp = settings.getEncryptedPin(this, activeUser.system, activeUser.id).savePIN(txtPinEntry.getText().toString(), this);
             }
         }
         else
         {
             if (isInputPINValid()) {
-                //todo: validate PIN
                 //canLoginToApp = settings.getEncryptedPin().validatePIN(txtPinEntry.getText().toString(), this);  //@deprecated
-                canLoginToApp = settings.getNewUserEncryptedPin(this, activeUser.system, activeUser.id).validatePIN(txtPinEntry.getText().toString(), this);
+                canLoginToApp = settings.getEncryptedPin(this, activeUser.system, activeUser.id).validatePIN(txtPinEntry.getText().toString(), this);
                 if (!canLoginToApp) {
                     loginErrorMessage = getString(R.string.pinentry_invalid_pin);
                 }

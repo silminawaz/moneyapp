@@ -30,11 +30,6 @@ public abstract class MoneyAppFragment extends Fragment implements MainActivity.
 
     private static final String TAG = "MoneyAppFragment";
 
-    //refresh timeout required to ensure that the page refresh happens after
-    // all pending fragment manager transactions are executed
-    private static final long FRAGMENT_UI_REFRESH_TIMEOUT_MS = 1000;
-    private static final long FRAGMENT_UI_REFRESH_WAIT_TIME_MS = 100;
-
 
     private OnFragmentInteractionListener mListener;
 
@@ -139,6 +134,14 @@ public abstract class MoneyAppFragment extends Fragment implements MainActivity.
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        ((MainActivity) getActivity()).disableProfileFab();
+        ((MainActivity) getActivity()).setAttachedFragmentUpdateListener(this);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         ((MainActivity) getActivity()).resetAttachedFragmentUpdateListener(this);
@@ -147,19 +150,7 @@ public abstract class MoneyAppFragment extends Fragment implements MainActivity.
     @Override
     public void refreshFragmentUI(){
 
-        //TODO: **SN** this code is buggy
-        long timeout=0;
-        synchronized (Thread.currentThread()) {
-            while (!isAdded() && timeout <= FRAGMENT_UI_REFRESH_TIMEOUT_MS) {
-                try {
-                        timeout += FRAGMENT_UI_REFRESH_WAIT_TIME_MS;
-                        Thread.currentThread().wait(timeout);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
-                }
-            }
-        }
+
 
         if (isAdded()) {
 

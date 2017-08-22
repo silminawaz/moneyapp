@@ -33,6 +33,7 @@ public class Settings {
 
     private static final String TAG = "Settings";
 
+    static final String SHARED_PREFERENCES_APP_SETTINGS = "appsettings";
     static final String SETTINGS_USER_NAME = "com.ewise.moneyapp.username.{profilename}";
     static final String SETTINGS_USER_EMAIL = "com.ewise.moneyapp.email.{profilename}";
     static final String SHARED_PREFERENCES_PROVIDER_LASTUPDATED = "providerlastupdated";
@@ -46,13 +47,12 @@ public class Settings {
     private SignOnUsers signOnUsers=null;
     private SignonUser activeUser=null;
     private SignonProfile activeProfile=null;
-    //private Context context;
 
     private static Settings settings = null;
 
 
+    //NOTE: Only Pass Application Context - dont pass activity context
     private Settings(Context context){
-        //this.context = context;
         encryptedPin = new EncryptedPin(context, null, null);//UNUSED
         encryptedPinMap = new HashMap<>();
         providerLastUpdatedList = null;
@@ -153,22 +153,27 @@ public class Settings {
     }
 
 
-    public EncryptedPin getActiveUserEncryptedPin(Activity activity){
+    public EncryptedPin getEncryptedPin(Activity activity){
 
         MoneyAppApp app = (MoneyAppApp) activity.getApplication();
         SignOnSystem signOnSystem=app.signOnSystem;
         String signonUserID=app.signonUserId;
         String signonUserPinKey = EncryptedPin.PIN_KEY_ALIAS_PREFIX + "." + signOnSystem.toString() + "." + signonUserID;
+        Log.d(TAG, "getEncryptedPin(Activity) : signonUserPinKey=" + signonUserPinKey);
         if (!encryptedPinMap.containsKey(signonUserPinKey)){
+            Log.d(TAG, "getEncryptedPin(Activity) : Adding signonUserPinKey to encryptedPinMap");
             encryptedPinMap.put(signonUserPinKey, new EncryptedPin(activity, signOnSystem, signonUserID));
         }
         return encryptedPinMap.get(signonUserPinKey);
     }
 
-    public EncryptedPin getNewUserEncryptedPin(Activity activity, SignOnSystem signOnSystem, String signonUserID){
+    public EncryptedPin getEncryptedPin(Activity activity, SignOnSystem signOnSystem, String signonUserID){
 
         String signonUserPinKey = EncryptedPin.PIN_KEY_ALIAS_PREFIX + "." + signOnSystem.toString() + "." + signonUserID;
+        Log.d(TAG, "getEncryptedPin(Activity, SignOnSystem, SignOnUserId) : signonUserPinKey=" + signonUserPinKey);
+
         if (!encryptedPinMap.containsKey(signonUserPinKey)){
+            Log.d(TAG, "getEncryptedPin(Activity, SignOnSystem, SignOnUserId) : Adding signonUserPinKey to encryptedPinMap");
             encryptedPinMap.put(signonUserPinKey, new EncryptedPin(activity, signOnSystem, signonUserID));
         }
         return encryptedPinMap.get(signonUserPinKey);
@@ -514,7 +519,8 @@ public class Settings {
 
     @Deprecated
     public String getActiveUserEmail(Activity activity) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+        SharedPreferences sharedPref = app.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_APP_SETTINGS, Context.MODE_PRIVATE);
         if (sharedPref.contains(SETTINGS_USER_EMAIL)){
             return sharedPref.getString(SETTINGS_USER_EMAIL, "");
         }
@@ -527,7 +533,8 @@ public class Settings {
     public boolean setUserEmail(String userName, String profileName, Activity activity){
         if (userName!=null) {
             if (userName.length()>0) {
-                SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+                MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+                SharedPreferences sharedPref = app.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_APP_SETTINGS, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(SETTINGS_USER_EMAIL, userName);
                 editor.apply();
@@ -564,7 +571,8 @@ public class Settings {
  */
     @Deprecated
     public String getUserName(Activity activity) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+        SharedPreferences sharedPref = app.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_APP_SETTINGS, Context.MODE_PRIVATE);
         if (sharedPref.contains(SETTINGS_USER_NAME)){
             return sharedPref.getString(SETTINGS_USER_NAME, "");
         }
@@ -578,7 +586,8 @@ public class Settings {
     public boolean setUserName(String userName, String profileName, Activity activity){
         if (userName!=null) {
             if (userName.length()>0) {
-                SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+                MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+                SharedPreferences sharedPref = app.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_APP_SETTINGS, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(SETTINGS_USER_NAME, userName);
                 editor.apply();

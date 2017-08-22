@@ -1,9 +1,11 @@
 package com.ewise.moneyapp.Utils;
 
+import android.support.annotation.Keep;
+
 /**
  * Copyright (c) 2017 eWise Singapore. Created  on 12/4/17.
  */
-
+@Keep
 public enum SignOnSystem {
 
     SIGN_ON_SYSTEM_UNKNOWN ("unknown"),

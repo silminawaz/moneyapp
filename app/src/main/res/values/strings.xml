@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">eWise</string>
     <string name="action_settings">Settings</string>
+    <string name="action_changepin">Change PIN</string>
     <string name="action_group_category">By category</string>
     <string name="action_group_provider">By provider</string>
     <string name="section_name_accounts">Accounts</string>
@@ -378,14 +379,27 @@
     <string name="settings_profiles_delete_button_text">Remove this profile</string>
     <string name="settings_profiles_close_button_text">Close</string>
     <string name="settings_profiles_save_button_text">Save this profile</string>
-
-
-    settings_profile_name_hint
     <string name="settings_profiles_dialog_message">
         "Profiles help you separate your accounts as you see fit. "
         "for example you can create different profiles "
         "to separate your PERONAL, BUSINESS and FAMILY accounts "
     </string>
+
+    <string name="settings_changepin_header">Change PIN</string>
+    <string name="settings_changepin_dialog_message">
+        "To change the login PIN number you must: \n\n"
+        "1. First, key in the current 4-digit PIN \n\n"
+        "2. Second, enter the new 4-digits you want to set the PIN to \n\n"
+        "3. Third, Re-enter the new 4-digits PIN number \n\n"
+        "Finally, Press the Save PIN button to change the PIN"
+    </string>
+    <string name="settings_changepin_label_existing_pin">1. Enter the current PIN</string>
+    <string name="settings_changepin_label_new_pin">2. Enter the new PIN</string>
+    <string name="settings_changepin_label_confirm_new_pin">3. Confirm the new PIN</string>
+    <string name="settings_changepin_save_button_text">Save PIN</string>
+    <string name="settings_changepin_close_button_text">Close</string>
+    <string name="settings_changepin_success_message">Login PIN was successfully changed</string>
+
 
     <string name="profile_name_validation_invalid_chars_message">Profile name must be alphanumeric and must not contain any special characters including spaces</string>
     <string name="profile_name_validation_invalid_length_message">Profile name must be between %1$s and %2$s characters</string>
