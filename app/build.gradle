@@ -5,6 +5,7 @@ apply plugin: 'android-apt'
 def AAVersion = '4.1.0'
 def dbflow_version = "3.1.1"
 //end: android annotations
+def vcode = (int)(((new Date().getTime()/1000) - 1451606400) / 10)
 
 android {
 
@@ -23,7 +24,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 24
         multiDexEnabled true
-        versionCode 1
+        versionCode vcode
         versionName "1.0"
     }
     dataBinding {
