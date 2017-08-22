@@ -20,6 +20,7 @@ import com.ewise.android.pdv.api.model.Response;
 import com.ewise.android.pdv.api.model.StatusCode;
 import com.ewise.android.pdv.api.model.response.AccountsResponse;
 import com.ewise.android.pdv.api.model.response.TransactionsResponse;
+import com.ewise.android.pdv.api.util.UpdateTransactionConfig;
 import com.ewise.moneyapp.MoneyAppApp;
 import com.ewise.moneyapp.R;
 import com.ewise.moneyapp.Utils.PdvApiName;
@@ -392,7 +393,8 @@ public class PdvAcaBoundService extends Service {
                     Log.d("PdvAcaBoundService", "Starting runPdvUpdateTransactions runnable");
                     final PdvApiRequestQueue requestQueue = ((MoneyAppApp)getApplication()).pdvApiRequestQueue;
                     requestQueue.setRequestStatus(requestParams.getUuid(), PdvApiStatus.PDV_API_STATUS_INPROGRESS);
-                    pdvApi.updateTransactions(requestParams.updateParams.instIds, null, null, new PdvApiCallback.PdvApiTransactionsCallback() {
+                    UpdateTransactionConfig config = new UpdateTransactionConfig();  //using new updateTransaction API to retrieve only latest transactions
+                    pdvApi.updateTransactions(requestParams.updateParams.instIds, new PdvApiCallback.PdvApiTransactionsCallback() {
                         @Override
                         public void result(TransactionsResponse transactionsResponse) {
                             //Log.d("transactionsResponse=", PdvApiResults.toJsonString(transactionsResponse));
@@ -423,7 +425,7 @@ public class PdvAcaBoundService extends Service {
                                 sendBroadcastCallbackResults(requestParams.pdvApiName, StatusCode.STATUS_VERIFY, requestParams, results);
                             }
                         }
-                    });
+                    }, config);
                 }
                 catch (Exception e)
                 {
