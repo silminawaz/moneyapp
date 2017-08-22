@@ -1,6 +1,7 @@
 package com.ewise.moneyapp.Utils;
 
 import android.app.Activity;
+import android.support.annotation.Keep;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
@@ -16,6 +17,8 @@ import java.util.List;
 /**
  * Copyright (c) 2017 eWise Singapore. Created  on 15/4/17.
  */
+
+@Keep
 public class FragmentPagerAdapterHelper {
 
     public static final String TAG = "FragmentPagerAdapterH..";

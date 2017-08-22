@@ -27,7 +27,12 @@ public class CurrencyAmount {
         NumberFormat numberFormat = NumberFormat.getInstance(Locale.getDefault());
         double dAmount = 0.0;
         if (amount!=null && !amount.isEmpty()) {
-             dAmount = Double.parseDouble(amount);
+            try {
+                dAmount = Double.parseDouble(amount);
+            }
+            catch (NumberFormatException e) {
+                dAmount = 0.0;
+            }
         }
         return getFormattedAmount(dAmount, currencyCode);
     }

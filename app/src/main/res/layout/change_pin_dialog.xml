@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="fill_horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/coloreWisePrimary"
+        android:gravity="start">
+
+        <!-- begin: need this view to make sure the dialog fragment view spans the width of the screen -->
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_gravity="fill_horizontal"
+            android:visibility="visible"/>
+        <!-- end: need this view to make sure the dialog fragment view spans the width of the screen -->
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:layout_gravity="center"
+        android:background="@color/coloreWisePrimary"
+        android:padding="@dimen/ewise_vertical_margin_large">
+
+        <ImageView
+            android:id="@+id/imageLogo"
+            android:layout_width="@dimen/ewise_touch_icon_size_xl"
+            android:layout_height="@dimen/ewise_touch_icon_size_xl"
+            android:src="@drawable/ewise_default_changepin_icon"
+            android:layout_gravity="start"
+            android:visibility="visible"/>
+
+        <TextView
+            android:text="@string/settings_changepin_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textHeader"
+            android:textSize="40sp"
+            android:elegantTextHeight="true"
+            android:layout_marginStart="@dimen/ewise_horizontal_margin_large"
+            android:layout_gravity="center"
+            android:textColor="@color/coloreWiseMainTextWhite"
+            />
+
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.ewise.moneyapp.profilesPromptsActivity"
+        android:fillViewport="true">
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/PromptsLayout"
+            android:paddingLeft="@dimen/ewise_horizontal_margin"
+            android:paddingRight="@dimen/ewise_horizontal_margin">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/PromptsMsg"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_gravity="center"
+                android:gravity="top|bottom">
+
+                <TextView
+                    android:text="@string/settings_changepin_dialog_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textPromptsMsg"
+                    android:textSize="@dimen/ewise_secondary_text_size"
+                    android:layout_marginStart="@dimen/ewise_horizontal_margin_large"
+                    android:gravity="start"
+                    android:layout_gravity=""
+                    android:textColor="@color/coloreWiseSecondaryTextBlack"
+                    android:textColorLink="@color/coloreWisePrimary"
+                    android:textStyle="normal|italic" />
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/ewise_vertical_margin">
+
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/ewise_primary_text_size"
+                    android:id="@+id/TextPINExisting"
+                    android:text="@string/settings_changepin_label_existing_pin"
+                    android:layout_marginTop="@dimen/ewise_horizontal_margin_large"/>
+
+                <com.ewise.moneyapp.views.PinEntryTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:textIsSelectable="false"
+                    android:textSize="20sp"
+                    android:id="@+id/txtPinEntryCurrent"
+                    android:textColor="@color/coloreWiseMainTextWhite"
+                    android:textStyle="normal|bold"
+                    style="@style/eWiseEncryptedPinTheme"
+                    />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/ewise_primary_text_size"
+                    android:id="@+id/TextPINNew"
+                    android:text="@string/settings_changepin_label_new_pin"
+                    android:layout_marginTop="@dimen/ewise_horizontal_margin_large"/>
+
+                <com.ewise.moneyapp.views.PinEntryTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:textIsSelectable="false"
+                    android:textSize="20sp"
+                    android:id="@+id/txtPinEntryNew"
+                    android:textColor="@color/coloreWiseMainTextWhite"
+                    android:textStyle="normal|bold"
+                    style="@style/eWiseEncryptedPinTheme"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/ewise_primary_text_size"
+                    android:id="@+id/TextPINNConfirmNew"
+                    android:text="@string/settings_changepin_label_confirm_new_pin"
+                    android:layout_marginTop="@dimen/ewise_horizontal_margin_large"/>
+
+                <com.ewise.moneyapp.views.PinEntryTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:textIsSelectable="false"
+                    android:textSize="20sp"
+                    android:id="@+id/txtPinEntryConfirmNew"
+                    android:textColor="@color/coloreWiseMainTextWhite"
+                    android:textStyle="normal|bold"
+                    style="@style/eWiseEncryptedPinTheme"
+                    />
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ButtonLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:orientation="horizontal">
+
+
+                    <Button
+                        android:text="@string/settings_changepin_save_button_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/btnChangePinSave"
+                        android:textColor="@color/coloreWiseBlueAegis"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAlignment="center"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/ewise_secondary_text_size"
+                        style="@style/Base.Widget.AppCompat.Button.Borderless"
+                        android:layout_gravity="center_horizontal" />
+
+                    <ProgressBar
+                        android:id="@+id/changePinSaveProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:visibility="visible"
+                        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Small"
+                        android:paddingEnd="@dimen/ewise_horizontal_margin"
+                        android:indeterminateDrawable="@drawable/ewise_progress_bar_drawable"/>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:visibility="gone"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/coloreWiseDivider"/>
+
+            <Button
+                android:text="@string/settings_changepin_close_button_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnChangePinCancel"
+                android:textSize="@dimen/ewise_secondary_text_size"
+                android:textColor="@color/coloreWiseBlueAegis"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="viewEnd"
+                android:textStyle="bold|italic"
+                style="@style/Base.Widget.AppCompat.Button.Borderless"
+                android:gravity="end" />
+
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</LinearLayout>

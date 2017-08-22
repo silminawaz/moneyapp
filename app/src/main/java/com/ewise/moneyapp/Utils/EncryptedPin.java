@@ -12,6 +12,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ewise.moneyapp.MoneyAppApp;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
@@ -38,6 +40,7 @@ public class EncryptedPin {
 
 
     public static final String TAG = "EncryptedPin";
+    static final String SHARED_PREFERENCES_APP_SETTINGS = "appsettings";
     public static final String PIN_KEY_ALIAS_PREFIX = "com.ewise.moneyapp.loginpinkey";
     public static final String DEFAULT_PIN_KEY_SUBJECT = "CN=com.ewise.moneyapp, O=Android Authority";
     //public static final int DEFAULT_PIN_KEY_SERIAL_NO = 1;
@@ -69,7 +72,9 @@ public class EncryptedPin {
 
         if (pinKeyExists()){
             if (!isPINKeyExpired()){
-                return false;
+                if (doesPINExist(activity)) {
+                    return false;
+                }
             }
         }
 
@@ -77,7 +82,11 @@ public class EncryptedPin {
     }
 
     public boolean doesPINExist(Activity activity){
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+
+        //SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+        SharedPreferences sharedPref = app.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_APP_SETTINGS, Context.MODE_PRIVATE);
+
         if (sharedPref.contains(DEFAULT_PIN_KEY_ALIAS)){
             String PINValue = sharedPref.getString(DEFAULT_PIN_KEY_ALIAS, null);
             if (PINValue!=null){
@@ -92,7 +101,9 @@ public class EncryptedPin {
 
 
     public boolean isPINExpired(Activity activity){
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        //SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+        SharedPreferences sharedPref = app.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_APP_SETTINGS, Context.MODE_PRIVATE);
         if (sharedPref.contains(DEFAULT_PIN_KEY_ALIAS)){
             String PINValue = sharedPref.getString(DEFAULT_PIN_KEY_ALIAS, null);
             if (PINValue!=null){
@@ -125,7 +136,9 @@ public class EncryptedPin {
         if (encryptedPin!=null) {
             if (encryptedPin.length()>0) {
                 //save plaintext pin in shared preferences
-                SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+                //SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+                MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+                SharedPreferences sharedPref = app.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_APP_SETTINGS, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(DEFAULT_PIN_KEY_ALIAS, encryptedPin);
                 editor.apply();
@@ -138,7 +151,9 @@ public class EncryptedPin {
 
     public boolean validatePIN (String plainTextPin, Activity activity){
         //Must always call this from the same activity to ensure that you get the correct saved results.
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        //SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        MoneyAppApp app = (MoneyAppApp) activity.getApplication();
+        SharedPreferences sharedPref = app.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_APP_SETTINGS, Context.MODE_PRIVATE);
         String savedPin = sharedPref.getString(DEFAULT_PIN_KEY_ALIAS, null);
         if (savedPin!=null){
             String decryptedPin = decryptPIN(savedPin, activity);

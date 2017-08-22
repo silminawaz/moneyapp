@@ -111,7 +111,9 @@ public class MoneyAppApp extends Application {
     private static final String TAG = MoneyAppApp.class.getName();
     public static final String DEFAULT_USERNAME = "silmiandroid5demo5";
     public static final String DEFAULT_MM_HOST = "https://qa-50-wmm.ewise.com/api/";
+    //public static final String DEFAULT_MM_HOST = "https://tandem-api.ewise.com/api/";
     public static final String DEFAULT_SWAN_HOST = "https://qaswan.ewise.com/";
+    //public static final String DEFAULT_SWAN_HOST = "https://swan-tandem.ewise.com/";
     public static final String EWISEDEMO = "com.ewise.android.pdv.EwiseSharedPref";
     public static final String INSTCODE_DRAWABLE_PREFIX = "instcode_";
 
@@ -123,6 +125,7 @@ public class MoneyAppApp extends Application {
     static final int ACCOUNT_DETAILS_ACTIVITY = 2;
     static final int ADD_PROVIDER_LIST_REQUEST = 3;
     static final int ADD_PROVIDER_PROMPTS_REQUEST = 4;
+
 
     static final int MAINACTIVITY_FINISHING_NOTIFICATION_REQUEST_CODE = 999;
 
@@ -463,6 +466,11 @@ public class MoneyAppApp extends Application {
                 issuerDns);
 
         config.put (PdvApi.Config.ENABLE_WEBVIEW_CONFIGURATION, false);
+
+        //config.put (PdvApi.Config.ENABLE_SEAGULL_LOGGING, false);
+        //config.put (PdvApi.Config.ENABLE_ACA_LOGGING, false);
+
+
 
         pdvApi.config(config);
     }

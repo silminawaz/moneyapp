@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -30,6 +31,8 @@ import java.util.List;
 /**
  * Copyright (c) 2017 eWise Singapore. Created  on 28/8/16.
  */
+
+@Keep
 public class CurrencyExchangeRates {
     /**
      * baseCurrencyCode : SGD

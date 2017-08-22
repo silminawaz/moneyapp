@@ -2,24 +2,15 @@ package com.ewise.moneyapp.Fragments;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatDrawableManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -146,7 +137,7 @@ public class EditProfilesDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
 
-                Log.d("EditProviderDialogFr...", "cancelButton.setOnClickListener.onClick()");
+                Log.d(TAG, "cancelButton.setOnClickListener.onClick()");
                 dismissAllowingStateLoss();
             }
         });
@@ -154,7 +145,7 @@ public class EditProfilesDialogFragment extends DialogFragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
-                Log.d("EditProviderDialogFr...", "saveButton.setOnClickListener.onClick()");
+                Log.d(TAG, "saveButton.setOnClickListener.onClick()");
                 progressBar.setVisibility(View.VISIBLE);
                 String message=getProfileNameValidationMessage();
                 if (!message.isEmpty()){
