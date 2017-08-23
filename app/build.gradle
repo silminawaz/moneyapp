@@ -130,4 +130,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     apt 'com.squareup.dagger:dagger-compiler:1.2.2'
 
+    apply plugin: 'com.google.gms.google-services'
+
 }
