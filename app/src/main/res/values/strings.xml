@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">eWise</string>
+    <string name="app_name">eWise Money</string>
     <string name="action_settings">Settings</string>
     <string name="action_changepin">Change PIN</string>
     <string name="action_group_category">By category</string>
