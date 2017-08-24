@@ -1,0 +1,19 @@
+{
+  "categoryTileMapping":
+  [
+    {"accountCategory": "CASH", "tileCategory": "CASH"},
+    {"accountCategory": "PROPERTY", "tileCategory": "PROPERTY"},
+    {"accountCategory": "INVESTMENT", "tileCategory": "INVESTMENT"},
+    {"accountCategory": "SUPERANNUATION", "tileCategory": "RETIREMENT"},
+    {"accountCategory": "EFFECTS", "tileCategory": "OTHERASSETS"},
+    {"accountCategory": "INSURANCE", "tileCategory": "INSURANCE"},
+    {"accountCategory": "ASSET", "tileCategory": "OTHERASSETS"},
+    {"accountCategory": "CREDIT", "tileCategory": "CREDIT"},
+    {"accountCategory": "MORTGAGE", "tileCategory": "LOAN"},
+    {"accountCategory": "INVESTLOAN", "tileCategory": "INVESTMENT"},
+    {"accountCategory": "LOAN", "tileCategory": "LOAN"},
+    {"accountCategory": "TAX", "tileCategory": "OTHERLIABILITIES"},
+    {"accountCategory": "OVERDRAFT", "tileCategory": "CASH"},
+    {"accountCategory": "LIABILITY", "tileCategory": "OTHERLIABILITIES"}
+  ]
+}
