@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "513238977805",
+    "project_id": "moneyapp-68a51"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:513238977805:android:07de3d783f460a3a",
+        "android_client_info": {
+          "package_name": "com.ewise.moneyapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "513238977805-3dh18odedid5vi9n4bepuhimt2n98hm8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ewise.moneyapp",
+            "certificate_hash": "3848bdb0b36af7f2437f3cca72185fd90fc4c633"
+          }
+        },
+        {
+          "client_id": "513238977805-9utqi3v3abolvb8fic70patd898vgl70.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBln6w1cI1yPUrMxMjPnEzSBtEK_EQSOfg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
