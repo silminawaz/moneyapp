@@ -26,6 +26,7 @@ android {
         multiDexEnabled true
         versionCode vcode
         versionName "1.0"
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "50979e69d9e946148fe091ba1434ba1d"]
     }
     dataBinding {
         enabled = true
@@ -71,6 +72,7 @@ apt {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'net.hockeyapp.android:HockeySDK:4.1.5'
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
 

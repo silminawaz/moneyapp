@@ -92,6 +92,10 @@ import com.ewise.moneyapp.adapters.ReportIssueMenuPagerAdapter;
 import com.ewise.moneyapp.adapters.TransferMenuPagerAdapter;
 import com.ewise.moneyapp.service.PdvAcaBoundService;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.metrics.MetricsManager;
+
+
 import org.xwalk.core.XWalkView;
 
 import java.util.HashMap;
@@ -590,6 +594,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MetricsManager.register(getApplication());
         Log.d(TAG, "onCreate() - START");
         this.setTheme(R.style.AppTheme_NoActionBar); //remove the splash theme
         super.onCreate(savedInstanceState);
@@ -1050,12 +1055,16 @@ public class MainActivity extends AppCompatActivity
                 Log.d(TAG, "onCreate() - Going to run Request Runnable");
                 handler.post(pdvApiRequestRunnable);
             }
-        }
-        catch(Exception e){
+        } catch(Exception e){
             Log.e(TAG, e.getMessage());
             e.printStackTrace();
             notifyPdvLoginFail();
         }
+        checkForCrashes();
+    }
+
+    private void checkForCrashes() {
+        CrashManager.register(this,new MyCustomCrashManagerListener());
     }
 
 
