@@ -1,0 +1,26 @@
+{
+  "InstitutionTileMapping": [
+    {
+      "instId": "3333",
+      "tileMapping": [
+        {
+          "accountCategory": "*",
+          "tileCategory": "BILLS"
+        }
+      ]
+    },
+    {
+      "instId": "3335",
+      "tileMapping": [
+        {
+          "accountCategory": "ASSET",
+          "tileCategory": "OTHERASSETS"
+        },
+        {
+          "accountCategory": "LIABILITIES",
+          "tileCategory": "BILLS"
+        }
+      ]
+    }
+  ]
+}

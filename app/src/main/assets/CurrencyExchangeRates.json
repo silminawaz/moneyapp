@@ -1,0 +1,18 @@
+{
+  "exchangeRateItems" : [
+    { "currencyPair" : "SGDSGD", "exchangeRate" : "1.0", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDAUD", "exchangeRate" : "1.1", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDUSD", "exchangeRate" : "0.75", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDEUR", "exchangeRate" : "0.66", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDGBP", "exchangeRate" : "0.57", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDCHF", "exchangeRate" : "0.71", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDHKD", "exchangeRate" : "5.56", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDINR", "exchangeRate" : "46.81", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDNZD", "exchangeRate" : "1.03", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDPHP", "exchangeRate" : "35.53", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDJPY", "exchangeRate" : "80.47", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDKRW", "exchangeRate" : "807.26", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDJOD", "exchangeRate" : "0.5", "rateQuoteDirect" : true},
+    { "currencyPair" : "SGDBRL", "exchangeRate" : "2.28", "rateQuoteDirect" : true}
+  ]
+}
