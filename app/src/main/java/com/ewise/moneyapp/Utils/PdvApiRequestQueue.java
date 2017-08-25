@@ -116,7 +116,6 @@ public class PdvApiRequestQueue {
             List<String> instIdList = p.updateParams.instIds;
             for (String instIdString : instIdList) {
                 if (instIdString.equals(instId)){
-                    Log.d("PdvApiRequestQueue", "getRequestForInstitution() - found requestParam for iid " + PdvApiResults.toJsonString(p));
                     return p;
                 }
             }
